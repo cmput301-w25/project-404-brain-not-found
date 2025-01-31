@@ -7,7 +7,7 @@
 | ------------- | ------ | --------------- |
 | Labeeba Sayed | lsayed | @labeebarocks   |
 | Kashish Gupta | kgupta5 | kashishgupta2911     |
-| [Full Name]   | [CCID] | [@username]     |
+| Harneet Kaur Tatla   | harneetk | @harneet862     |
 | Brayden Bartelds  | bartelds | @braydenmcb   |
 | Daniil Zahoruiko  | zahoruik | @daniil-zahoruiko     |
 | Kelsey Pattison   | kpattiso | @Kelsey-Patti     |
