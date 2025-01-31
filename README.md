@@ -6,8 +6,8 @@
 | Name          | CCID   | GitHub Username |
 | ------------- | ------ | --------------- |
 | Labeeba Sayed | lsayed | @labeebarocks   |
-| Kashish Gupta | kgupta5 | kashishgupta2911     |
-| [Full Name]   | [CCID] | [@username]     |
+| Kashish Gupta | kgupta5 | @kashishgupta2911     |
+| Harneet K. Tatla| harneetk| @harneet862    |
 | [Full Name]   | [CCID] | [@username]     |
 | Daniil Zahoruiko  | zahoruik | @daniil-zahoruiko     |
 | Kelsey Pattison   | kpattiso | @Kelsey-Patti     |
