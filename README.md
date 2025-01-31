@@ -2,14 +2,14 @@
 
 ## Team Members
 
-| Name        | CCID   | GitHub Username |
-| ----------- | ------ | --------------- |
-| [Full Name] | [CCID] | [@username]     |
-| [Full Name] | [CCID] | [@username]     |
-| [Full Name] | [CCID] | [@username]     |
-| [Full Name] | [CCID] | [@username]     |
-| [Full Name] | [CCID] | [@username]     |
-| [Full Name] | [CCID] | [@username]     |
+| Name          | CCID   | GitHub Username |
+| ------------- | ------ | --------------- |
+| Labeeba Sayed | lsayed | @labeebarocks   |
+| [Full Name]   | [CCID] | [@username]     |
+| [Full Name]   | [CCID] | [@username]     |
+| [Full Name]   | [CCID] | [@username]     |
+| [Full Name]   | [CCID] | [@username]     |
+| [Full Name]   | [CCID] | [@username]     |
 
 ## Project Description
 
