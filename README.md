@@ -8,7 +8,7 @@
 | [Full Name] | [CCID] | [@username]     |
 | [Full Name] | [CCID] | [@username]     |
 | [Full Name] | [CCID] | [@username]     |
-| [Full Name] | [CCID] | [@username]     |
+| Daniil Zahoruiko | zahoruik | @daniil-zahoruiko     |
 | [Full Name] | [CCID] | [@username]     |
 
 ## Project Description
