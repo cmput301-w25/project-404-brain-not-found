@@ -21,4 +21,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "CMPUT301-Team-Project"
 include(":app")
- 
