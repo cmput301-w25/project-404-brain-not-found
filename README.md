@@ -9,7 +9,7 @@
 | [Full Name] | [CCID] | [@username]     |
 | [Full Name] | [CCID] | [@username]     |
 | [Full Name] | [CCID] | [@username]     |
-| Kelsey Pattison | kpattiso | Kelsey-Patti     |
+| Kelsey Pattison | kpattiso | @Kelsey-Patti     |
 
 ## Project Description
 
