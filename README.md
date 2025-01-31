@@ -2,14 +2,16 @@
 
 ## Team Members
 
-| Name        | CCID   | GitHub Username |
-| ----------- | ------ | --------------- |
-| [Full Name] | [CCID] | [@username]     |
-| [Full Name] | [CCID] | [@username]     |
-| [Full Name] | [CCID] | [@username]     |
-| [Full Name] | [CCID] | [@username]     |
-| Daniil Zahoruiko | zahoruik | @daniil-zahoruiko     |
-| [Full Name] | [CCID] | [@username]     |
+
+| Name          | CCID   | GitHub Username |
+| ------------- | ------ | --------------- |
+| Labeeba Sayed | lsayed | @labeebarocks   |
+| Kashish Gupta | kgupta5 | kashishgupta2911     |
+| [Full Name]   | [CCID] | [@username]     |
+| [Full Name]   | [CCID] | [@username]     |
+| Daniil Zahoruiko  | zahoruik | @daniil-zahoruiko     |
+| Kelsey Pattison   | kpattiso | @Kelsey-Patti     |
+
 
 ## Project Description
 
