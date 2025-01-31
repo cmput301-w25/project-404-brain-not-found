@@ -5,11 +5,12 @@
 | Name          | CCID   | GitHub Username |
 | ------------- | ------ | --------------- |
 | Labeeba Sayed | lsayed | @labeebarocks   |
+| Kashish Gupta | kgupta5 | kashishgupta2911     |
 | [Full Name]   | [CCID] | [@username]     |
 | [Full Name]   | [CCID] | [@username]     |
 | [Full Name]   | [CCID] | [@username]     |
 | [Full Name]   | [CCID] | [@username]     |
-| [Full Name]   | [CCID] | [@username]     |
+
 
 ## Project Description
 
