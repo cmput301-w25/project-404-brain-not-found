@@ -32,6 +32,6 @@
 ## Documentation
 
 - [Wiki](https://github.com/cmput301-w25/project-404-brain-not-found/wiki)
-- [Scrum Board]
-- [UI Mockups]
+- [Scrum Board](https://github.com/orgs/cmput301-w25/projects/72)
+- [UI Mockups](https://github.com/cmput301-w25/project-404-brain-not-found/wiki/UI-Mockup)
 - [UML]
