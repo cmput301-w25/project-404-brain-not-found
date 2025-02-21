@@ -1,4 +1,22 @@
 <resources>
     <string name="app_name">CMPUT301-Team-Project</string>
     <string name="trigger">Trigger</string>
+    <string-array name="emotional_states">
+        <item>Select Emotional State…</item>
+        <item>Anger</item>
+        <item>Confusion</item>
+        <item>Disgust</item>
+        <item>Fear</item>
+        <item>Happiness</item>
+        <item>Sadness</item>
+        <item>Shame</item>
+        <item>Surprise</item>
+    </string-array>
+    <string-array name="social_situations">
+        <item>Select Social Situation…</item>
+        <item>Alone</item>
+        <item>With one other person</item>
+        <item>With two to several people</item>
+        <item>With a crowd</item>
+    </string-array>
 </resources>

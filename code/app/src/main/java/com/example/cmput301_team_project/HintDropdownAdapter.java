@@ -17,9 +17,9 @@ import java.util.ArrayList;
  * that disables and grays out the first item of a dropdown
  * in order for it to be a hint.
  */
-public class DropdownWithHintAdapter extends ArrayAdapter<String> {
+public class HintDropdownAdapter extends ArrayAdapter<String> {
 
-    public DropdownWithHintAdapter(Context context, ArrayList<String> items) { super(context, android.R.layout.simple_spinner_dropdown_item, items);}
+    public HintDropdownAdapter(Context context, ArrayList<String> items) { super(context, android.R.layout.simple_spinner_dropdown_item, items);}
 
     @Override
     public boolean isEnabled(int position) {

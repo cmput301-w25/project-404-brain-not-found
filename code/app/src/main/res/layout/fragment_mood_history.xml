@@ -14,7 +14,7 @@
         android:orientation="horizontal">
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/add_mood_button"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:scaleType="fitXY"
