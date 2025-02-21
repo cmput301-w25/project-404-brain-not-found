@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/mood_history_icon"
+        android:title=""
+        android:icon="@drawable/ic_baseline_book_24"/>
+</menu>
