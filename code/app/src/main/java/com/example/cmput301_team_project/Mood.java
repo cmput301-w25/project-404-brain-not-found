@@ -8,6 +8,11 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+/**
+ * Base class for mood event.
+ * Use {@link Mood#createMood(MoodEmotionEnum, MoodSocialSituationEnum, String, Date)} factory method
+ * to create the correct subclass instance of the base class
+ */
 public abstract class Mood {
     private MoodSocialSituationEnum socialSituation;
     private String trigger;
@@ -23,6 +28,14 @@ public abstract class Mood {
         this.date = date;
     }
 
+    /**
+     *
+     * @param emotion emotional state of mood event
+     * @param socialSituation social situation of mood event
+     * @param trigger trigger of mood event
+     * @param date date of mood event. If null value is supplied, the current date and time are used
+     * @return Mood class instance
+     */
     public static Mood createMood(MoodEmotionEnum emotion, MoodSocialSituationEnum socialSituation, String trigger, @Nullable Date date) {
         switch(emotion) {
             case ANGER:

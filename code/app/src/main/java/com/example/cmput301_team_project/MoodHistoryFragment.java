@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 
 /**
  * A simple {@link Fragment} subclass.
+ * Responsible for user's mood history list.
  * Use the {@link MoodHistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */

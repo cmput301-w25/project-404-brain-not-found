@@ -2,6 +2,10 @@ package com.example.cmput301_team_project;
 
 import android.content.Context;
 
+/**
+ * Enum that represents mood emotional state.
+ * It implements {@link HintDropdownEnumInterface} in order to be used in hint dropdowns on mood form.
+ */
 public enum MoodEmotionEnum implements HintDropdownEnumInterface {
     NONE(R.string.emotional_state_dropdown_hint),
     ANGER(R.string.anger),
@@ -19,7 +23,7 @@ public enum MoodEmotionEnum implements HintDropdownEnumInterface {
     }
 
     @Override
-    public String getDisplayName(Context context) {
+    public String getDropdownDisplayName(Context context) {
         return context.getString(resId);
     }
 }

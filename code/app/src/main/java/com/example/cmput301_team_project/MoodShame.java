@@ -4,6 +4,10 @@ import com.google.firebase.firestore.Exclude;
 
 import java.util.Date;
 
+/**
+ * Subclass of {@link Mood} that represents emotional state of shame.
+ * Defines some emotional-state-specific attributes, such as display colour and emoji
+ */
 public class MoodShame extends Mood {
 
     public MoodShame(MoodSocialSituationEnum socialSituation, String trigger) {

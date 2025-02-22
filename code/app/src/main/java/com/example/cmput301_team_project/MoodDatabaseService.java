@@ -8,7 +8,7 @@ import com.google.firebase.firestore.CollectionReference;
  */
 public class MoodDatabaseService extends BaseDatabaseService {
     private static MoodDatabaseService instance = null;
-    private CollectionReference moodsRef;
+    private final CollectionReference moodsRef;
 
     private MoodDatabaseService() {
         super();

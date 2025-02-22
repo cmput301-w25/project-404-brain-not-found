@@ -27,8 +27,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         BottomNavigationView navigation = findViewById(R.id.navigation_main);
-        // TODO: This should probably be changed to mood following list once its fragment is created
+        // TODO: This should probably be changed to mood following list once its fragment is created so that's the first tab user sees
         replaceFragment(new MoodHistoryFragment());
+
         navigation.setOnItemSelectedListener(item -> {
             if(item.getItemId() == R.id.mood_history_icon) {
                 replaceFragment(MoodHistoryFragment.newInstance());

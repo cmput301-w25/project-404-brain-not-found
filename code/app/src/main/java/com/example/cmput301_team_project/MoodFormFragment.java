@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * A simple {@link DialogFragment} subclass.
+ * A {@link DialogFragment} subclass that implements form for adding and editing moods
  * Use the {@link MoodFormFragment#newInstance} factory method to
  * create an instance of this fragment.
  */

@@ -27,7 +27,7 @@ public class HintDropdownAdapter extends ArrayAdapter<String> {
     private static ArrayList<String> mapDropdownItems(Context context, ArrayList<HintDropdownEnumInterface> items) {
         return items
                 .stream()
-                .map(item -> item.getDisplayName(context))
+                .map(item -> item.getDropdownDisplayName(context))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 

@@ -4,6 +4,10 @@ import com.google.firebase.firestore.Exclude;
 
 import java.util.Date;
 
+/**
+ * Subclass of {@link Mood} that represents emotional state of happiness.
+ * Defines some emotional-state-specific attributes, such as display colour and emoji
+ */
 public class MoodHappiness extends Mood {
     public MoodHappiness(MoodSocialSituationEnum socialSituation, String trigger) {
         super(socialSituation, trigger);
