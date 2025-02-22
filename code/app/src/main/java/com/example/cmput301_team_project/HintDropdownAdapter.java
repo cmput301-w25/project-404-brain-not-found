@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * This  class implements a custom array adapter
@@ -19,7 +20,16 @@ import java.util.ArrayList;
  */
 public class HintDropdownAdapter extends ArrayAdapter<String> {
 
-    public HintDropdownAdapter(Context context, ArrayList<String> items) { super(context, android.R.layout.simple_spinner_dropdown_item, items);}
+    public HintDropdownAdapter(Context context, ArrayList<HintDropdownEnumInterface> items) {
+        super(context, android.R.layout.simple_spinner_dropdown_item, mapDropdownItems(context, items));
+    }
+
+    private static ArrayList<String> mapDropdownItems(Context context, ArrayList<HintDropdownEnumInterface> items) {
+        return items
+                .stream()
+                .map(item -> item.getDisplayName(context))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
 
     @Override
     public boolean isEnabled(int position) {
@@ -36,5 +46,12 @@ public class HintDropdownAdapter extends ArrayAdapter<String> {
             tv.setTextColor(Color.BLACK);
         }
         return view;
+    }
+
+    public void setError(View v, CharSequence s) {
+        TextView textView = (TextView) v;
+        textView.setError("");
+        textView.setTextColor(Color.RED);
+        textView.setText(s);
     }
 }

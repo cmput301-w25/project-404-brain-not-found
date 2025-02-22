@@ -3,7 +3,6 @@ package com.example.cmput301_team_project;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -23,6 +23,9 @@ import java.util.Arrays;
  * create an instance of this fragment.
  */
 public class MoodFormFragment extends DialogFragment {
+    interface MoodFormDialogListener {
+        void addMood(Mood mood);
+    }
 
     public MoodFormFragment() {
         // Required empty public constructor
@@ -52,8 +55,8 @@ public class MoodFormFragment extends DialogFragment {
         Spinner socialSituation = view.findViewById(R.id.form_situation);
         EditText trigger = view.findViewById(R.id.form_trigger);
 
-        HintDropdownAdapter emotionAdapter = new HintDropdownAdapter(getActivity(), new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.emotional_states))));
-        HintDropdownAdapter socialSituationAdapter = new HintDropdownAdapter(getActivity(), new ArrayList<>(Arrays.asList(getResources().getStringArray(R.array.social_situations))));
+        HintDropdownAdapter emotionAdapter = new HintDropdownAdapter(getContext(), new ArrayList<>(Arrays.asList(MoodEmotionEnum.values())));
+        HintDropdownAdapter socialSituationAdapter = new HintDropdownAdapter(getContext(), new ArrayList<>(Arrays.asList(MoodSocialSituationEnum.values())));
 
         emotion.setOnItemSelectedListener(new HintDropdownItemSelectedListener());
         emotion.setAdapter(emotionAdapter);
@@ -61,14 +64,28 @@ public class MoodFormFragment extends DialogFragment {
         socialSituation.setOnItemSelectedListener(new HintDropdownItemSelectedListener());
         socialSituation.setAdapter(socialSituationAdapter);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        return builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog dialog = builder
                 .setView(view)
                 .setTitle("Add Mood Event")
                 .setNegativeButton("Cancel", null)
-                .setPositiveButton("Add", (dialog, which) -> {
-
-                })
+                .setPositiveButton("Add", null)
                 .create();
+
+        dialog.setOnShowListener(dialog1 -> {
+            Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+            positiveButton.setOnClickListener(v -> {
+                if(emotion.getSelectedItemPosition() == 0) {
+                    emotionAdapter.setError(emotion.getSelectedView(), getString(R.string.no_emotional_state_error_msg));
+                    return;
+                }
+
+                Mood mood = Mood.createMood(MoodEmotionEnum.values()[emotion.getSelectedItemPosition()], MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()], trigger.getText().toString());
+
+                dialog.dismiss();
+            });
+        });
+
+        return dialog;
     }
 }

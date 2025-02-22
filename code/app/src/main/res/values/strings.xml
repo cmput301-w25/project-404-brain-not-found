@@ -1,22 +1,27 @@
 <resources>
     <string name="app_name">CMPUT301-Team-Project</string>
     <string name="trigger">Trigger</string>
-    <string-array name="emotional_states">
-        <item>Select Emotional State…</item>
-        <item>Anger</item>
-        <item>Confusion</item>
-        <item>Disgust</item>
-        <item>Fear</item>
-        <item>Happiness</item>
-        <item>Sadness</item>
-        <item>Shame</item>
-        <item>Surprise</item>
-    </string-array>
-    <string-array name="social_situations">
-        <item>Select Social Situation…</item>
-        <item>Alone</item>
-        <item>With one other person</item>
-        <item>With two to several people</item>
-        <item>With a crowd</item>
-    </string-array>
+    <string name="anger">Anger</string>
+    <string name="confusion">Confusion</string>
+    <string name="disgust">Disgust</string>
+    <string name="fear">Fear</string>
+    <string name="happiness">Happiness</string>
+    <string name="sadness">Sadness</string>
+    <string name="shame">Shame</string>
+    <string name="surprise">Surprise</string>
+    <string name="emotional_state_dropdown_hint">Select Emotional State…</string>
+    <string name="no_emotional_state_error_msg">Emotional State is required</string>
+    <string name="emoji_anger">😡</string>
+    <string name="emoji_confusion">😕</string>
+    <string name="emoji_disgust">🤢</string>
+    <string name="emoji_fear">😱</string>
+    <string name="emoji_happiness">😊</string>
+    <string name="emoji_sadness">☹️</string>
+    <string name="emoji_shame">😳</string>
+    <string name="emoji_surprise">🫢</string>
+    <string name="social_alone">Alone</string>
+    <string name="social_pair">With one other person</string>
+    <string name="social_several">With two to several people</string>
+    <string name="social_crowd">With a crowd</string>
+    <string name="social_situation_dropdown_hint">Select Social Situation…</string>
 </resources>
