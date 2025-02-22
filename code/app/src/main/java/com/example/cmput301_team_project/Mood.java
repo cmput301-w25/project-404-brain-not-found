@@ -18,10 +18,10 @@ public abstract class Mood {
         this.socialSituation = socialSituation;
         this.trigger = trigger;
 
-        dfUTC = DateFormat.getTimeInstance();
+        dfUTC = DateFormat.getDateTimeInstance();
         dfUTC.setTimeZone(TimeZone.getTimeZone("utc"));
 
-        dfLocal = DateFormat.getTimeInstance();
+        dfLocal = DateFormat.getDateInstance();
         dfLocal.setTimeZone(TimeZone.getDefault());
 
         date = dfUTC.format(new Date());
@@ -50,6 +50,8 @@ public abstract class Mood {
     }
 
     public abstract MoodEmotionEnum getEmotion();
+    public abstract int getColour();
+    public abstract int getEmoji();
 
     public MoodSocialSituationEnum getSocialSituation() {
         return socialSituation;
@@ -71,9 +73,4 @@ public abstract class Mood {
             return "";
         }
     }
-
-    @Exclude
-    public abstract int getColour();
-    @Exclude
-    public abstract int getEmoji();
 }
