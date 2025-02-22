@@ -90,7 +90,7 @@ public class MoodFormFragment extends DialogFragment {
                     return;
                 }
 
-                Mood mood = Mood.createMood(MoodEmotionEnum.values()[emotion.getSelectedItemPosition()], MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()], trigger.getText().toString());
+                Mood mood = Mood.createMood(MoodEmotionEnum.values()[emotion.getSelectedItemPosition()], MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()], trigger.getText().toString(), null);
                 listener.addMood(mood);
 
                 dialog.dismiss();
