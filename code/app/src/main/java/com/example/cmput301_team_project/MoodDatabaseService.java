@@ -11,7 +11,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
         super();
     }
 
-    public MoodDatabaseService getInstance() {
+    public static MoodDatabaseService getInstance() {
         if(instance == null) {
             instance = new MoodDatabaseService();
         }

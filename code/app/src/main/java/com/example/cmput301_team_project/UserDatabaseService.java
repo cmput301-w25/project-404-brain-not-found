@@ -11,7 +11,7 @@ public class UserDatabaseService extends BaseDatabaseService {
         super();
     }
 
-    public UserDatabaseService getInstance() {
+    public static UserDatabaseService getInstance() {
         if(instance == null) {
             instance = new UserDatabaseService();
         }
