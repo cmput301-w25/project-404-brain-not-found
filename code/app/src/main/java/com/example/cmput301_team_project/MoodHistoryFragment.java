@@ -14,10 +14,11 @@ import android.widget.ImageButton;
  * Use the {@link MoodHistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MoodHistoryFragment extends Fragment {
+public class MoodHistoryFragment extends Fragment implements MoodFormFragment.MoodFormDialogListener {
+    private final MoodDatabaseService moodDatabaseService;
 
     public MoodHistoryFragment() {
-        // Required empty public constructor
+        moodDatabaseService = MoodDatabaseService.getInstance();
     }
 
     /**
@@ -43,9 +44,14 @@ public class MoodHistoryFragment extends Fragment {
 
         ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
         addMoodButton.setOnClickListener(v -> {
-            MoodFormFragment.newInstance().show(requireActivity().getSupportFragmentManager(), "Add Mood Event");
+            MoodFormFragment.newInstance().show(getChildFragmentManager(), "Add Mood Event");
         });
 
         return view;
+    }
+
+    @Override
+    public void addMood(Mood mood) {
+        moodDatabaseService.addMood(mood);
     }
 }

@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         replaceFragment(new MoodHistoryFragment());
         navigation.setOnItemSelectedListener(item -> {
             if(item.getItemId() == R.id.mood_history_icon) {
-                replaceFragment(new MoodHistoryFragment());
+                replaceFragment(MoodHistoryFragment.newInstance());
             }
             return true;
         });

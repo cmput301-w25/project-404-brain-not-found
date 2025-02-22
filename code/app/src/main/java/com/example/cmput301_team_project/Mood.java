@@ -1,17 +1,30 @@
 package com.example.cmput301_team_project;
 
-import android.content.Context;
+import com.google.firebase.firestore.Exclude;
 
-import com.google.type.DateTime;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.TimeZone;
 
 public abstract class Mood {
     private MoodSocialSituationEnum socialSituation;
     private String trigger;
-    private DateTime dateTime;
+    private String date;
+    private final DateFormat dfUTC;
+    private final DateFormat dfLocal;
 
     protected Mood(MoodSocialSituationEnum socialSituation, String trigger) {
         this.socialSituation = socialSituation;
         this.trigger = trigger;
+
+        dfUTC = DateFormat.getTimeInstance();
+        dfUTC.setTimeZone(TimeZone.getTimeZone("utc"));
+
+        dfLocal = DateFormat.getTimeInstance();
+        dfLocal.setTimeZone(TimeZone.getDefault());
+
+        date = dfUTC.format(new Date());
     }
 
     public static Mood createMood(MoodEmotionEnum emotion, MoodSocialSituationEnum socialSituation, String trigger) {
@@ -37,6 +50,30 @@ public abstract class Mood {
     }
 
     public abstract MoodEmotionEnum getEmotion();
+
+    public MoodSocialSituationEnum getSocialSituation() {
+        return socialSituation;
+    }
+
+    public String getTrigger() {
+        return trigger;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    @Exclude
+    public String getDateLocal() {
+        try {
+            return dfLocal.format(dfUTC.parse(date));
+        } catch (ParseException e) {
+            return "";
+        }
+    }
+
+    @Exclude
     public abstract int getColour();
+    @Exclude
     public abstract int getEmoji();
 }

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +27,7 @@ public class MoodFormFragment extends DialogFragment {
     interface MoodFormDialogListener {
         void addMood(Mood mood);
     }
+    private MoodFormDialogListener listener;
 
     public MoodFormFragment() {
         // Required empty public constructor
@@ -44,6 +46,14 @@ public class MoodFormFragment extends DialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+
+        Fragment parentFragment = getParentFragment();
+        if (parentFragment instanceof MoodFormDialogListener) {
+            listener = (MoodFormDialogListener) parentFragment;
+        }
+        else {
+            throw new RuntimeException(parentFragment + " must implement MoodFormDialogListener");
+        }
     }
 
     @NonNull
@@ -81,6 +91,7 @@ public class MoodFormFragment extends DialogFragment {
                 }
 
                 Mood mood = Mood.createMood(MoodEmotionEnum.values()[emotion.getSelectedItemPosition()], MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()], trigger.getText().toString());
+                listener.addMood(mood);
 
                 dialog.dismiss();
             });
