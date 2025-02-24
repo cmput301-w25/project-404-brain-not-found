@@ -1,14 +1,18 @@
 package com.example.cmput301_team_project;
 
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-public class LoginSignupActivity extends AppCompatActivity {
+public class LoginSignupActivity extends AppCompatActivity implements LoginSignupFragment.onButtonClickListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,5 +24,21 @@ public class LoginSignupActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        replaceFragment(new LoginSignupFragment());
+    }
+
+    public void onButtonClicked(int buttonId){
+        if (buttonId == R.id.signup_button) {
+            replaceFragment(new SignupFragment());
+        } else if (buttonId == R.id.login_button){
+            replaceFragment(new LoginFragment());
+        }
+    }
+
+    private void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.main, fragment);
+        fragmentTransaction.commit();
     }
 }
