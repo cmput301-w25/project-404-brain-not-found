@@ -2,7 +2,15 @@ package com.example.cmput301_team_project;
 
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+
+import org.w3c.dom.Document;
 
 /**
  * Singleton class to manage user-related operations with the firestore database
@@ -19,13 +27,18 @@ public class UserDatabaseService extends BaseDatabaseService {
     }
 
     public static UserDatabaseService getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new UserDatabaseService();
         }
         return instance;
     }
 
-    public void addUser(AppUser user){
-        usersRef.add(user);
+    public void addUser(AppUser user) {
+        DocumentReference uref = usersRef.document(user.username);
+        uref.set(user);
+    }
+
+    public DocumentReference getDocRef(String username) {
+        return usersRef.document(username);
     }
 }

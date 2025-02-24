@@ -1,7 +1,9 @@
 package com.example.cmput301_team_project;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -12,6 +14,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.auth.FirebaseAuthCredentialsProvider;
 import com.google.firebase.firestore.auth.User;
 
 /**
@@ -34,10 +41,35 @@ public class SignupFragment extends Fragment {
         EditText usernameInput = view.findViewById(R.id.signup_username);
         EditText passwordInput = view.findViewById(R.id.signup_password);
         String username = usernameInput.getText().toString();
+        //eventually this password should be hashed
         String password = passwordInput.getText().toString();
-        AppUser newUser = new AppUser(username, password);
-        userDatabaseService.addUser(newUser);
-        Toast.makeText(getContext(), "User signed up successfully!", Toast.LENGTH_SHORT).show();
+
+
+        if (username.length()<= 5){
+            Toast.makeText(getContext(), "Username not long enough", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if (password.length()<= 5){
+            Toast.makeText(getContext(), "Password not long enough", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        DocumentReference docRef = userDatabaseService.getDocRef(username);
+        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()){
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()){
+                        Toast.makeText(getContext(), "Username already taken", Toast.LENGTH_SHORT).show();
+                    }else{
+                        AppUser newUser = new AppUser(username, password);
+                        userDatabaseService.addUser(newUser);
+                        Intent myIntent = new Intent(getContext(), MainActivity.class);
+                        getContext().startActivity(myIntent);
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -53,7 +85,6 @@ public class SignupFragment extends Fragment {
 
         Button signupButton = view.findViewById(R.id.button_signin);
         signupButton.setOnClickListener(v ->{
-
             signUp(view);
         });
         return view;
