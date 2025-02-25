@@ -53,23 +53,13 @@ public class SignupFragment extends Fragment {
             Toast.makeText(getContext(), "Password not long enough", Toast.LENGTH_SHORT).show();
             return;
         }
-        DocumentReference docRef = userDatabaseService.getDocRef(username);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()){
-                        Toast.makeText(getContext(), "Username already taken", Toast.LENGTH_SHORT).show();
-                    }else{
-                        AppUser newUser = new AppUser(username, password);
-                        userDatabaseService.addUser(newUser);
-                        Intent myIntent = new Intent(getContext(), MainActivity.class);
-                        getContext().startActivity(myIntent);
-                    }
-                }
-            }
-        });
+        if (userDatabaseService.userExists(username) == false) {
+            AppUser newUser = new AppUser(username, password);
+            userDatabaseService.addUser(newUser);
+            Intent myIntent = new Intent(getContext(), MainActivity.class);
+            getContext().startActivity(myIntent);
+        }
+
     }
 
     @Override
