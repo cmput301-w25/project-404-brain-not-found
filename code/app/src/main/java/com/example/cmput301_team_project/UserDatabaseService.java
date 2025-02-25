@@ -41,22 +41,32 @@ public class UserDatabaseService extends BaseDatabaseService {
         return usersRef.document(username);
     }
 
-    private Boolean userExists = false;
-    public Boolean userExists(String username){
+    public Task<Boolean> userExists(String username){
         DocumentReference docRef = usersRef.document(username);
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()){
-                    DocumentSnapshot document = task.getResult();
-                    if (document.exists()){
-                        userExists = true;
-                    }else{
-                        userExists = false;
-                    }
-                }
-            }
-        });
-        return userExists;
+
+        Task<Boolean> document = docRef.get().continueWith(task ->{
+                return task.getResult().exists();
+//                if (exists){
+//                    return true;
+//                } else {
+//                    return false;
+//                }
+                });
+
+        //docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//            @Override
+//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                if (task.isSuccessful()){
+//                    DocumentSnapshot document = task.getResult();
+//                    if (document.exists()){
+//                        //method call here
+//                        userExists = true;
+//                    }else{
+//                        userExists = false;
+//                    }
+//                }
+//            }
+//        });
+        return document;
     }
 }

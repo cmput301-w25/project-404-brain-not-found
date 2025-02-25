@@ -53,7 +53,7 @@ public class SignupFragment extends Fragment {
             Toast.makeText(getContext(), "Password not long enough", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (userDatabaseService.userExists(username) == false) {
+        if (userDatabaseService.userExists(username).getResult()) {
             AppUser newUser = new AppUser(username, password);
             userDatabaseService.addUser(newUser);
             Intent myIntent = new Intent(getContext(), MainActivity.class);
