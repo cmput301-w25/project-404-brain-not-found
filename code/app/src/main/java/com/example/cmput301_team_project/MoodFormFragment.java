@@ -5,6 +5,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
@@ -13,7 +16,11 @@ import androidx.fragment.app.Fragment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
+
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +68,8 @@ public class MoodFormFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = getLayoutInflater().inflate(R.layout.fragment_mood_form, null);
 
+        initializePhotoPicker(view);
+
         Spinner emotion = view.findViewById(R.id.form_emotion);
         Spinner socialSituation = view.findViewById(R.id.form_situation);
         EditText trigger = view.findViewById(R.id.form_trigger);
@@ -98,5 +107,31 @@ public class MoodFormFragment extends DialogFragment {
         });
 
         return dialog;
+    }
+
+    private void initializePhotoPicker(View view)
+    {
+        ImageView preview = view.findViewById(R.id.mood_image_preview);
+        ImageButton removePreview = view.findViewById(R.id.remove_preview);
+
+        ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
+                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
+                       if (uri != null) {
+                           preview.setImageURI(uri);
+                           preview.setVisibility(View.VISIBLE);
+                           removePreview.setVisibility(View.VISIBLE);
+                       }
+                });
+
+        removePreview.setOnClickListener(v -> {
+            preview.setVisibility(View.GONE);
+            removePreview.setVisibility(View.GONE);
+            preview.setImageURI(null);
+        });
+
+        MaterialButton addImageButton = view.findViewById(R.id.add_image);
+        addImageButton.setOnClickListener(v -> pickMedia.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build()));
     }
 }

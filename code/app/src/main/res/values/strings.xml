@@ -24,4 +24,7 @@
     <string name="social_several">With two to several people</string>
     <string name="social_crowd">With a crowd</string>
     <string name="social_situation_dropdown_hint">Select Social Situation…</string>
+    <string name="add_image">Add Image</string>
+    <string name="mood_image_preview">Mood Image Preview</string>
+    <string name="remove_image">Remove Image</string>
 </resources>
