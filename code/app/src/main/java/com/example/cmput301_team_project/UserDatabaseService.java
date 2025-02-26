@@ -37,36 +37,22 @@ public class UserDatabaseService extends BaseDatabaseService {
         uref.set(user);
     }
 
-    public DocumentReference getDocRef(String username) {
-        return usersRef.document(username);
+    public Task<String> getPassword(String username){
+        DocumentReference uref = usersRef.document(username);
+
+        Task<String> password = uref.get().continueWith(task -> {
+            return task.getResult().getString("password");
+        });
+
+        return password;
     }
 
     public Task<Boolean> userExists(String username){
         DocumentReference docRef = usersRef.document(username);
 
         Task<Boolean> document = docRef.get().continueWith(task ->{
-                return task.getResult().exists();
-//                if (exists){
-//                    return true;
-//                } else {
-//                    return false;
-//                }
+                return task.isSuccessful() && task.getResult().exists();
                 });
-
-        //docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-//            @Override
-//            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-//                if (task.isSuccessful()){
-//                    DocumentSnapshot document = task.getResult();
-//                    if (document.exists()){
-//                        //method call here
-//                        userExists = true;
-//                    }else{
-//                        userExists = false;
-//                    }
-//                }
-//            }
-//        });
         return document;
     }
 }

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.auth.FirebaseAuthCredentialsProvider;
@@ -29,9 +30,11 @@ import com.google.firebase.firestore.auth.User;
 public class SignupFragment extends Fragment {
 
     private final UserDatabaseService userDatabaseService;
+    private final SessionManager sessionManager;
 
     public SignupFragment() {
         userDatabaseService = UserDatabaseService.getInstance();
+        sessionManager = SessionManager.getInstance();
     }
     public static SignupFragment newInstance() {
         return new SignupFragment();
@@ -44,22 +47,30 @@ public class SignupFragment extends Fragment {
         //eventually this password should be hashed
         String password = passwordInput.getText().toString();
 
+        TextInputLayout usernameLayout = view.findViewById(R.id.signup_username_layout);
+        TextInputLayout passwordLayout = view.findViewById(R.id.signup_password_layout);
 
-        if (username.length()<= 5){
-            Toast.makeText(getContext(), "Username not long enough", Toast.LENGTH_SHORT).show();
+
+        if (username.isEmpty()){
+            usernameLayout.setError("Cannot have an empty username");
             return;
         }
-        else if (password.length()<= 5){
-            Toast.makeText(getContext(), "Password not long enough", Toast.LENGTH_SHORT).show();
+        if (password.isEmpty()){
+            passwordLayout.setError("Cannot have an empty password");
             return;
         }
-        if (userDatabaseService.userExists(username).getResult()) {
-            AppUser newUser = new AppUser(username, password);
-            userDatabaseService.addUser(newUser);
-            Intent myIntent = new Intent(getContext(), MainActivity.class);
-            getContext().startActivity(myIntent);
-        }
-
+        userDatabaseService.userExists(username).addOnCompleteListener(new OnCompleteListener<Boolean>() {
+            @Override
+            public void onComplete(@NonNull Task<Boolean> task) {
+                if (!task.getResult().booleanValue()){
+                    AppUser newUser = new AppUser(username, password);
+                    userDatabaseService.addUser(newUser);
+                    sessionManager.setCurrentUser(username);
+                    Intent myIntent = new Intent(getContext(), MainActivity.class);
+                    getContext().startActivity(myIntent);
+                }
+            }
+        });
     }
 
     @Override
