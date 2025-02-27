@@ -64,6 +64,7 @@ public class MoodFormFragment extends DialogFragment {
         Spinner emotion = view.findViewById(R.id.form_emotion);
         Spinner socialSituation = view.findViewById(R.id.form_situation);
         EditText trigger = view.findViewById(R.id.form_trigger);
+        EditText location = view.findViewById(R.id.form_Location);
 
         HintDropdownAdapter emotionAdapter = new HintDropdownAdapter(getContext(), new ArrayList<>(Arrays.asList(MoodEmotionEnum.values())));
         HintDropdownAdapter socialSituationAdapter = new HintDropdownAdapter(getContext(), new ArrayList<>(Arrays.asList(MoodSocialSituationEnum.values())));
@@ -90,7 +91,7 @@ public class MoodFormFragment extends DialogFragment {
                     return;
                 }
 
-                Mood mood = Mood.createMood(MoodEmotionEnum.values()[emotion.getSelectedItemPosition()], MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()], trigger.getText().toString(), null);
+                Mood mood = Mood.createMood(MoodEmotionEnum.values()[emotion.getSelectedItemPosition()], MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()], trigger.getText().toString(), null, null);
                 listener.addMood(mood);
 
                 dialog.dismiss();

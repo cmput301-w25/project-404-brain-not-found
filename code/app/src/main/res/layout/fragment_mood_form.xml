@@ -6,29 +6,38 @@
     android:orientation="vertical"
     android:padding="20dp"
     tools:context=".MoodFormFragment">
-    
+
     <Spinner
         android:id="@+id/form_emotion"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:spinnerMode="dropdown"/>
+        android:spinnerMode="dropdown" />
 
     <Spinner
         android:id="@+id/form_situation"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:spinnerMode="dropdown"/>
+        android:spinnerMode="dropdown" />
 
     <EditText
         android:id="@+id/form_trigger"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:minHeight="100dp"
         android:layout_weight="1"
-        android:inputType="text"
         android:autofillHints=""
-        android:hint="@string/trigger"/>
+        android:hint="@string/trigger"
+        android:inputType="text"
+        android:minHeight="100dp" />
+
+    <EditText
+        android:id="@+id/form_Location"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="Location"
+        android:inputType="text" />
 
 </LinearLayout>

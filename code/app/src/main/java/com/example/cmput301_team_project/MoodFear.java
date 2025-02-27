@@ -12,11 +12,15 @@ public class MoodFear extends Mood {
     public MoodFear(MoodSocialSituationEnum socialSituation, String trigger) {
         super(socialSituation, trigger);
     }
-
+    public MoodFear(MoodSocialSituationEnum socialSituation, String trigger, String location) {
+        super(socialSituation, trigger, location);
+    }
     public MoodFear(MoodSocialSituationEnum socialSituation, String trigger, Date date) {
         super(socialSituation, trigger, date);
     }
-
+    public MoodFear(MoodSocialSituationEnum socialSituation, String trigger, Date date, String location) {
+        super(socialSituation, trigger, date, location);
+    }
     @Override
     public MoodEmotionEnum getEmotion() {
         return MoodEmotionEnum.FEAR;

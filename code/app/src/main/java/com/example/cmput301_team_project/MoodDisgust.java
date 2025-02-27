@@ -12,11 +12,15 @@ public class MoodDisgust extends Mood{
     public MoodDisgust(MoodSocialSituationEnum socialSituation, String trigger) {
         super(socialSituation, trigger);
     }
-
+    public MoodDisgust(MoodSocialSituationEnum socialSituation, String trigger, String location) {
+        super(socialSituation, trigger, location);
+    }
     public MoodDisgust(MoodSocialSituationEnum socialSituation, String trigger, Date date) {
         super(socialSituation, trigger, date);
     }
-
+    public MoodDisgust(MoodSocialSituationEnum socialSituation, String trigger, Date date, String location) {
+        super(socialSituation, trigger, date, location);
+    }
     @Override
     public MoodEmotionEnum getEmotion() {
         return MoodEmotionEnum.DISGUST;
