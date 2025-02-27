@@ -199,7 +199,11 @@ public class MoodFormFragment extends DialogFragment {
     }
 
     private String imageViewToBase64(ImageView imageView) {
-        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+        BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
+        if(drawable == null) {
+            return null;
+        }
+        Bitmap bitmap = drawable.getBitmap();
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
