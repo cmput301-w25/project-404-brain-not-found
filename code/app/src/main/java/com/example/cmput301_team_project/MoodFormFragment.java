@@ -1,18 +1,20 @@
 package com.example.cmput301_team_project;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.PickVisualMediaRequest;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -99,7 +101,10 @@ public class MoodFormFragment extends DialogFragment {
                     return;
                 }
 
-                Mood mood = Mood.createMood(MoodEmotionEnum.values()[emotion.getSelectedItemPosition()], MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()], trigger.getText().toString(), null);
+                Mood mood = Mood.createMood(MoodEmotionEnum.values()[emotion.getSelectedItemPosition()],
+                        MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
+                        trigger.getText().toString(),
+                        null);
                 listener.addMood(mood);
 
                 dialog.dismiss();
@@ -114,24 +119,40 @@ public class MoodFormFragment extends DialogFragment {
         ImageView preview = view.findViewById(R.id.mood_image_preview);
         ImageButton removePreview = view.findViewById(R.id.remove_preview);
 
-        ActivityResultLauncher<PickVisualMediaRequest> pickMedia =
-                registerForActivityResult(new ActivityResultContracts.PickVisualMedia(), uri -> {
-                       if (uri != null) {
-                           preview.setImageURI(uri);
-                           preview.setVisibility(View.VISIBLE);
-                           removePreview.setVisibility(View.VISIBLE);
-                       }
-                });
+        ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if(result.getResultCode() == Activity.RESULT_OK)
+                    {
+                        Intent data = result.getData();
+                        if(data != null && data.getData() != null) {
+                            // user selected an image from gallery
+                            preview.setImageURI(data.getData());
+                        }
+                        else if(data != null){
+                            // user captured an image on camera
+                            preview.setImageBitmap(data.getParcelableExtra("data"));
+                        }
+
+                        preview.setVisibility(View.VISIBLE);
+                        removePreview.setVisibility(View.VISIBLE);
+                    }
+                }
+        );
+
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        Intent chooser = Intent.createChooser(galleryIntent, "Select Image");
+        chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{ cameraIntent });
+
+        MaterialButton addImageButton = view.findViewById(R.id.add_image);
+        addImageButton.setOnClickListener(v -> activityResultLauncher.launch(chooser));
 
         removePreview.setOnClickListener(v -> {
             preview.setVisibility(View.GONE);
             removePreview.setVisibility(View.GONE);
             preview.setImageURI(null);
         });
-
-        MaterialButton addImageButton = view.findViewById(R.id.add_image);
-        addImageButton.setOnClickListener(v -> pickMedia.launch(new PickVisualMediaRequest.Builder()
-                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
-                .build()));
     }
 }
