@@ -6,8 +6,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -21,7 +19,6 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,12 +26,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -131,7 +126,6 @@ public class MoodFormFragment extends DialogFragment {
     {
         ImageView preview = view.findViewById(R.id.mood_image_preview);
         ImageButton removePreview = view.findViewById(R.id.remove_preview);
-        TextView errorView = view.findViewById(R.id.image_error_msg);
 
         File cameraFile = new File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "IMG_" + System.currentTimeMillis() + ".jpg");
         Uri cameraImgUri = FileProvider.getUriForFile(requireContext(), "com.example.cmput301_team_project.fileprovider", cameraFile);
@@ -152,30 +146,21 @@ public class MoodFormFragment extends DialogFragment {
                             uri = cameraImgUri;
                         }
 
-                        long fileSize = Long.MAX_VALUE;
                         try {
-                            AssetFileDescriptor fileDescriptor = requireContext().getContentResolver().openAssetFileDescriptor(uri , "r");
-                            if(fileDescriptor != null) {
-                                fileSize = fileDescriptor.getLength();
-                                fileDescriptor.close();
+                            if(!validateImage(uri))
+                            {
+                                setImageError(view, R.string.image_size_exceeded, View.VISIBLE);
+                                return;
                             }
                         } catch (IOException e) {
-                            errorView.setText(R.string.image_invalid);
-                            errorView.setVisibility(View.VISIBLE);
+                            setImageError(view, R.string.image_invalid, View.VISIBLE);
                             return;
                         }
 
-                        if(fileSize > MAX_IMAGE_SIZE) {
-                            errorView.setText(R.string.image_size_exceeded);
-                            errorView.setVisibility(View.VISIBLE);
-                        }
-                        else {
-                            errorView.setText(null);
-                            errorView.setVisibility(View.GONE);
-                            preview.setImageURI(uri);
-                            preview.setVisibility(View.VISIBLE);
-                            removePreview.setVisibility(View.VISIBLE);
-                        }
+                        setImageError(view, null, View.GONE);
+                        preview.setImageURI(uri);
+                        preview.setVisibility(View.VISIBLE);
+                        removePreview.setVisibility(View.VISIBLE);
                     }
                 }
         );
@@ -195,5 +180,26 @@ public class MoodFormFragment extends DialogFragment {
             removePreview.setVisibility(View.GONE);
             preview.setImageURI(null);
         });
+    }
+
+    private void setImageError(View view, @Nullable Integer resId, int visibility)
+    {
+        TextView errorView = view.findViewById(R.id.image_error_msg);
+        if(resId != null) {
+            errorView.setText(resId);
+        }
+        errorView.setVisibility(visibility);
+    }
+
+    private boolean validateImage(Uri uri) throws IOException {
+        long fileSize = Long.MAX_VALUE;
+        AssetFileDescriptor fileDescriptor = requireContext().getContentResolver().openAssetFileDescriptor(uri , "r");
+
+        if(fileDescriptor != null) {
+            fileSize = fileDescriptor.getLength();
+            fileDescriptor.close();
+        }
+
+        return fileSize <= MAX_IMAGE_SIZE;
     }
 }
