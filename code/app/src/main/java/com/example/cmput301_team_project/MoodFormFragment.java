@@ -6,6 +6,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -19,6 +21,7 @@ import androidx.fragment.app.Fragment;
 
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,9 +29,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -112,7 +117,8 @@ public class MoodFormFragment extends DialogFragment {
                 Mood mood = Mood.createMood(MoodEmotionEnum.values()[emotion.getSelectedItemPosition()],
                         MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
                         trigger.getText().toString(),
-                        null);
+                        null,
+                        imageViewToBase64(view.findViewById(R.id.mood_image_preview)));
                 listener.addMood(mood);
 
                 dialog.dismiss();
@@ -122,8 +128,7 @@ public class MoodFormFragment extends DialogFragment {
         return dialog;
     }
 
-    private void initializePhotoPicker(View view)
-    {
+    private void initializePhotoPicker(View view) {
         ImageView preview = view.findViewById(R.id.mood_image_preview);
         ImageButton removePreview = view.findViewById(R.id.remove_preview);
 
@@ -174,8 +179,7 @@ public class MoodFormFragment extends DialogFragment {
         });
     }
 
-    private void setImageError(View view, @Nullable Integer resId, int visibility)
-    {
+    private void setImageError(View view, @Nullable Integer resId, int visibility) {
         TextView errorView = view.findViewById(R.id.image_error_msg);
         if(resId != null) {
             errorView.setText(resId);
@@ -193,5 +197,15 @@ public class MoodFormFragment extends DialogFragment {
         }
 
         return fileSize <= MAX_IMAGE_SIZE;
+    }
+
+    private String imageViewToBase64(ImageView imageView) {
+        Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
+
+        return Base64.encodeToString(byteArray, Base64.NO_WRAP);
     }
 }
