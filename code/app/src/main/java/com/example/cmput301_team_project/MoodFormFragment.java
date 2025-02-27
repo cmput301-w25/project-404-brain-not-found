@@ -136,15 +136,7 @@ public class MoodFormFragment extends DialogFragment {
                     if(result.getResultCode() == Activity.RESULT_OK)
                     {
                         Intent data = result.getData();
-                        Uri uri;
-                        if(data != null && data.getData() != null) {
-                            // user selected an image from gallery
-                            uri = data.getData();
-                        }
-                        else {
-                            // user captured an image on camera
-                            uri = cameraImgUri;
-                        }
+                        Uri uri = (data != null && data.getData() != null) ? data.getData() : cameraImgUri;
 
                         try {
                             if(!validateImage(uri))
