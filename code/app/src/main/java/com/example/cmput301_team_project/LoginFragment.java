@@ -54,39 +54,24 @@ public class LoginFragment extends Fragment {
         }else if (password.isEmpty()){
             passwordLayout.setError("Password cannot be empty");
         }else{
-            userDatabaseService.userExists(username).addOnCompleteListener(new OnCompleteListener<Boolean>() {
-                @Override
-                public void onComplete(@NonNull Task<Boolean> task) {
-                    if (task.getResult().booleanValue()){
-                        usernameLayout.setError("");
-                        userDatabaseService.getSalt(username).addOnCompleteListener(new OnCompleteListener<String>() {
-                            @Override
-                            public void onComplete(@NonNull Task<String> task) {
-                                byte[] salt = Base64.decode(task.getResult(), Base64.DEFAULT);
-                                try {
-                                    String hashed = userDatabaseService.hashPassword(password, salt);
-                                    userDatabaseService.getPassword(username).addOnCompleteListener(new OnCompleteListener<String>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<String> task) {
-                                            if (hashed.equals(task.getResult())){
-                                                sessionManager.setCurrentUser(username);
-                                                Intent myIntent = new Intent(getContext(), MainActivity.class);
-                                                getContext().startActivity(myIntent);
-                                            } else{
-                                                passwordLayout.setError("Incorrect password");
-                                            }
-                                        }
-                                    });
-                                } catch (NoSuchAlgorithmException e) {
-                                    throw new RuntimeException(e);
-                                } catch (InvalidKeySpecException e) {
-                                    throw new RuntimeException(e);
-                                }
-                            }
-                        });
-                    }else{
-                        usernameLayout.setError("Username does not exist");
-                    }
+            userDatabaseService.userExists(username).addOnCompleteListener(task -> {
+                if (task.getResult()) {
+                    usernameLayout.setError("");
+
+                    userDatabaseService.validateCredentials(username, password).addOnCompleteListener(validationTask -> {
+                        if(validationTask.isSuccessful() && validationTask.getResult()) {
+                            passwordLayout.setError("");
+                            sessionManager.setCurrentUser(username);
+                            Intent myIntent = new Intent(getContext(), MainActivity.class);
+                            getContext().startActivity(myIntent);
+                        }
+                        else {
+                            passwordLayout.setError("Incorrect password");
+                        }
+                    });
+                }
+                else {
+                    usernameLayout.setError("Username does not exist");
                 }
             });
         }

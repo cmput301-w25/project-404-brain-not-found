@@ -44,7 +44,6 @@ public class SignupFragment extends Fragment {
         EditText usernameInput = view.findViewById(R.id.signup_username);
         EditText passwordInput = view.findViewById(R.id.signup_password);
         String username = usernameInput.getText().toString();
-        //eventually this password should be hashed
         String password = passwordInput.getText().toString();
         byte[] salt = userDatabaseService.generateSalt();
         String hashed = userDatabaseService.hashPassword(password, salt);

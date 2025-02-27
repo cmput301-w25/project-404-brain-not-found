@@ -39,22 +39,20 @@ public class UserDatabaseService extends BaseDatabaseService {
         uref.set(user);
     }
 
-    public Task<String> getPassword(String username){
+    public Task<Boolean> validateCredentials(String username, String inputPassword)
+    {
         DocumentReference uref = usersRef.document(username);
 
-        Task<String> password = uref.get().continueWith(task -> {
-            return task.getResult().getString("password");
-        });
+        return uref.get().continueWith(task -> {
+            if(!task.isSuccessful()) {
+                return false;
+            }
 
-        return password;
-    }
-
-    public Task<String> getSalt(String username){
-        DocumentReference uref = usersRef.document(username);
-        Task<String> salt = uref.get().continueWith(task ->{
-            return task.getResult().getString("salt");
+            String password = task.getResult().getString("password");
+            byte[] salt = Base64.decode(task.getResult().getString("salt"), Base64.DEFAULT);
+            String hashed = hashPassword(inputPassword, salt);
+            return hashed.equals(password);
         });
-        return salt;
     }
 
     public Task<Boolean> userExists(String username){
