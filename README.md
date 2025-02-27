@@ -6,9 +6,9 @@
 | Name          | CCID   | GitHub Username |
 | ------------- | ------ | --------------- |
 | Labeeba Sayed | lsayed | @labeebarocks   |
-| Kashish Gupta | kgupta5 | @kashishgupta2911     |
-| Harneet K. Tatla| harneetk| @harneet862    |
-| [Full Name]   | [CCID] | [@username]     |
+| Kashish Gupta | kgupta5 | kashishgupta2911     |
+| Harneet Kaur Tatla   | harneetk | @harneet862     |
+| Brayden Bartelds  | bartelds | @braydenmcb   |
 | Daniil Zahoruiko  | zahoruik | @daniil-zahoruiko     |
 | Kelsey Pattison   | kpattiso | @Kelsey-Patti     |
 
@@ -31,7 +31,7 @@
 
 ## Documentation
 
-- [Wiki Link]
-- [Scrum Board]
-- [UI Mockups]
+- [Wiki](https://github.com/cmput301-w25/project-404-brain-not-found/wiki)
+- [Scrum Board](https://github.com/orgs/cmput301-w25/projects/72)
+- [UI Mockups](https://github.com/cmput301-w25/project-404-brain-not-found/wiki/UI-Mockup)
 - [UML]
