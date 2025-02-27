@@ -13,10 +13,16 @@ public class MoodAnger extends Mood {
         super(socialSituation, trigger);
     }
 
+    public MoodAnger(MoodSocialSituationEnum socialSituation, String trigger, String location) {
+        super(socialSituation, trigger, location);
+    }
     public MoodAnger(MoodSocialSituationEnum socialSituation, String trigger, Date date) {
         super(socialSituation, trigger, date);
     }
 
+    public MoodAnger(MoodSocialSituationEnum socialSituation, String trigger, Date date, String location) {
+        super(socialSituation, trigger, date, location);
+    }
     @Override
     public MoodEmotionEnum getEmotion() {
         return MoodEmotionEnum.ANGER;
