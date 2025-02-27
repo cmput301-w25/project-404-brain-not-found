@@ -5,25 +5,37 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -33,6 +45,8 @@ import java.util.Arrays;
  * create an instance of this fragment.
  */
 public class MoodFormFragment extends DialogFragment {
+    private final int MAX_IMAGE_SIZE = 65536;
+
     interface MoodFormDialogListener {
         void addMood(Mood mood);
     }
@@ -71,7 +85,6 @@ public class MoodFormFragment extends DialogFragment {
         View view = getLayoutInflater().inflate(R.layout.fragment_mood_form, null);
 
         initializePhotoPicker(view);
-
         Spinner emotion = view.findViewById(R.id.form_emotion);
         Spinner socialSituation = view.findViewById(R.id.form_situation);
         EditText trigger = view.findViewById(R.id.form_trigger);
@@ -118,6 +131,10 @@ public class MoodFormFragment extends DialogFragment {
     {
         ImageView preview = view.findViewById(R.id.mood_image_preview);
         ImageButton removePreview = view.findViewById(R.id.remove_preview);
+        TextView errorView = view.findViewById(R.id.image_error_msg);
+
+        File cameraFile = new File(requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES), "IMG_" + System.currentTimeMillis() + ".jpg");
+        Uri cameraImgUri = FileProvider.getUriForFile(requireContext(), "com.example.cmput301_team_project.fileprovider", cameraFile);
 
         ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -125,23 +142,47 @@ public class MoodFormFragment extends DialogFragment {
                     if(result.getResultCode() == Activity.RESULT_OK)
                     {
                         Intent data = result.getData();
+                        Uri uri;
                         if(data != null && data.getData() != null) {
                             // user selected an image from gallery
-                            preview.setImageURI(data.getData());
+                            uri = data.getData();
                         }
-                        else if(data != null){
+                        else {
                             // user captured an image on camera
-                            preview.setImageBitmap(data.getParcelableExtra("data"));
+                            uri = cameraImgUri;
                         }
 
-                        preview.setVisibility(View.VISIBLE);
-                        removePreview.setVisibility(View.VISIBLE);
+                        long fileSize = Long.MAX_VALUE;
+                        try {
+                            AssetFileDescriptor fileDescriptor = requireContext().getContentResolver().openAssetFileDescriptor(uri , "r");
+                            if(fileDescriptor != null) {
+                                fileSize = fileDescriptor.getLength();
+                                fileDescriptor.close();
+                            }
+                        } catch (IOException e) {
+                            errorView.setText(R.string.image_invalid);
+                            errorView.setVisibility(View.VISIBLE);
+                            return;
+                        }
+
+                        if(fileSize > MAX_IMAGE_SIZE) {
+                            errorView.setText(R.string.image_size_exceeded);
+                            errorView.setVisibility(View.VISIBLE);
+                        }
+                        else {
+                            errorView.setText(null);
+                            errorView.setVisibility(View.GONE);
+                            preview.setImageURI(uri);
+                            preview.setVisibility(View.VISIBLE);
+                            removePreview.setVisibility(View.VISIBLE);
+                        }
                     }
                 }
         );
 
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraImgUri);
 
         Intent chooser = Intent.createChooser(galleryIntent, "Select Image");
         chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{ cameraIntent });

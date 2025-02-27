@@ -27,4 +27,6 @@
     <string name="add_image">Add Image</string>
     <string name="mood_image_preview">Mood Image Preview</string>
     <string name="remove_image">Remove Image</string>
+    <string name="image_size_exceeded">Image exceeds the size limit of 64KB</string>
+    <string name="image_invalid">Invalid image. Please try again</string>
 </resources>
