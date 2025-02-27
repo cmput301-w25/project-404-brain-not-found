@@ -32,6 +32,8 @@ public class LoginSignupActivity extends AppCompatActivity implements LoginSignu
             replaceFragment(new SignupFragment());
         } else if (buttonId == R.id.login_button){
             replaceFragment(new LoginFragment());
+        } else if (buttonId == R.id.back_login || buttonId == R.id.back_signup){
+            replaceFragment(new LoginSignupFragment());
         }
     }
 

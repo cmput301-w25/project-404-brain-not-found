@@ -12,15 +12,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.auth.FirebaseAuthCredentialsProvider;
 import com.google.firebase.firestore.auth.User;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import android.util.Base64;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +40,7 @@ public class SignupFragment extends Fragment {
 
     private final UserDatabaseService userDatabaseService;
     private final SessionManager sessionManager;
+    private LoginSignupFragment.onButtonClickListener listener;
 
     public SignupFragment() {
         userDatabaseService = UserDatabaseService.getInstance();
@@ -40,12 +50,14 @@ public class SignupFragment extends Fragment {
         return new SignupFragment();
     }
 
-    public void signUp(View view){
+    public void signUp(View view) throws NoSuchAlgorithmException, InvalidKeySpecException {
         EditText usernameInput = view.findViewById(R.id.signup_username);
         EditText passwordInput = view.findViewById(R.id.signup_password);
         String username = usernameInput.getText().toString();
         //eventually this password should be hashed
         String password = passwordInput.getText().toString();
+        byte[] salt = userDatabaseService.generateSalt();
+        String hashed = userDatabaseService.hashPassword(password, salt);
 
         TextInputLayout usernameLayout = view.findViewById(R.id.signup_username_layout);
         TextInputLayout passwordLayout = view.findViewById(R.id.signup_password_layout);
@@ -63,7 +75,7 @@ public class SignupFragment extends Fragment {
             @Override
             public void onComplete(@NonNull Task<Boolean> task) {
                 if (!task.getResult().booleanValue()){
-                    AppUser newUser = new AppUser(username, password);
+                    AppUser newUser = new AppUser(username, hashed, Base64.encodeToString(salt, Base64.NO_WRAP));
                     userDatabaseService.addUser(newUser);
                     sessionManager.setCurrentUser(username);
                     Intent myIntent = new Intent(getContext(), MainActivity.class);
@@ -76,6 +88,7 @@ public class SignupFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        listener = (LoginSignupFragment.onButtonClickListener) getActivity();
     }
 
     @Override
@@ -86,7 +99,20 @@ public class SignupFragment extends Fragment {
 
         Button signupButton = view.findViewById(R.id.button_signin);
         signupButton.setOnClickListener(v ->{
-            signUp(view);
+            try {
+                signUp(view);
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            } catch (InvalidKeySpecException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        ImageButton backButton = view.findViewById(R.id.back_signup);
+        backButton.setOnClickListener(v ->{
+            if (listener != null){
+                listener.onButtonClicked(R.id.back_signup);
+            }
         });
         return view;
     }

@@ -1,15 +1,17 @@
 package com.example.cmput301_team_project;
 
-import android.content.Intent;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
+import android.util.Base64;
+
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 
 /**
  * Singleton class to manage user-related operations with the firestore database
@@ -47,6 +49,14 @@ public class UserDatabaseService extends BaseDatabaseService {
         return password;
     }
 
+    public Task<String> getSalt(String username){
+        DocumentReference uref = usersRef.document(username);
+        Task<String> salt = uref.get().continueWith(task ->{
+            return task.getResult().getString("salt");
+        });
+        return salt;
+    }
+
     public Task<Boolean> userExists(String username){
         DocumentReference docRef = usersRef.document(username);
 
@@ -54,5 +64,22 @@ public class UserDatabaseService extends BaseDatabaseService {
                 return task.isSuccessful() && task.getResult().exists();
                 });
         return document;
+    }
+
+    public String hashPassword(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        int iterations = 10000;
+        int keyLength = 256;
+        PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, keyLength);
+        SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        byte[] hash = skf.generateSecret(spec).getEncoded();
+
+        return Base64.encodeToString(hash, Base64.NO_WRAP);
+
+    }
+
+    public byte[] generateSalt() {
+        byte[] salt = new byte[16];
+        new SecureRandom().nextBytes(salt);
+        return salt;
     }
 }
