@@ -1,7 +1,5 @@
 package com.example.cmput301_team_project;
 
-import android.se.omapi.Session;
-
 public class SessionManager {
     private static SessionManager instance = null;
     private String currentUser;
