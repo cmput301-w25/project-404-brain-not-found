@@ -9,12 +9,12 @@ import java.util.Date;
  * Defines some emotional-state-specific attributes, such as display colour and emoji
  */
 public class MoodAnger extends Mood {
-    public MoodAnger(MoodSocialSituationEnum socialSituation, String trigger, String imageBase64) {
-        super(socialSituation, trigger, imageBase64);
+    public MoodAnger(MoodSocialSituationEnum socialSituation, String trigger, String author, String imageBase64) {
+        super(socialSituation, trigger, author, imageBase64);
     }
 
-    public MoodAnger(MoodSocialSituationEnum socialSituation, String trigger, Date date, String imageBase64) {
-        super(socialSituation, trigger, date, imageBase64);
+    public MoodAnger(MoodSocialSituationEnum socialSituation, String trigger, String author, Date date, String imageBase64) {
+        super(socialSituation, trigger, author, date, imageBase64);
     }
 
     @Override
