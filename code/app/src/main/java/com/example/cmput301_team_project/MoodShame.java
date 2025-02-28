@@ -10,12 +10,12 @@ import java.util.Date;
  */
 public class MoodShame extends Mood {
 
-    public MoodShame(MoodSocialSituationEnum socialSituation, String trigger) {
-        super(socialSituation, trigger);
+    public MoodShame(MoodSocialSituationEnum socialSituation, String trigger, String author, String imageBase64) {
+        super(socialSituation, trigger, author, imageBase64);
     }
 
-    public MoodShame(MoodSocialSituationEnum socialSituation, String trigger, Date date) {
-        super(socialSituation, trigger, date);
+    public MoodShame(MoodSocialSituationEnum socialSituation, String trigger, String author, Date date, String imageBase64) {
+        super(socialSituation, trigger, author, date, imageBase64);
     }
 
     @Override
