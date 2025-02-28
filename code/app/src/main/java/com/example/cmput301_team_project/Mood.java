@@ -10,24 +10,26 @@ import java.util.TimeZone;
 
 /**
  * Base class for mood event.
- * Use {@link Mood#createMood(MoodEmotionEnum, MoodSocialSituationEnum, String, Date, String)} factory method
+ * Use {@link Mood#createMood(MoodEmotionEnum, MoodSocialSituationEnum, String, String, Date, String)} factory method
  * to create the correct subclass instance of the base class
  */
 public abstract class Mood {
     private MoodSocialSituationEnum socialSituation;
     private String trigger;
+    private String author;
     private Date date;
     private String imageBase64;
 
-    protected Mood(MoodSocialSituationEnum socialSituation, String trigger, String imageBase64) {
-        this(socialSituation, trigger, new Date(), imageBase64);
+    protected Mood(MoodSocialSituationEnum socialSituation, String trigger, String author, String imageBase64) {
+        this(socialSituation, trigger, author, new Date(), imageBase64);
     }
 
-    protected Mood(MoodSocialSituationEnum socialSituation, String trigger, Date date, String imageBase64) {
+    protected Mood(MoodSocialSituationEnum socialSituation, String trigger, String author, Date date, String imageBase64) {
         this.socialSituation = socialSituation;
         this.trigger = trigger;
         this.date = date;
         this.imageBase64 = imageBase64;
+        this.author = author;
     }
 
     /**
@@ -38,24 +40,24 @@ public abstract class Mood {
      * @param date date of mood event. If null value is supplied, the current date and time are used
      * @return Mood class instance
      */
-    public static Mood createMood(MoodEmotionEnum emotion, MoodSocialSituationEnum socialSituation, String trigger, @Nullable Date date, String imageBase64) {
+    public static Mood createMood(MoodEmotionEnum emotion, MoodSocialSituationEnum socialSituation, String trigger, String author, @Nullable Date date, @Nullable String imageBase64) {
         switch(emotion) {
             case ANGER:
-                return date == null ? new MoodAnger(socialSituation, trigger, imageBase64) : new MoodAnger(socialSituation, trigger, date, imageBase64);
+                return date == null ? new MoodAnger(socialSituation, trigger, author, imageBase64) : new MoodAnger(socialSituation, trigger, author, date, imageBase64);
             case CONFUSION:
-                return date == null ? new MoodConfusion(socialSituation, trigger, imageBase64) : new MoodConfusion(socialSituation, trigger, date, imageBase64);
+                return date == null ? new MoodConfusion(socialSituation, trigger, author, imageBase64) : new MoodConfusion(socialSituation, trigger, author, date, imageBase64);
             case DISGUST:
-                return date == null ? new MoodDisgust(socialSituation, trigger, imageBase64) : new MoodDisgust(socialSituation, trigger, date, imageBase64);
+                return date == null ? new MoodDisgust(socialSituation, trigger, author, imageBase64) : new MoodDisgust(socialSituation, trigger, author, date, imageBase64);
             case FEAR:
-                return date == null ? new MoodFear(socialSituation, trigger, imageBase64) : new MoodFear(socialSituation, trigger, date, imageBase64);
+                return date == null ? new MoodFear(socialSituation, trigger, author, imageBase64) : new MoodFear(socialSituation, trigger, author, date, imageBase64);
             case HAPPINESS:
-                return date == null ? new MoodHappiness(socialSituation, trigger, imageBase64) : new MoodHappiness(socialSituation, trigger, date, imageBase64);
+                return date == null ? new MoodHappiness(socialSituation, trigger, author, imageBase64) : new MoodHappiness(socialSituation, trigger, author, date, imageBase64);
             case SADNESS:
-                return date == null ? new MoodSadness(socialSituation, trigger, imageBase64) : new MoodSadness(socialSituation, trigger, date, imageBase64);
+                return date == null ? new MoodSadness(socialSituation, trigger, author, imageBase64) : new MoodSadness(socialSituation, trigger, author, date, imageBase64);
             case SHAME:
-                return date == null ? new MoodShame(socialSituation, trigger, imageBase64) : new MoodShame(socialSituation, trigger, date, imageBase64);
+                return date == null ? new MoodShame(socialSituation, trigger, author, imageBase64) : new MoodShame(socialSituation, trigger, author, date, imageBase64);
             case SURPRISE:
-                return date == null ? new MoodSurprise(socialSituation, trigger, imageBase64) : new MoodSurprise(socialSituation, trigger, date, imageBase64);
+                return date == null ? new MoodSurprise(socialSituation, trigger, author, imageBase64) : new MoodSurprise(socialSituation, trigger, author, date, imageBase64);
         }
         throw new IllegalArgumentException();
     }
@@ -85,5 +87,9 @@ public abstract class Mood {
 
     public String getImageBase64() {
         return imageBase64;
+    }
+
+    public String getAuthor() {
+        return author;
     }
 }

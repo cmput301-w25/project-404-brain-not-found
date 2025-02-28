@@ -116,6 +116,7 @@ public class MoodFormFragment extends DialogFragment {
                 Mood mood = Mood.createMood(MoodEmotionEnum.values()[emotion.getSelectedItemPosition()],
                         MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
                         trigger.getText().toString(),
+                        SessionManager.getInstance().getCurrentUser(),
                         null,
                         imageViewToBase64(view.findViewById(R.id.mood_image_preview)));
                 listener.addMood(mood);
