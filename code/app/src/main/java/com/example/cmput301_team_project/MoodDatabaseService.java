@@ -41,7 +41,9 @@ public class MoodDatabaseService extends BaseDatabaseService {
 
     // this is the method to get all the documents in the moods collection
     public Task<List<Mood>> getMoodList() {
+        Log.d("username", SessionManager.getInstance().getCurrentUser());
         return moodsRef
+                .whereEqualTo("author", SessionManager.getInstance().getCurrentUser())
                 .orderBy("date", Query.Direction.DESCENDING)
                 .get().continueWith(task -> {
             List<Mood> moodList = new ArrayList<>();
@@ -51,7 +53,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
                     try {
                         // Safely extract fields with null checks
                         Object authorObj = doc.get("author");
-                        String author = (authorObj != null) ? authorObj.toString() : "Unknown";
+                        String author = (authorObj != null) ? authorObj.toString() : "Guest";
 
                         Object imageObj = doc.get("imageBase64");
                         String imageBase64 = (imageObj != null) ? imageObj.toString() : "";
