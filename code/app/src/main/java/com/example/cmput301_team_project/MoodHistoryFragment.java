@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -66,8 +67,16 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
         addMoodButton.setOnClickListener(v -> {
             MoodFormFragment.newInstance().show(getChildFragmentManager(), "Add Mood Event");
         });
+        // Handle movie list item click to edit a movie
+        moodListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                new MoodDetailFragment(moodList.get(i)).show(getParentFragmentManager(), "Mood Event details");;
+            }
+        });
 
         loadMoodData();
+
         return view;
     }
 
@@ -102,4 +111,5 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
                             Toast.LENGTH_SHORT).show();
                 });
     }
+
 }
