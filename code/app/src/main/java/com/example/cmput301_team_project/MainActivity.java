@@ -15,6 +15,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private String currentUsername; // Add this variable to store the current user's username
+
+    public String getCurrentUsername() {
+        return currentUsername;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,17 +32,23 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        currentUsername = getCurrentUsername();
+
+
         BottomNavigationView navigation = findViewById(R.id.navigation_main);
-        // TODO: This should probably be changed to mood following list once its fragment is created so that's the first tab user sees
-        replaceFragment(new MoodHistoryFragment());
+        //TODO: This should probably be changed to mood following list once its fragment is created so that's the first tab user sees
+        //replaceFragment(new MoodHistoryFragment());
+        replaceFragment(MoodHistoryFragment.newInstance(currentUsername));
 
         navigation.setOnItemSelectedListener(item -> {
             if(item.getItemId() == R.id.mood_history_icon) {
-                replaceFragment(MoodHistoryFragment.newInstance());
+                replaceFragment(MoodHistoryFragment.newInstance(currentUsername));
             }
             return true;
         });
     }
+
+
 
     private void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();

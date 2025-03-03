@@ -15,35 +15,42 @@ import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Responsible for user's mood history list.
- * Use the {@link MoodHistoryFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * Responsible for displaying the user's mood history list.
  */
 public class MoodHistoryFragment extends Fragment implements MoodFormFragment.MoodFormDialogListener {
-    private final MoodDatabaseService moodDatabaseService;
+    private MoodDatabaseService moodDatabaseService;
     private ListView moodListView;
     private MoodListAdapter moodListAdapter;
     private ArrayList<Mood> moodList;
+    private String currentUsername;
 
-    public MoodHistoryFragment() {
-        moodDatabaseService = MoodDatabaseService.getInstance();
+    // Constructor should not call newInstance
+    public MoodHistoryFragment(String username) {
+        this.currentUsername = username;
+        moodDatabaseService = MoodDatabaseService.getInstance(username);
         moodList = new ArrayList<>();
-
     }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
+     * Factory method to create a new instance of MoodHistoryFragment.
      *
-     * @return A new instance of fragment MoodHistoryFragment.
+     * @param username The username of the current user.
+     * @return A new instance of MoodHistoryFragment.
      */
-    public static MoodHistoryFragment newInstance() {
-        return new MoodHistoryFragment();
+    public static MoodHistoryFragment newInstance(String username) {
+        MoodHistoryFragment fragment = new MoodHistoryFragment(username);
+        Bundle args = new Bundle();
+        args.putString("username", username); // Pass username as an argument
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            currentUsername = getArguments().getString("username"); // Retrieve username from arguments
+        }
     }
 
     @Override
@@ -54,10 +61,12 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
         moodListView = view.findViewById(R.id.Mood_List);
         moodListAdapter = new MoodListAdapter(getContext(), moodList);
         moodListView.setAdapter(moodListAdapter);
+
         ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
         addMoodButton.setOnClickListener(v -> {
             MoodFormFragment.newInstance().show(getChildFragmentManager(), "Add Mood Event");
         });
+
         loadMoodData();
         return view;
     }
@@ -66,6 +75,7 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
     public void addMood(Mood mood) {
         moodDatabaseService.addMood(mood);
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -74,7 +84,7 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
     }
 
     /**
-     * Loads mood data from Firestore database
+     * Loads mood data from Firestore database for the current user.
      */
     private void loadMoodData() {
         moodDatabaseService.getMoodList()
@@ -92,5 +102,4 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
                             Toast.LENGTH_SHORT).show();
                 });
     }
-
 }
