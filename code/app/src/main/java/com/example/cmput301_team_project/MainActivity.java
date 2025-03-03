@@ -1,6 +1,8 @@
 package com.example.cmput301_team_project;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,7 +15,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MoodDetailFragment.OnFragmentInteractionListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,4 +46,18 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
     }
+
+    @Override
+    public void onOkPressed() {
+        // Handle the "OK" button press here, e.g., show a toast or close the dialog
+        Toast.makeText(this, "OK pressed in MainActivity", Toast.LENGTH_SHORT).show();
+    }
+
+    // Method to show the MoodDetailFragment with mood details
+    public void showMoodDetails(Mood mood) {
+        // Create and show the MoodDetailFragment with the given mood
+        MoodDetailFragment fragment = new MoodDetailFragment(mood);
+        fragment.show(getSupportFragmentManager(), "MoodDetailFragment");
+    }
+
 }
