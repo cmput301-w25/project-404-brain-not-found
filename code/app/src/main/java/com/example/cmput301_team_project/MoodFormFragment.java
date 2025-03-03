@@ -45,6 +45,9 @@ import java.util.Arrays;
  */
 public class MoodFormFragment extends DialogFragment {
     private final int MAX_IMAGE_SIZE = 65536;
+    private ArrayList<Mood> moodList;
+
+
 
     interface MoodFormDialogListener {
         void addMood(Mood mood);
@@ -53,6 +56,10 @@ public class MoodFormFragment extends DialogFragment {
 
     public MoodFormFragment() {
         // Required empty public constructor
+    }
+
+    public MoodFormFragment(ArrayList<Mood> moodList) {
+        this.moodList = moodList;
     }
 
     /**
@@ -64,6 +71,10 @@ public class MoodFormFragment extends DialogFragment {
     public static MoodFormFragment newInstance() {
         return new MoodFormFragment();
     }
+    public static MoodFormFragment newInstance(ArrayList<Mood> moodList) {
+        return new MoodFormFragment(moodList);
+    }
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -120,6 +131,7 @@ public class MoodFormFragment extends DialogFragment {
                         null,
                         imageViewToBase64(view.findViewById(R.id.mood_image_preview)));
                 listener.addMood(mood);
+                //moodList.add(mood); // added
 
                 dialog.dismiss();
             });

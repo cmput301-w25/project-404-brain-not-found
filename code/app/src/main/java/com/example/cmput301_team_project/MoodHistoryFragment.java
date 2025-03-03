@@ -26,6 +26,7 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
     private MoodListAdapter moodListAdapter;
     private ArrayList<Mood> moodList;
 
+
     public MoodHistoryFragment() {
         moodDatabaseService = MoodDatabaseService.getInstance();
         moodList = new ArrayList<>();
@@ -57,7 +58,9 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
         moodListView.setAdapter(moodListAdapter);
         ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
         addMoodButton.setOnClickListener(v -> {
-            MoodFormFragment.newInstance().show(getChildFragmentManager(), "Add Mood Event");
+            MoodFormFragment.newInstance(moodList).show(getChildFragmentManager(), "Add Mood Event");
+            //moodList.add(mood);
+           // moodListAdapter.notifyDataSetChanged();
         });
         // Handle movie list item click to edit a movie
         moodListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -74,6 +77,7 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
     @Override
     public void addMood(Mood mood) {
         moodDatabaseService.addMood(mood);
+        loadMoodData();
     }
     @Override
     public void onResume() {
@@ -101,5 +105,6 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
                             Toast.LENGTH_SHORT).show();
                 });
     }
+
 
 }
