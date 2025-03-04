@@ -83,41 +83,50 @@ public class MoodDatabaseService extends BaseDatabaseService {
 
                         // Safely get emotion with default to prevent crashes
                         Object emotionObj = doc.get("emotion");
-                        String emotion = (emotionObj != null) ? emotionObj.toString().toLowerCase() : "";
+                        String emotionString = (emotionObj != null) ? emotionObj.toString().toLowerCase() : "";
 
-                        // Creating mood objects based on the emotion
-                        Mood mood = null;
-
-                        switch (emotion) {
-                            case "anger":
-                                mood = new MoodAnger(socialSituation, trigger, author, date, imageBase64);
-                                break;
-                            case "confusion":
-                                mood = new MoodConfusion(socialSituation, trigger, author, date, imageBase64);
-                                break;
-                            case "disgust":
-                                mood = new MoodDisgust(socialSituation, trigger, author, date, imageBase64);
-                                break;
-                            case "fear":
-                                mood = new MoodFear(socialSituation, trigger, author, date, imageBase64);
-                                break;
-                            case "happiness":
-                                mood = new MoodHappiness(socialSituation, trigger, author, date, imageBase64);
-                                break;
-                            case "sadness":
-                                mood = new MoodSadness(socialSituation, trigger, author, date, imageBase64);
-                                break;
-                            case "shame":
-                                mood = new MoodShame(socialSituation, trigger, author, date, imageBase64);
-                                break;
-                            case "surprise":
-                                mood = new MoodSurprise(socialSituation, trigger, author, date, imageBase64);
-                                break;
-                            default:
-                                // Log unknown emotion and skip this entry
-                                Log.w("MoodDatabaseService", "Unknown emotion type: " + emotion);
-                                continue;
+                        MoodEmotionEnum emotion = MoodEmotionEnum.NONE;
+                        // Safely converting the socialSituation string to the enum
+                        try {
+                            if (emotionString != null && !emotionString.isEmpty()) {
+                                emotion = MoodEmotionEnum.valueOf(emotionString.toUpperCase());
+                            }
+                        } catch (IllegalArgumentException e) {
+                            // Keep the default NONE value
                         }
+                        // Creating mood objects based on the emotion
+                        Mood mood = Mood.createMood(emotion, socialSituation, trigger, author, date, imageBase64);
+//
+//                        switch (emotion) {
+//                            case "anger":
+//                                mood = new MoodAnger(socialSituation, trigger, author, date, imageBase64);
+//                                break;
+//                            case "confusion":
+//                                mood = new MoodConfusion(socialSituation, trigger, author, date, imageBase64);
+//                                break;
+//                            case "disgust":
+//                                mood = new MoodDisgust(socialSituation, trigger, author, date, imageBase64);
+//                                break;
+//                            case "fear":
+//                                mood = new MoodFear(socialSituation, trigger, author, date, imageBase64);
+//                                break;
+//                            case "happiness":
+//                                mood = new MoodHappiness(socialSituation, trigger, author, date, imageBase64);
+//                                break;
+//                            case "sadness":
+//                                mood = new MoodSadness(socialSituation, trigger, author, date, imageBase64);
+//                                break;
+//                            case "shame":
+//                                mood = new MoodShame(socialSituation, trigger, author, date, imageBase64);
+//                                break;
+//                            case "surprise":
+//                                mood = new MoodSurprise(socialSituation, trigger, author, date, imageBase64);
+//                                break;
+//                            default:
+//                                // Log unknown emotion and skip this entry
+//                                Log.w("MoodDatabaseService", "Unknown emotion type: " + emotion);
+//                                continue;
+//                        }
 
                         if (mood != null) {
                             moodList.add(mood);

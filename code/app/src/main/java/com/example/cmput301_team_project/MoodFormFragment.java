@@ -131,8 +131,6 @@ public class MoodFormFragment extends DialogFragment {
                         null,
                         imageViewToBase64(view.findViewById(R.id.mood_image_preview)));
                 listener.addMood(mood);
-                //moodList.add(mood); // added
-
                 dialog.dismiss();
             });
         });
