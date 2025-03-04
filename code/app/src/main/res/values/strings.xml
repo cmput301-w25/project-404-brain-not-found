@@ -29,4 +29,6 @@
     <string name="remove_image">Remove Image</string>
     <string name="image_size_exceeded">Image exceeds the size limit of 64KB</string>
     <string name="image_invalid">Invalid image. Please try again</string>
+    <string name="trigger_too_many_chars">Trigger must be under %d characters</string>
+    <string name="trigger_too_many_words">Trigger must have at most %d words</string>
 </resources>

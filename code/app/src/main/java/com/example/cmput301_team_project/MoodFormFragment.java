@@ -46,6 +46,8 @@ import java.util.Arrays;
 public class MoodFormFragment extends DialogFragment {
     private final int MAX_IMAGE_SIZE = 65536;
 
+    private final int MAX_TRIGGER_LENGTH = 20;
+    private final int MAX_TRIGGER_WORDS = 3;
     interface MoodFormDialogListener {
         void addMood(Mood mood);
     }
@@ -112,10 +114,20 @@ public class MoodFormFragment extends DialogFragment {
                     emotionAdapter.setError(emotion.getSelectedView(), getString(R.string.no_emotional_state_error_msg));
                     return;
                 }
-
+                // get the string input of trigger
+                String inputtedTrigger = trigger.getText().toString();
+                // invoke error if the length is less than max length
+                if (!isValidTriggerLength(inputtedTrigger)) {
+                    trigger.setError(String.format(getString(R.string.trigger_too_many_chars), MAX_TRIGGER_LENGTH));
+                    return;
+                }
+                if (!isValidTriggerWordCount(inputtedTrigger)) {
+                    trigger.setError(String.format(getString(R.string.trigger_too_many_words), MAX_TRIGGER_WORDS));
+                    return;
+                }
                 Mood mood = Mood.createMood(MoodEmotionEnum.values()[emotion.getSelectedItemPosition()],
                         MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
-                        trigger.getText().toString(),
+                        inputtedTrigger,
                         SessionManager.getInstance().getCurrentUser(),
                         null,
                         imageViewToBase64(view.findViewById(R.id.mood_image_preview)));
@@ -127,7 +139,26 @@ public class MoodFormFragment extends DialogFragment {
 
         return dialog;
     }
-
+    /**
+     * Checks if the trigger text is of valid length
+     *
+     * @param inputtedTrigger The trigger to be validated
+     * @return {@code true} if the length of the trigger is less than {@code MAX_TRIGGER_LENGTH} otherwise {@code false}
+     * */
+    private boolean isValidTriggerLength(String inputtedTrigger) {
+        return inputtedTrigger.length() <= MAX_TRIGGER_LENGTH;
+    }
+    /**
+     * Checks if the trigger text is of valid word count
+     *
+     * @param inputtedTrigger The trigger to be validated
+     * @return {@code true} if the length of the trigger is less than {@code MAX_TRIGGER_WORDS} otherwise {@code false}
+     * */
+    private boolean isValidTriggerWordCount(String inputtedTrigger) {
+        // splits the trigger string into a list of words (separated by whitespace)
+        String[] words = inputtedTrigger.trim().split("\\s+");
+        return words.length <= MAX_TRIGGER_WORDS;
+    }
     private void initializePhotoPicker(View view) {
         ImageView preview = view.findViewById(R.id.mood_image_preview);
         ImageButton removePreview = view.findViewById(R.id.remove_preview);
