@@ -96,38 +96,6 @@ public class MoodDatabaseService extends BaseDatabaseService {
                         }
                         // Creating mood objects based on the emotion
                         Mood mood = Mood.createMood(emotion, socialSituation, trigger, author, date, imageBase64);
-//
-//                        switch (emotion) {
-//                            case "anger":
-//                                mood = new MoodAnger(socialSituation, trigger, author, date, imageBase64);
-//                                break;
-//                            case "confusion":
-//                                mood = new MoodConfusion(socialSituation, trigger, author, date, imageBase64);
-//                                break;
-//                            case "disgust":
-//                                mood = new MoodDisgust(socialSituation, trigger, author, date, imageBase64);
-//                                break;
-//                            case "fear":
-//                                mood = new MoodFear(socialSituation, trigger, author, date, imageBase64);
-//                                break;
-//                            case "happiness":
-//                                mood = new MoodHappiness(socialSituation, trigger, author, date, imageBase64);
-//                                break;
-//                            case "sadness":
-//                                mood = new MoodSadness(socialSituation, trigger, author, date, imageBase64);
-//                                break;
-//                            case "shame":
-//                                mood = new MoodShame(socialSituation, trigger, author, date, imageBase64);
-//                                break;
-//                            case "surprise":
-//                                mood = new MoodSurprise(socialSituation, trigger, author, date, imageBase64);
-//                                break;
-//                            default:
-//                                // Log unknown emotion and skip this entry
-//                                Log.w("MoodDatabaseService", "Unknown emotion type: " + emotion);
-//                                continue;
-//                        }
-
                         if (mood != null) {
                             moodList.add(mood);
                         }
