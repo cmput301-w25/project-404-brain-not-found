@@ -41,7 +41,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
 
     // this is the method to get all the documents in the moods collection
     public Task<List<Mood>> getMoodList() {
-        Log.d("username", SessionManager.getInstance().getCurrentUser());
+        //Log.d("username", SessionManager.getInstance().getCurrentUser());
         return moodsRef
                 .whereEqualTo("author", SessionManager.getInstance().getCurrentUser())
                 .orderBy("date", Query.Direction.DESCENDING)

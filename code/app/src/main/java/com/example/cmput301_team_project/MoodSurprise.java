@@ -34,4 +34,8 @@ public class MoodSurprise extends Mood {
     public int getEmoji() {
         return R.string.emoji_surprise;
     }
+
+    public String getDisplayName(){
+        return "Surprised";
+    }
 }

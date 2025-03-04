@@ -1,81 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/list_title"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="12dp"
-    android:background="@android:color/white"
-    android:layout_margin="8dp"
-    android:elevation="4dp">
-
-
-    <LinearLayout
-        android:id="@+id/row_one"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingBottom="6dp">
-
-        <TextView
-            android:id="@+id/Mood_class"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:gravity="left"
-            android:layout_weight="1"
-            android:maxLines="1"
-            android:text="TextView"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#000"/>
-
-        <TextView
-            android:id="@+id/emoji"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="end"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="TextView"
-            android:textSize="16sp"
-            android:textColor="#666"/>
-
-
-    </LinearLayout>
+    android:layout_margin="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    android:background="#F5F5F5"
+    android:padding="16dp">
 
     <LinearLayout
-        android:id="@+id/row_two"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingTop="6dp">
+        android:background="#E3F2FD"
+        android:padding="16dp"
+        android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/mood_date"
-            android:layout_width="0dp"
+        <!-- First Row: Emoji + Mood Text -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="TextView"
-            android:textSize="16sp"
-            android:textColor="#444"/>
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp">
 
+            <!-- Larger Emoji -->
+            <TextView
+                android:id="@+id/moodEmoji"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:text="😃"
+                android:textSize="50sp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- "I am" Line -->
+                <TextView
+                    android:id="@+id/mood_prefix"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="I am"
+                    android:textColor="#666"
+                    android:textSize="18sp" />
+
+                <!-- Larger "Happy" -->
+                <TextView
+                    android:id="@+id/emotionName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Happy"
+                    android:textColor="#000"
+                    android:textSize="32sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/socialSituation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Alone"
+                    android:textColor="#666"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+            <!-- Right Side: Date & Action -->
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="end">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="end">
+
+                    <TextView
+                        android:id="@+id/dateAns"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Feb 9, 2025"
+                        android:textColor="#333"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/timeAns"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10:30 AM"
+                        android:textColor="#444"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:id="@+id/triggerName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Pet a dog"
+                        android:textColor="#1565C0"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </FrameLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ImageBase64"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop" />
     </LinearLayout>
-
-    <!--    <ImageButton-->
-    <!--        android:id="@+id/delete_button"-->
-    <!--        android:layout_width="43dp"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_gravity="center_horizontal"-->
-    <!--        android:backgroundTint="#B3FFFFFF"-->
-    <!--        app:srcCompat="@android:drawable/ic_delete" />-->
-
-</LinearLayout>
+</androidx.cardview.widget.CardView>

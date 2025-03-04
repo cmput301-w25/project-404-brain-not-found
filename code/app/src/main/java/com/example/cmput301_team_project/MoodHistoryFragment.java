@@ -62,13 +62,6 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
             //moodList.add(mood);
            // moodListAdapter.notifyDataSetChanged();
         });
-        // Handle movie list item click to edit a movie
-        moodListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                new MoodDetailFragment(moodList.get(i)).show(getParentFragmentManager(), "Mood Event details");;
-            }
-        });
         loadMoodData();
 
         return view;
