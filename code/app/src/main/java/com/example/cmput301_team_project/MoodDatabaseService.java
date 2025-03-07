@@ -39,6 +39,12 @@ public class MoodDatabaseService extends BaseDatabaseService {
         moodsRef.add(mood);
     }
 
+    /**Find the mood event in database with doc ID and delete it
+     * @param mood The mood event in history to be deleted.*/
+    public void deleteMood(Mood mood){
+        moodsRef.document(mood.getId()).delete();
+    }
+
     // this is the method to get all the documents in the moods collection
     public Task<List<Mood>> getMoodList() {
         //Log.d("username", SessionManager.getInstance().getCurrentUser());
@@ -97,6 +103,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
                         // Creating mood objects based on the emotion
                         Mood mood = Mood.createMood(emotion, socialSituation, trigger, author, date, imageBase64);
                         if (mood != null) {
+                            mood.setId(doc.getId()); // Set the Firestore document ID
                             moodList.add(mood);
                         }
                     } catch (Exception e) {
