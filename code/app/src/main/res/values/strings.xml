@@ -31,4 +31,6 @@
     <string name="image_invalid">Invalid image. Please try again</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
+    <string name="trigger_too_many_chars">Trigger must be under %d characters</string>
+    <string name="trigger_too_many_words">Trigger must have at most %d words</string>
 </resources>
