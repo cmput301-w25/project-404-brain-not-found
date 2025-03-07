@@ -28,6 +28,11 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
     private ArrayList<Mood> moodList;
     private MoodDatabaseService moodDatabaseService; // Reference to the database service
 
+    /**
+     * Constructs a new MoodListAdapter.
+     * @param context the current context.
+     * @param moodList the list of Mood objects to display.
+     */
     public MoodListAdapter(Context context, ArrayList<Mood> moodList) {
         super(context, 0, moodList);
         this.context = context;
@@ -35,12 +40,13 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
         this.moodDatabaseService = MoodDatabaseService.getInstance(); // Get a singleton instance
     }
 
-    /**Don't want to use the addMood method in this class.
-     * Just need to implement the MoodFormDialogListener interface to be able
-     * to show Edit Mood Event dialog fragment.*/
+    /**
+     * Method from MoodFormDialogListener, not used in this class but necessary for interface implementation.
+     * @param mood the mood to potentially add, not used here.
+     */
     @Override
     public void addMood(Mood mood){
-        return;
+        // Not implemented as adding mood is not handled here
     }
 
     @Override
@@ -52,16 +58,27 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
 
         // Get the Mood item at the current position
         Mood mood = getItem(position);
+        setupMoodItemView(convertView, mood, position);
 
+        return convertView;
+    }
+
+    /**
+     * Sets up the mood item view elements and assigns them values from the mood object.
+     * @param view The view for the mood item.
+     * @param mood The mood object to display.
+     * @param position The position of the item in the list.
+     */
+    private void setupMoodItemView(View view, Mood mood, int position) {
         // Find views and set values
-        TextView moodClass = convertView.findViewById(R.id.emotionName);
-        TextView emoji = convertView.findViewById(R.id.moodEmoji);
-        TextView moodDate = convertView.findViewById(R.id.dateAns);
-        TextView socialSituation = convertView.findViewById(R.id.socialSituation);
-        TextView triggerName = convertView.findViewById(R.id.triggerName);
-        TextView moodTime = convertView.findViewById(R.id.timeAns);
-        ImageView moodImage = convertView.findViewById(R.id.ImageBase64);
-        ImageView menuButton = convertView.findViewById(R.id.mood_menu_button);
+        TextView moodClass = view.findViewById(R.id.emotionName);
+        TextView emoji = view.findViewById(R.id.moodEmoji);
+        TextView moodDate = view.findViewById(R.id.dateAns);
+        TextView socialSituation = view.findViewById(R.id.socialSituation);
+        TextView triggerName = view.findViewById(R.id.triggerName);
+        TextView moodTime = view.findViewById(R.id.timeAns);
+        ImageView moodImage = view.findViewById(R.id.ImageBase64);
+        ImageView menuButton = view.findViewById(R.id.mood_menu_button);
 
         if (mood != null) {
             moodClass.setText(mood.getDisplayName().toString());
@@ -80,11 +97,13 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
                 }
             });
         }
-
-        return convertView;
     }
 
-    // Inflates the popup mood menu as defined in res/menu/mood_menu.xml
+    /**
+     * Inflates a popup menu for mood item interactions such as edit and delete.
+     * @param view The anchor view for the popup menu.
+     * @param position The position of the item in the list for which the menu is being displayed.
+     */
     private void openPopupMenu(View view, int position){
         PopupMenu popup = new PopupMenu(getContext(), view);
         popup.getMenuInflater().inflate(R.menu.mood_menu, popup.getMenu());
@@ -104,6 +123,10 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
         popup.show();
     }
 
+    /**
+     * Handles the event to edit a mood.
+     * @param mood The mood object to be edited.
+     */
     public void editMoodEvent(Mood mood) {
         MoodFormFragment editFragment = MoodFormFragment.newInstance(moodList);
         editFragment.populateFields(mood);
@@ -115,6 +138,11 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
         }
     }
 
+    /**
+     * Handles the event to delete a mood from the list and database.
+     * @param mood The mood object to be deleted.
+     * @param position The position of the mood in the list.
+     */
     private void deleteMoodEvent(Mood mood, int position) {
         // Remove from the local mood listview list
         moodList.remove(position);

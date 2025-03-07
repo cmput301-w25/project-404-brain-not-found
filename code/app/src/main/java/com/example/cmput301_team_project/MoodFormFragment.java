@@ -221,9 +221,17 @@ public class MoodFormFragment extends DialogFragment {
         return Base64.encodeToString(byteArray, Base64.NO_WRAP);
     }
 
+    /**
+     * Populates the fields of the mood form dialog with the data from an existing mood.
+     * This method is should be used to pre-fill the dialog fields when editing an existing mood entry,
+     * allowing users to see and modify current values.
+     *
+     * @param mood The mood object whose data is used to populate the form fields.
+     */
     public void populateFields(Mood mood) {
         Dialog dialog = getDialog();
         if (dialog != null) {
+            // Retrieve the form widgets from the dialog
             Spinner emotionSpinner = dialog.findViewById(R.id.form_emotion);
             Spinner situationSpinner = dialog.findViewById(R.id.form_situation);
             EditText triggerEditText = dialog.findViewById(R.id.form_trigger);
