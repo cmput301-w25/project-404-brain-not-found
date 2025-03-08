@@ -65,7 +65,7 @@ public abstract class Mood {
     public abstract MoodEmotionEnum getEmotion();
     public abstract int getColour();
     public abstract int getEmoji();
-    public abstract String getDisplayName();
+    public abstract int getDisplayName();
 
     public MoodSocialSituationEnum getSocialSituation() {
         return socialSituation;

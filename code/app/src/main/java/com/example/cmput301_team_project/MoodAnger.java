@@ -34,7 +34,7 @@ public class MoodAnger extends Mood {
         return R.string.emoji_anger;
     }
 
-    public String getDisplayName(){
-        return "Angry";
+    public int getDisplayName(){
+        return R.string.mood_anger;
     }
 }

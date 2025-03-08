@@ -52,7 +52,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
 
 
         if (mood != null) {
-            moodClass.setText(mood.getDisplayName().toString());
+            moodClass.setText(mood.getDisplayName());
             emoji.setText(mood.getEmoji());
             moodDate.setText(mood.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString());
             socialSituation.setText(mood.getSocialSituation().toString());
@@ -64,7 +64,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         return convertView;
     }
     private Bitmap decodeBase64(String base64Str) {
-        byte[] decodedBytes = Base64.decode(base64Str, Base64.DEFAULT);
+        byte[] decodedBytes = Base64.decode(base64Str, Base64.NO_WRAP);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 }

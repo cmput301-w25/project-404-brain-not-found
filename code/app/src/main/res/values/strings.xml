@@ -29,4 +29,12 @@
     <string name="remove_image">Remove Image</string>
     <string name="image_size_exceeded">Image exceeds the size limit of 64KB</string>
     <string name="image_invalid">Invalid image. Please try again</string>
+    <string name="mood_disgusted">Disgusted</string>
+    <string name="mood_anger">Anger</string>
+    <string name="mood_confusion">Confused</string>
+    <string name="mood_fear">Scared</string>
+    <string name="mood_happiness">Happy</string>
+    <string name="mood_sadness">Sad</string>
+    <string name="mood_shame">Ashamed</string>
+    <string name="mood_surprise">Surprised</string>
 </resources>

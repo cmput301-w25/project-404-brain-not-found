@@ -33,7 +33,7 @@ public class MoodHappiness extends Mood {
     public int getEmoji() {
         return R.string.emoji_happiness;
     }
-    public String getDisplayName(){
-        return "Happy";
+    public int getDisplayName(){
+        return R.string.mood_happiness;
     }
 }
