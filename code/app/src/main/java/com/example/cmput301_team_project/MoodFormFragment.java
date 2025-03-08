@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 
@@ -174,8 +176,11 @@ public class MoodFormFragment extends DialogFragment {
                         Intent data = result.getData();
                         Uri uri = (data != null && data.getData() != null) ? data.getData() : cameraImgUri;
 
+                        Bitmap image;
+
                         try {
-                            if(!validateImage(uri))
+                            image = tryCompressImage(uri);
+                            if(image == null)
                             {
                                 setImageError(view, R.string.image_size_exceeded, View.VISIBLE);
                                 return;
@@ -186,7 +191,7 @@ public class MoodFormFragment extends DialogFragment {
                         }
 
                         setImageError(view, null, View.GONE);
-                        preview.setImageURI(uri);
+                        preview.setImageBitmap(image);
                         preview.setVisibility(View.VISIBLE);
                         removePreview.setVisibility(View.VISIBLE);
                     }
@@ -218,16 +223,24 @@ public class MoodFormFragment extends DialogFragment {
         errorView.setVisibility(visibility);
     }
 
-    private boolean validateImage(Uri uri) throws IOException {
-        long fileSize = Long.MAX_VALUE;
-        AssetFileDescriptor fileDescriptor = requireContext().getContentResolver().openAssetFileDescriptor(uri , "r");
+    private Bitmap tryCompressImage(Uri uri) throws IOException {
+        Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), uri);
 
-        if(fileDescriptor != null) {
-            fileSize = fileDescriptor.getLength();
-            fileDescriptor.close();
+        int quality = 100;
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        do {
+            byteArrayOutputStream.reset();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
+            quality -= 5;
+        } while(quality > 10 && 4 * byteArrayOutputStream.toByteArray().length > 3 * MAX_IMAGE_SIZE);
+
+        if(4 * byteArrayOutputStream.toByteArray().length > 3 * MAX_IMAGE_SIZE) {
+            return null;
         }
 
-        return fileSize <= MAX_IMAGE_SIZE;
+        byte[] compressedBytes = byteArrayOutputStream.toByteArray();
+        return BitmapFactory.decodeByteArray(compressedBytes, 0, compressedBytes.length);
     }
 
     private String imageViewToBase64(ImageView imageView) {
