@@ -47,8 +47,6 @@ public class MoodFormFragment extends DialogFragment {
     private final int MAX_IMAGE_SIZE = 65536;
     private ArrayList<Mood> moodList;
 
-
-
     interface MoodFormDialogListener {
         void addMood(Mood mood);
     }
@@ -221,5 +219,38 @@ public class MoodFormFragment extends DialogFragment {
         byte[] byteArray = byteArrayOutputStream.toByteArray();
 
         return Base64.encodeToString(byteArray, Base64.NO_WRAP);
+    }
+
+    /**
+     * Populates the fields of the mood form dialog with the data from an existing mood.
+     * This method is should be used to pre-fill the dialog fields when editing an existing mood entry,
+     * allowing users to see and modify current values.
+     *
+     * @param mood The mood object whose data is used to populate the form fields.
+     */
+    public void populateFields(Mood mood) {
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            // Retrieve the form widgets from the dialog
+            Spinner emotionSpinner = dialog.findViewById(R.id.form_emotion);
+            Spinner situationSpinner = dialog.findViewById(R.id.form_situation);
+            EditText triggerEditText = dialog.findViewById(R.id.form_trigger);
+            ImageView moodImagePreview = dialog.findViewById(R.id.mood_image_preview);
+
+            // Set emotion and situation spinners (ONLY WORKS IF ENUM ORDER MATCHES SPINNER ORDER)
+            emotionSpinner.setSelection(mood.getEmotion().ordinal());
+            situationSpinner.setSelection(mood.getSocialSituation().ordinal());
+
+            // Set trigger text
+            triggerEditText.setText(mood.getTrigger());
+
+            // Set image if available
+            if (mood.getImageBase64() != null && !mood.getImageBase64().isEmpty()) {
+                moodImagePreview.setImageBitmap(ImageUtils.decodeBase64(mood.getImageBase64()));
+                moodImagePreview.setVisibility(View.VISIBLE);
+                ImageButton removePreviewButton = dialog.findViewById(R.id.remove_preview);
+                removePreviewButton.setVisibility(View.VISIBLE);
+            }
+        }
     }
 }

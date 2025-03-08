@@ -14,6 +14,7 @@ import java.util.TimeZone;
  * to create the correct subclass instance of the base class
  */
 public abstract class Mood {
+    private String id; // Firestore mood document ID
     private MoodSocialSituationEnum socialSituation;
     private String trigger;
     private String author;
@@ -92,5 +93,13 @@ public abstract class Mood {
 
     public String getAuthor() {
         return author;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

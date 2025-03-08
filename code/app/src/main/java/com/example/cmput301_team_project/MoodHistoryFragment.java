@@ -49,21 +49,21 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_mood_history, container, false);
         moodListView = view.findViewById(R.id.Mood_List);
         moodListAdapter = new MoodListAdapter(getContext(), moodList);
         moodListView.setAdapter(moodListAdapter);
+
         ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
         addMoodButton.setOnClickListener(v -> {
             MoodFormFragment.newInstance(moodList).show(getChildFragmentManager(), "Add Mood Event");
             //moodList.add(mood);
            // moodListAdapter.notifyDataSetChanged();
         });
-        loadMoodData();
 
+        loadMoodData();
         return view;
     }
 
