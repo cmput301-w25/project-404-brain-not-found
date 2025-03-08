@@ -84,7 +84,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
         ImageView menuButton = view.findViewById(R.id.mood_menu_button);
 
         if (mood != null) {
-            moodClass.setText(mood.getDisplayName().toString());
+            moodClass.setText(mood.getDisplayName());
             emoji.setText(mood.getEmoji());
             moodDate.setText(mood.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString());
             socialSituation.setText(mood.getSocialSituation().toString());
