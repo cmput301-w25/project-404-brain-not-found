@@ -143,11 +143,6 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
     }
 
 
-    private Bitmap decodeBase64(String base64Str) {
-        byte[] decodedBytes = Base64.decode(base64Str, Base64.NO_WRAP);
-        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
-    }
-
     /**
      * Handles the event to delete a mood from the list and database.
      * @param mood The mood object to be deleted.
@@ -160,5 +155,10 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
         moodDatabaseService.deleteMood(mood);
         // Notify the adapter to refresh the list view
         notifyDataSetChanged();
+    }
+
+    private Bitmap decodeBase64(String base64Str) {
+        byte[] decodedBytes = Base64.decode(base64Str, Base64.NO_WRAP);
+        return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }
 }
