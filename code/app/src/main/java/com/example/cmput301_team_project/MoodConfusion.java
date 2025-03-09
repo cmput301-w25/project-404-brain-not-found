@@ -33,4 +33,8 @@ public class MoodConfusion extends Mood {
     public int getEmoji() {
         return R.string.emoji_confusion;
     }
+
+    public int getDisplayName(){
+        return R.string.mood_confusion;
+    }
 }

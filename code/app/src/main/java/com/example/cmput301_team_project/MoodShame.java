@@ -34,4 +34,8 @@ public class MoodShame extends Mood {
     public int getEmoji() {
         return R.string.emoji_shame;
     }
+
+    public int getDisplayName(){
+        return R.string.mood_shame;
+    }
 }
