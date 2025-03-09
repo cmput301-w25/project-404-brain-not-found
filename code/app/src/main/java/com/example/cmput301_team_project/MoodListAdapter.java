@@ -1,9 +1,6 @@
 package com.example.cmput301_team_project;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +15,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -31,17 +29,19 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
     private Context context;
     private ArrayList<Mood> moodList;
     private MoodDatabaseService moodDatabaseService; // Reference to the database service
+    private Fragment parentFragment;
 
     /**
      * Constructs a new MoodListAdapter.
      * @param context the current context.
      * @param moodList the list of Mood objects to display.
      */
-    public MoodListAdapter(Context context, ArrayList<Mood> moodList) {
+    public MoodListAdapter(Context context, ArrayList<Mood> moodList, Fragment parentFragment) {
         super(context, 0, moodList);
         this.context = context;
         this.moodList = moodList;
         this.moodDatabaseService = MoodDatabaseService.getInstance(); // Get a singleton instance
+        this.parentFragment = parentFragment;
     }
 
     /**
@@ -141,7 +141,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
         MoodFormFragment editFragment = MoodFormFragment.newInstance(moodList);
         editFragment.populateFields(mood);
         if (context instanceof FragmentActivity) {
-            FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+            FragmentManager fragmentManager = parentFragment.getChildFragmentManager();
             editFragment.show(fragmentManager, "Edit Mood Event");
         } else {
             Log.e("MoodListAdapter", "Context is not an instance of FragmentActivity");

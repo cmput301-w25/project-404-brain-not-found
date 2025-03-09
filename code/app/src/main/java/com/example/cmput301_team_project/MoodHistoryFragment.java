@@ -53,7 +53,7 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_mood_history, container, false);
         moodListView = view.findViewById(R.id.Mood_List);
-        moodListAdapter = new MoodListAdapter(getContext(), moodList);
+        moodListAdapter = new MoodListAdapter(getContext(), moodList, this);
         moodListView.setAdapter(moodListAdapter);
 
         ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
