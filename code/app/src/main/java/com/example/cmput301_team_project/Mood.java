@@ -105,6 +105,7 @@ public abstract class Mood implements Serializable {
         return author;
     }
 
+    @Exclude
     public String getId() {
         return id;
     }
