@@ -44,7 +44,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
         moodsRef.document(mood.getId()).delete();
     }
 
-    // this is the method to get all the documents in the moods collection
+    /**this is the method to get all the documents in the moods collection*/
     public Task<List<Mood>> getMoodList() {
         //Log.d("username", SessionManager.getInstance().getCurrentUser());
         return moodsRef

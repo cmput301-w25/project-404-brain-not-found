@@ -39,6 +39,15 @@ public class UserDatabaseService extends BaseDatabaseService {
         uref.set(user);
     }
 
+    /**
+     * Validates a user's credentials by checking the hashed password.
+     * This method retrieves the stored password hash and salt from Firestore,
+     * hashes the input password with the same salt, and compares the results.
+     *
+     * @param username The username of the user.
+     * @param inputPassword The password entered by the user.
+     * @return A {@link Task} that resolves to {@code true} if the password matches, otherwise {@code false}.
+     */
     public Task<Boolean> validateCredentials(String username, String inputPassword)
     {
         DocumentReference uref = usersRef.document(username);
@@ -55,6 +64,12 @@ public class UserDatabaseService extends BaseDatabaseService {
         });
     }
 
+    /**
+     * Checks if a user exists in the Firestore database.
+     *
+     * @param username The username to check.
+     * @return A {@link Task} that resolves to {@code true} if the user exists, otherwise {@code false}.
+     */
     public Task<Boolean> userExists(String username){
         DocumentReference docRef = usersRef.document(username);
 
@@ -64,6 +79,15 @@ public class UserDatabaseService extends BaseDatabaseService {
         return document;
     }
 
+    /**
+     * Hashes a password using the PBKDF2 algorithm with HMAC-SHA1.
+     *
+     * @param password The password to hash.
+     * @param salt The salt used for hashing.
+     * @return A Base64-encoded string representing the hashed password.
+     * @throws NoSuchAlgorithmException If the algorithm is not available.
+     * @throws InvalidKeySpecException If the key specification is invalid.
+     */
     public String hashPassword(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
         int iterations = 10000;
         int keyLength = 256;
@@ -75,6 +99,11 @@ public class UserDatabaseService extends BaseDatabaseService {
 
     }
 
+    /**
+     * Generates a random salt for password hashing.
+     *
+     * @return A byte array representing the generated salt.
+     */
     public byte[] generateSalt() {
         byte[] salt = new byte[16];
         new SecureRandom().nextBytes(salt);

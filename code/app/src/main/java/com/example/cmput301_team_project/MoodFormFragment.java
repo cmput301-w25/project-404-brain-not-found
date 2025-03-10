@@ -221,6 +221,13 @@ public class MoodFormFragment extends DialogFragment {
         return words.length <= MAX_TRIGGER_WORDS;
     }
 
+    /**
+     * Initializes the photo picker, allowing users to select or capture an image.
+     * This method sets up an {@link ActivityResultLauncher} to handle image selection
+     * from the gallery or camera and applies compression if necessary.
+     *
+     * @param view The parent view containing UI elements related to image selection.
+     */
     private void initializePhotoPicker(View view) {
         ImageView preview = view.findViewById(R.id.mood_image_preview);
         ImageButton removePreview = view.findViewById(R.id.remove_preview);
@@ -275,6 +282,13 @@ public class MoodFormFragment extends DialogFragment {
         });
     }
 
+    /**
+     * Displays an error message related to image selection.
+     *
+     * @param view The parent view containing the error message UI element.
+     * @param resId The resource ID of the error message string, or null if clearing the error.
+     * @param visibility The visibility state to apply to the error message view.
+     */
     private void setImageError(View view, @Nullable Integer resId, int visibility) {
         TextView errorView = view.findViewById(R.id.image_error_msg);
         if(resId != null) {
@@ -283,6 +297,14 @@ public class MoodFormFragment extends DialogFragment {
         errorView.setVisibility(visibility);
     }
 
+    /**
+     * Attempts to compress a selected image to reduce its size while maintaining quality.
+     * If the image cannot be compressed below the maximum allowed size, it returns null.
+     *
+     * @param uri The URI of the image to be compressed.
+     * @return A compressed {@link Bitmap} object, or null if compression fails.
+     * @throws IOException If an error occurs while retrieving the image.
+     */
     private Bitmap tryCompressImage(Uri uri) throws IOException {
         Bitmap bitmap = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), uri);
 
@@ -303,6 +325,12 @@ public class MoodFormFragment extends DialogFragment {
         return BitmapFactory.decodeByteArray(compressedBytes, 0, compressedBytes.length);
     }
 
+    /**
+     * Converts an image displayed in an {@link ImageView} to a Base64-encoded string.
+     *
+     * @param imageView The {@link ImageView} containing the image to be encoded.
+     * @return The Base64-encoded string representation of the image, or null if no image is present.
+     */
     private String imageViewToBase64(ImageView imageView) {
         BitmapDrawable drawable = (BitmapDrawable) imageView.getDrawable();
         if(drawable == null) {
