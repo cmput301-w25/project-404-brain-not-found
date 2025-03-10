@@ -12,4 +12,8 @@ public abstract class BaseDatabaseService {
     protected BaseDatabaseService() {
         db = FirebaseFirestore.getInstance();
     }
+
+    protected BaseDatabaseService(FirebaseFirestore db) {
+        this.db = db;
+    }
 }
