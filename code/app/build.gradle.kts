@@ -30,11 +30,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    packaging {
-        exclude("resources.arsc")
-        exclude("AndroidManifest.xml")
-        exclude("res/anim/btn_checkbox_to_checked_box_inner_merged_animation.xml")
-    }
     buildFeatures {
         viewBinding = true
     }
@@ -49,7 +44,6 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
     implementation(libs.byte.buddy)
-    implementation(files("${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"))
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.inline)
