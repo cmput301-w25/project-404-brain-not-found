@@ -69,10 +69,9 @@ public class UserDatabaseService extends BaseDatabaseService {
     public Task<Boolean> userExists(String username){
         DocumentReference docRef = usersRef.document(username);
 
-        Task<Boolean> document = docRef.get().continueWith(task ->{
+        return docRef.get().continueWith(task ->{
                 return task.isSuccessful() && task.getResult().exists();
                 });
-        return document;
     }
 
     public String hashPassword(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {

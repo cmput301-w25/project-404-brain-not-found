@@ -7,7 +7,7 @@ import org.junit.Test;
 
 
 /**
- * Class for testing Mood class and its subclasses
+ * Class for testing {@link Mood} class and its subclasses
  */
 public class MoodUnitTest {
     @Test

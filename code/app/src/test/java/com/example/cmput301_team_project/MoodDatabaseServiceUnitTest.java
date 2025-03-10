@@ -16,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.Date;
 
 /**
- * Class for testing MoodDatabaseService
+ * Class for testing {@link MoodDatabaseService}
  */
 public class MoodDatabaseServiceUnitTest {
     @Mock
