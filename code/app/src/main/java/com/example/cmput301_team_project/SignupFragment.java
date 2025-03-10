@@ -40,6 +40,17 @@ public class SignupFragment extends Fragment {
         return new SignupFragment();
     }
 
+    /**
+     * Handles the signup process, including input validation, password hashing,
+     * and storing the new user in Firestore.
+     *
+     * If the username already exists, the user is notified. If successful, the user is
+     * logged in and redirected to the main activity.
+     *
+     * @param view The parent view containing input fields.
+     * @throws NoSuchAlgorithmException If the password hashing algorithm is not found.
+     * @throws InvalidKeySpecException If the password hashing fails due to an invalid key specification.
+     */
     public void signUp(View view) throws NoSuchAlgorithmException, InvalidKeySpecException {
         EditText usernameInput = view.findViewById(R.id.signup_username);
         EditText passwordInput = view.findViewById(R.id.signup_password);

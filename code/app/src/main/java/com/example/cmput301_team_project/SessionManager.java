@@ -1,5 +1,9 @@
 package com.example.cmput301_team_project;
 
+/**
+ * A singleton class that manages the user session.
+ * This class stores the currently logged-in user's information and provides access to it.
+ */
 public class SessionManager {
     private static SessionManager instance = null;
     private String currentUser;

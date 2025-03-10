@@ -36,6 +36,15 @@ public class LoginFragment extends Fragment {
         return new LoginFragment();
     }
 
+    /**
+     * Attempts to log in the user by verifying credentials.
+     * If the username or password fields are empty, it displays an error.
+     * If the credentials are valid, the user is authenticated and redirected to the main activity.
+     *
+     * @param view The view containing the login input fields.
+     * @throws NoSuchAlgorithmException If an encryption algorithm is missing.
+     * @throws InvalidKeySpecException If an invalid key specification is encountered.
+     */
     public void login(View view) throws NoSuchAlgorithmException, InvalidKeySpecException {
         EditText usernameInput = (EditText) view.findViewById(R.id.login_username);
         EditText passwordInput = (EditText) view.findViewById(R.id.login_password);
