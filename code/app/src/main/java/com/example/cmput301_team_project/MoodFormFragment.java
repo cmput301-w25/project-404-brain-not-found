@@ -55,8 +55,7 @@ public class MoodFormFragment extends DialogFragment {
 
     interface MoodFormDialogListener {
         void addMood(Mood mood);
-        void updateMood();
-        void replaceMood(Mood oldMood, Mood newMood);
+        void replaceMood(Mood newMood);
     }
     private MoodFormDialogListener listener;
 
@@ -96,8 +95,6 @@ public class MoodFormFragment extends DialogFragment {
             throw new RuntimeException(parentFragment + " must implement MoodFormDialogListener");
         }
     }
-
-
 
     @NonNull
     @Override
@@ -180,26 +177,8 @@ public class MoodFormFragment extends DialogFragment {
                             imageViewToBase64(view.findViewById(R.id.mood_image_preview))
                     );
 
-//                    if (moodBeingEdited.getEmotion() == selectedEmotion) {
-//                        // Emotion is not changed → Modify the existing Mood object in place
-//                        moodBeingEdited.setSocialSituation(MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()]);
-//                        moodBeingEdited.setTrigger(trigger.getText().toString());
-//                        //moodBeingEdited.setImageBase64(imageViewToBase64(view.findViewById(R.id.mood_image_preview)));
-//
-//                        listener.updateMood(); // Notify adapter to refresh UI
-//                    } else {
-//                        // Emotion has changed → Create a new Mood object
-//                        Mood newMood = Mood.createMood(
-//                                selectedEmotion, // New Emotion
-//                                moodBeingEdited.getSocialSituation(),
-//                                inputtedTrigger,
-//                                moodBeingEdited.getAuthor(),
-//                                moodBeingEdited.getDate(),
-//                                imageViewToBase64(view.findViewById(R.id.mood_image_preview))
-//                        );
-
-                        newMood.setId(moodBeingEdited.getId()); // Preserve Firestore document ID
-                        listener.replaceMood(moodBeingEdited, newMood); // Notify Adapter
+                    newMood.setId(moodBeingEdited.getId()); // Preserve Firestore document ID
+                    listener.replaceMood(newMood); // Notify Adapter
 
                 } else {
                     // Add a new mood event
@@ -211,10 +190,8 @@ public class MoodFormFragment extends DialogFragment {
                             null,
                             imageViewToBase64(view.findViewById(R.id.mood_image_preview))
                     );
-
                     listener.addMood(newMood);
                 }
-
                 dialog.dismiss();
             });
         });

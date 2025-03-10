@@ -7,6 +7,7 @@ import com.google.firebase.firestore.Exclude;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.TimeZone;
 
 /**
@@ -83,6 +84,12 @@ public abstract class Mood implements Serializable {
         return date;
     }
 
+    public Boolean equals(Mood mood){
+        if (Objects.equals(this.id, mood.id)){
+            return true;
+        }
+        return false;
+    }
     @Exclude
     public String getDateLocal() {
         DateFormat dfLocal = DateFormat.getDateTimeInstance();

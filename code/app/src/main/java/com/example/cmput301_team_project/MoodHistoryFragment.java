@@ -77,10 +77,12 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
         // Refresh mood data when returning to the fragment
         loadMoodData();
     }
+
     @Override
-    public void updateMood() {}
-    @Override
-    public void replaceMood(Mood oldMood, Mood newMood) {}
+    public void replaceMood(Mood newMood) {
+        moodDatabaseService.updateMood(newMood);
+        loadMoodData();
+    }
 
     /**
      * Loads mood data from Firestore database

@@ -14,7 +14,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -24,7 +23,7 @@ import androidx.fragment.app.FragmentManager;
  * MoodListAdapter is a custom ArrayAdapter used to display a list of Mood objects in a ListView.
  * It inflates a custom layout for each mood and binds the mood details to the corresponding UI elements.
  */
-public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragment.MoodFormDialogListener {
+public class MoodListAdapter extends ArrayAdapter<Mood> {
 
     private Context context;
     private ArrayList<Mood> moodList;
@@ -42,30 +41,6 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
         this.moodList = moodList;
         this.moodDatabaseService = MoodDatabaseService.getInstance(); // Get a singleton instance
         this.parentFragment = parentFragment;
-    }
-
-    /**
-     * Method from MoodFormDialogListener, not used in this class but necessary for interface implementation.
-     * @param mood the mood to potentially add, not used here.
-     */
-    @Override
-    public void addMood(Mood mood){
-        // Not implemented as adding mood is not handled here
-    }
-    @Override
-    public void updateMood(){
-        Log.d("MoodListAdapter", "updateMood() called!"); // Debugging log
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public void replaceMood(Mood oldMood, Mood newMood) {
-        int index = moodList.indexOf(oldMood);
-        if (index != -1) {
-            moodList.set(index, newMood); // 🔹 Replace old Mood with the new one
-            moodDatabaseService.updateMood(newMood); // 🔹 Update Firestore
-            notifyDataSetChanged(); // 🔹 Refresh UI
-        }
     }
 
     @Override
