@@ -33,6 +33,7 @@ android {
     packaging {
         exclude("resources.arsc")
         exclude("AndroidManifest.xml")
+        exclude("res/anim/btn_checkbox_to_checked_box_inner_merged_animation.xml")
     }
     buildFeatures {
         viewBinding = true
