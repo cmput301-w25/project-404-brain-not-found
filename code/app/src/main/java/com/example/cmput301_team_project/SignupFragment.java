@@ -22,7 +22,7 @@ import java.security.spec.InvalidKeySpecException;
 import android.util.Base64;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} subclass for signup.
  * Use the {@link SignupFragment#newInstance} factory method to
  * create an instance of this fragment.
  */

@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} subclass for LoginSignup screen.
  * Use the {@link LoginSignupFragment#newInstance} factory method to
  * create an instance of this fragment.
  */

@@ -14,7 +14,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} subclass for user mood history screen.
  * Responsible for user's mood history list.
  * Use the {@link MoodHistoryFragment#newInstance} factory method to
  * create an instance of this fragment.

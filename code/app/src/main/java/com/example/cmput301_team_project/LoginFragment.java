@@ -18,7 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} subclass for login.
  * Use the {@link LoginFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
