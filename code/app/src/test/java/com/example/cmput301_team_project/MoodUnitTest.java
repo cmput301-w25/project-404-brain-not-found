@@ -5,22 +5,24 @@ import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 
-import java.util.Date;
-
 public class MoodUnitTest {
-//    @Test
-//    public void testCreateMood() {
-//        MoodSocialSituationEnum socialSituation = MoodSocialSituationEnum.ALONE;
-//        String trigger = "";
-//        String author = "";
-//        Date date = null;
-//        class TestHelper {
-//            Mood createMoodUtil(MoodEmotionEnum emotion) {
-//
-//            }
-//        }
-//        assertEquals(MoodAnger.class, Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "", "", null, null).getClass());
-//    }
+    @Test
+    public void testCreateMood() {
+        class TestHelper {
+            Mood createMoodUtil(MoodEmotionEnum emotion) {
+                return Mood.createMood(emotion, MoodSocialSituationEnum.ALONE, "", "", null, null);
+            }
+        }
+        TestHelper testHelper = new TestHelper();
+        assertEquals(MoodAnger.class,testHelper.createMoodUtil(MoodEmotionEnum.ANGER).getClass());
+        assertEquals(MoodConfusion.class,testHelper.createMoodUtil(MoodEmotionEnum.CONFUSION).getClass());
+        assertEquals(MoodDisgust.class,testHelper.createMoodUtil(MoodEmotionEnum.DISGUST).getClass());
+        assertEquals(MoodFear.class,testHelper.createMoodUtil(MoodEmotionEnum.FEAR).getClass());
+        assertEquals(MoodHappiness.class,testHelper.createMoodUtil(MoodEmotionEnum.HAPPINESS).getClass());
+        assertEquals(MoodSadness.class,testHelper.createMoodUtil(MoodEmotionEnum.SADNESS).getClass());
+        assertEquals(MoodShame.class,testHelper.createMoodUtil(MoodEmotionEnum.SHAME).getClass());
+        assertEquals(MoodSurprise.class,testHelper.createMoodUtil(MoodEmotionEnum.SURPRISE).getClass());
+    }
 
     @Test
     public void testIllegalCreateMood() {
