@@ -58,8 +58,6 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
         ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
         addMoodButton.setOnClickListener(v -> {
             MoodFormFragment.newInstance(null).show(getChildFragmentManager(), "Add Mood Event");
-            //moodList.add(mood);
-           // moodListAdapter.notifyDataSetChanged();
         });
 
         loadMoodData();

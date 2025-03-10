@@ -9,9 +9,10 @@ tools:context=".SignupFragment">
 
     <Button
         android:id="@+id/button_signin"
-        android:layout_width="180sp"
-        android:layout_height="wrap_content"
+        android:layout_width="200sp"
+        android:layout_height="60sp"
         android:layout_marginTop="120dp"
+        android:backgroundTint="@color/buttons"
         android:text="Sign Up"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -31,7 +32,7 @@ tools:context=".SignupFragment">
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signup_username_layout"
         android:layout_width="350dp"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:layout_marginTop="110dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,7 +41,7 @@ tools:context=".SignupFragment">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/signup_username"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
             android:layout_marginTop="100dp"
             android:hint="Username" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -48,7 +49,7 @@ tools:context=".SignupFragment">
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signup_password_layout"
         android:layout_width="350dp"
-        android:layout_height="wrap_content"
+        android:layout_height="70dp"
         android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,9 +58,9 @@ tools:context=".SignupFragment">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/signup_password"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="Password" />
+            android:layout_height="match_parent"
+            android:hint="Password"
+            android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <ImageButton
