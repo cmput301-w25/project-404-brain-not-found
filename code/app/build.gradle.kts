@@ -30,6 +30,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+    packaging {
+        exclude("resources.arsc")
+        exclude("AndroidManifest.xml")
+    }
     buildFeatures {
         viewBinding = true
     }
