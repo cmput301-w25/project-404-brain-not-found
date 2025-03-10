@@ -56,21 +56,23 @@ public class SignupFragment extends Fragment {
         EditText passwordInput = view.findViewById(R.id.signup_password);
         String username = usernameInput.getText().toString();
         String password = passwordInput.getText().toString();
-        byte[] salt = userDatabaseService.generateSalt();
-        String hashed = userDatabaseService.hashPassword(password, salt);
+
 
         TextInputLayout usernameLayout = view.findViewById(R.id.signup_username_layout);
         TextInputLayout passwordLayout = view.findViewById(R.id.signup_password_layout);
 
 
         if (username.isEmpty()){
-            usernameLayout.setError("Cannot have an empty username");
+            usernameInput.setError("Username cannot be empty");
             return;
         }
         if (password.isEmpty()){
-            passwordLayout.setError("Cannot have an empty password");
+            passwordInput.setError("Password cannot be empty");
             return;
         }
+
+        byte[] salt = userDatabaseService.generateSalt();
+        String hashed = userDatabaseService.hashPassword(password, salt);
         userDatabaseService.userExists(username).addOnCompleteListener(new OnCompleteListener<Boolean>() {
             @Override
             public void onComplete(@NonNull Task<Boolean> task) {
@@ -80,6 +82,8 @@ public class SignupFragment extends Fragment {
                     sessionManager.setCurrentUser(username);
                     Intent myIntent = new Intent(getContext(), MainActivity.class);
                     getContext().startActivity(myIntent);
+                }else{
+                    usernameInput.setError("Username already taken");
                 }
             }
         });

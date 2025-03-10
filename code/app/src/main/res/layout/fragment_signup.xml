@@ -32,7 +32,7 @@ tools:context=".SignupFragment">
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signup_username_layout"
         android:layout_width="350dp"
-        android:layout_height="70dp"
+        android:layout_height="95dp"
         android:layout_marginTop="110dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,15 +41,14 @@ tools:context=".SignupFragment">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/signup_username"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="100dp"
+            android:layout_height="60dp"
             android:hint="Username" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signup_password_layout"
         android:layout_width="350dp"
-        android:layout_height="70dp"
+        android:layout_height="95dp"
         android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +57,7 @@ tools:context=".SignupFragment">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/signup_password"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="60dp"
             android:hint="Password"
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>

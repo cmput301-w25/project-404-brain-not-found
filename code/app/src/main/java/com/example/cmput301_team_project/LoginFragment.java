@@ -55,28 +55,28 @@ public class LoginFragment extends Fragment {
 
 
         if (username.isEmpty()){
-            usernameLayout.setError("Username cannot be empty");
+            usernameInput.setError("Username cannot be empty");
         }else if (password.isEmpty()){
-            passwordLayout.setError("Password cannot be empty");
+            passwordInput.setError("Password cannot be empty");
         }else{
             userDatabaseService.userExists(username).addOnCompleteListener(task -> {
                 if (task.getResult()) {
-                    usernameLayout.setError("");
+                    usernameInput.setError(null);
 
                     userDatabaseService.validateCredentials(username, password).addOnCompleteListener(validationTask -> {
                         if(validationTask.isSuccessful() && validationTask.getResult()) {
-                            passwordLayout.setError("");
+                            passwordInput.setError("");
                             sessionManager.setCurrentUser(username);
                             Intent myIntent = new Intent(getContext(), MainActivity.class);
                             getContext().startActivity(myIntent);
                         }
                         else {
-                            passwordLayout.setError("Incorrect password");
+                            passwordInput.setError("Incorrect password");
                         }
                     });
                 }
                 else {
-                    usernameLayout.setError("Username does not exist");
+                    usernameInput.setError("Username does not exist");
                 }
             });
         }

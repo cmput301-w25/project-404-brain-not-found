@@ -4,6 +4,7 @@ package com.example.cmput301_team_project;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -27,11 +28,21 @@ public class UserDatabaseService extends BaseDatabaseService {
         usersRef = db.collection("users");
     }
 
+    private UserDatabaseService(FirebaseFirestore db) {
+        super(db);
+
+        usersRef = db.collection("users");
+    }
+
     public static UserDatabaseService getInstance() {
         if (instance == null) {
             instance = new UserDatabaseService();
         }
         return instance;
+    }
+
+    public static void setInstanceForTesting(FirebaseFirestore db) {
+        instance = new UserDatabaseService(db);
     }
 
     public void addUser(AppUser user) {
@@ -73,10 +84,9 @@ public class UserDatabaseService extends BaseDatabaseService {
     public Task<Boolean> userExists(String username){
         DocumentReference docRef = usersRef.document(username);
 
-        Task<Boolean> document = docRef.get().continueWith(task ->{
+        return docRef.get().continueWith(task ->{
                 return task.isSuccessful() && task.getResult().exists();
                 });
-        return document;
     }
 
     /**

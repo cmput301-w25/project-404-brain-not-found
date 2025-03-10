@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
@@ -26,11 +27,21 @@ public class MoodDatabaseService extends BaseDatabaseService {
         moodsRef = db.collection("moods");
     }
 
+    private MoodDatabaseService(FirebaseFirestore db) {
+        super(db);
+
+        moodsRef = db.collection("moods");
+    }
+
     public static MoodDatabaseService getInstance() {
         if (instance == null) {
             instance = new MoodDatabaseService();
         }
         return instance;
+    }
+
+    public static void setInstanceForTesting(FirebaseFirestore db) {
+        instance = new MoodDatabaseService(db);
     }
 
     public void addMood(Mood mood) {
