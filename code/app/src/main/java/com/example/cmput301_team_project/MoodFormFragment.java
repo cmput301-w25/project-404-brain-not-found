@@ -268,7 +268,7 @@ public class MoodFormFragment extends DialogFragment {
         removePreview.setOnClickListener(v -> {
             preview.setVisibility(View.GONE);
             removePreview.setVisibility(View.GONE);
-            preview.setImageURI(null);
+            preview.setImageDrawable(null);
         });
     }
 
