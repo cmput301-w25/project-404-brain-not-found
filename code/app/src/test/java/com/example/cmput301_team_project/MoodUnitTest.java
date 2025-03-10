@@ -5,6 +5,10 @@ import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 
+
+/**
+ * Class for testing Mood class and its subclasses
+ */
 public class MoodUnitTest {
     @Test
     public void testCreateMood() {

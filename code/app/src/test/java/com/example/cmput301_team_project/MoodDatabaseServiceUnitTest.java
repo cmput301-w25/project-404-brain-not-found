@@ -15,6 +15,9 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.Date;
 
+/**
+ * Class for testing MoodDatabaseService
+ */
 public class MoodDatabaseServiceUnitTest {
     @Mock
     private FirebaseFirestore mockFirestore;
