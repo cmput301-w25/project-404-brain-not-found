@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.3"
+byteBuddy = "1.17.1"
 firebaseBom = "33.9.0"
 firebaseFirestore = "25.1.2"
 junit = "4.13.2"
@@ -9,9 +10,12 @@ appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.10.0"
 constraintlayout = "2.2.0"
+mockitoCore = "5.7.0"
+mockitoInline = "5.2.0"
 
 
 [libraries]
+byte-buddy = { module = "net.bytebuddy:byte-buddy", version.ref = "byteBuddy" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore", version.ref = "firebaseFirestore" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -21,6 +25,8 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 
 
 [plugins]
