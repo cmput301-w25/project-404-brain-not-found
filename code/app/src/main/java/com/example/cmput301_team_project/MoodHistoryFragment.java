@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -58,7 +57,7 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
 
         ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
         addMoodButton.setOnClickListener(v -> {
-            MoodFormFragment.newInstance(moodList).show(getChildFragmentManager(), "Add Mood Event");
+            MoodFormFragment.newInstance().show(getChildFragmentManager(), "Add Mood Event");
             //moodList.add(mood);
            // moodListAdapter.notifyDataSetChanged();
         });

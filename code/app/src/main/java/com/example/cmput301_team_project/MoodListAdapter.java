@@ -87,7 +87,6 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
 
 
         if (mood != null) {
-            String moodName = context.getString(mood.getDisplayName());
             moodClass.setText(mood.getDisplayName());
             emoji.setText(mood.getEmoji());
             moodDate.setText(mood.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString());
@@ -96,7 +95,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
             moodTime.setText(mood.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")).toString());
             moodImage.setImageBitmap(ImageUtils.decodeBase64(mood.getImageBase64()));
 
-            cardView.setCardBackgroundColor(getMoodColor(moodName));
+            cardView.setCardBackgroundColor(getContext().getResources().getColor(mood.getColour(), getContext().getTheme()));
 
             // If the three-dot menu icon is clicked, a pop-up menu shows up
             menuButton.setOnClickListener(new View.OnClickListener() {
@@ -138,7 +137,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
      * @param mood The mood object to be edited.
      */
     public void editMoodEvent(Mood mood) {
-        MoodFormFragment editFragment = MoodFormFragment.newInstance(moodList);
+        MoodFormFragment editFragment = MoodFormFragment.newInstance();
         editFragment.populateFields(mood);
         if (context instanceof FragmentActivity) {
             FragmentManager fragmentManager = parentFragment.getChildFragmentManager();
@@ -161,32 +160,5 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
         moodDatabaseService.deleteMood(mood);
         // Notify the adapter to refresh the list view
         notifyDataSetChanged();
-    }
-
-    /**
-     * Returns the color associated with a given mood name.
-     * @param moodName The display name of the mood.
-     * @return The color resource ID for the mood.
-     */
-    private int getMoodColor(String moodName) {
-        if (moodName.equals(context.getString(R.string.mood_anger))) {
-            return ContextCompat.getColor(context, R.color.anger);
-        } else if (moodName.equals(context.getString(R.string.mood_confusion))) {
-            return ContextCompat.getColor(context, R.color.confusion);
-        } else if (moodName.equals(context.getString(R.string.mood_disgusted))) {
-            return ContextCompat.getColor(context, R.color.disgust);
-        } else if (moodName.equals(context.getString(R.string.mood_fear))) {
-            return ContextCompat.getColor(context, R.color.fear);
-        } else if (moodName.equals(context.getString(R.string.mood_happiness))) {
-            return ContextCompat.getColor(context, R.color.happiness);
-        } else if (moodName.equals(context.getString(R.string.mood_sadness))) {
-            return ContextCompat.getColor(context, R.color.sadness);
-        } else if (moodName.equals(context.getString(R.string.mood_shame))) {
-            return ContextCompat.getColor(context, R.color.shame);
-        } else if (moodName.equals(context.getString(R.string.mood_surprise))) {
-            return ContextCompat.getColor(context, R.color.surprise);
-        }
-
-        return ContextCompat.getColor(context, R.color.default_background);
     }
 }
