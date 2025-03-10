@@ -4,8 +4,10 @@ import androidx.annotation.Nullable;
 
 import com.google.firebase.firestore.Exclude;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.TimeZone;
 
 /**
@@ -13,7 +15,8 @@ import java.util.TimeZone;
  * Use {@link Mood#createMood(MoodEmotionEnum, MoodSocialSituationEnum, String, String, Date, String)} factory method
  * to create the correct subclass instance of the base class
  */
-public abstract class Mood {
+public abstract class Mood implements Serializable {
+    private String id; // Firestore mood document ID
     private MoodSocialSituationEnum socialSituation;
     private String trigger;
     private String author;
@@ -63,8 +66,11 @@ public abstract class Mood {
     }
 
     public abstract MoodEmotionEnum getEmotion();
+
     public abstract int getColour();
+
     public abstract int getEmoji();
+    public abstract int getDisplayName();
 
     public MoodSocialSituationEnum getSocialSituation() {
         return socialSituation;
@@ -78,6 +84,12 @@ public abstract class Mood {
         return date;
     }
 
+    public Boolean equals(Mood mood){
+        if (Objects.equals(this.id, mood.id)){
+            return true;
+        }
+        return false;
+    }
     @Exclude
     public String getDateLocal() {
         DateFormat dfLocal = DateFormat.getDateTimeInstance();
@@ -92,4 +104,31 @@ public abstract class Mood {
     public String getAuthor() {
         return author;
     }
+
+    @Exclude
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setSocialSituation(MoodSocialSituationEnum socialSituation) {
+        this.socialSituation = socialSituation;
+    }
+
+    public void setTrigger(String trigger) {
+        this.trigger = trigger;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
+    }
+
+
 }
