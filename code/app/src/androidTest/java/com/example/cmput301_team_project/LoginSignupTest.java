@@ -93,6 +93,7 @@ public class LoginSignupTest {
         Thread.sleep(500);
         onView(withId(R.id.login_button)).perform(click());
         onView(withId(R.id.login_username)).perform(ViewActions.typeText("hello"));
+        Thread.sleep(500);
         onView(withId(R.id.button_login)).perform(click());
         onView(withId(R.id.login_password)).check(matches(hasErrorText("Password cannot be empty")));
 
@@ -112,6 +113,7 @@ public class LoginSignupTest {
         Thread.sleep(500);
         onView(withId(R.id.signup_button)).perform(click());
         onView(withId(R.id.signup_username)).perform(ViewActions.typeText("hello"));
+        Thread.sleep(500);
         onView(withId(R.id.button_signin)).perform(click());
         onView(withId(R.id.signup_password)).check(matches(hasErrorText("Password cannot be empty")));
 
