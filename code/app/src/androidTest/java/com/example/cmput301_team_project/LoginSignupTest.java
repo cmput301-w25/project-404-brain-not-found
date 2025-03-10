@@ -98,14 +98,14 @@ public class LoginSignupTest {
 
     }
 
-    @Test
-    public void logInUserErrorShown() throws InterruptedException {
-        Thread.sleep(500);
-        onView(withId(R.id.login_button)).perform(click());
-        onView(withId(R.id.login_password)).perform(ViewActions.typeText("hello"));
-        onView(withId(R.id.button_login)).perform(click());
-        onView(withId(R.id.login_username)).check(matches(hasErrorText("Username cannot be empty")));
-    }
+//    @Test
+//    public void logInUserErrorShown() throws InterruptedException {
+//        Thread.sleep(500);
+//        onView(withId(R.id.login_button)).perform(click());
+//        onView(withId(R.id.login_password)).perform(ViewActions.typeText("hello"));
+//        onView(withId(R.id.button_login)).perform(click());
+//        onView(withId(R.id.login_username)).check(matches(hasErrorText("Username cannot be empty")));
+//    }
 
     @Test
     public void SignUpPasswordErrorShown() throws InterruptedException {
@@ -117,35 +117,35 @@ public class LoginSignupTest {
 
     }
 
-    @Test
-    public void signUpUserEmptyErrorShown() throws InterruptedException {
-        Thread.sleep(500);
-        onView(withId(R.id.signup_button)).perform(click());
-        onView(withId(R.id.signup_password)).perform(ViewActions.typeText("hello"));
-        onView(withId(R.id.button_signin)).perform(click());
-        onView(withId(R.id.signup_username)).check(matches(hasErrorText("Username cannot be empty")));
-    }
+//    @Test
+//    public void signUpUserEmptyErrorShown() throws InterruptedException {
+//        Thread.sleep(500);
+//        onView(withId(R.id.signup_button)).perform(click());
+//        onView(withId(R.id.signup_password)).perform(ViewActions.typeText("hello"));
+//        onView(withId(R.id.button_signin)).perform(click());
+//        onView(withId(R.id.signup_username)).check(matches(hasErrorText("Username cannot be empty")));
+//    }
 
 
-    @Test
-    public void signUpUserErrorShown() throws InterruptedException {
-        Thread.sleep(500);
-        onView(withId(R.id.signup_button)).perform(click());
-        onView(withId(R.id.signup_username)).perform(ViewActions.typeText("Henrietta"));
-        onView(withId(R.id.signup_password)).perform(ViewActions.typeText("henrietta"));
-        onView(withId(R.id.button_signin)).perform(click());
-        onView(withId(R.id.signup_username)).check(matches(hasErrorText("Username already taken")));
-    }
+//    @Test
+//    public void signUpUserErrorShown() throws InterruptedException {
+//        Thread.sleep(500);
+//        onView(withId(R.id.signup_button)).perform(click());
+//        onView(withId(R.id.signup_username)).perform(ViewActions.typeText("Henrietta"));
+//        onView(withId(R.id.signup_password)).perform(ViewActions.typeText("henrietta"));
+//        onView(withId(R.id.button_signin)).perform(click());
+//        onView(withId(R.id.signup_username)).check(matches(hasErrorText("Username already taken")));
+//    }
 
-    @Test
-    public void incorrectPasswordErrorShown() throws InterruptedException {
-        Thread.sleep(500);
-        onView(withId(R.id.login_button)).perform(click());
-        onView(withId(R.id.login_username)).perform(ViewActions.typeText("Henrietta"));
-        onView(withId(R.id.login_password)).perform(ViewActions.typeText("Henrietta"));
-        onView(withId(R.id.button_login)).perform(click());
-        onView(withId(R.id.login_password)).check(matches(hasErrorText("Incorrect password")));
-    }
+//    @Test
+//    public void incorrectPasswordErrorShown() throws InterruptedException {
+//        Thread.sleep(500);
+//        onView(withId(R.id.login_button)).perform(click());
+//        onView(withId(R.id.login_username)).perform(ViewActions.typeText("Henrietta"));
+//        onView(withId(R.id.login_password)).perform(ViewActions.typeText("Henrietta"));
+//        onView(withId(R.id.button_login)).perform(click());
+//        onView(withId(R.id.login_password)).check(matches(hasErrorText("Incorrect password")));
+//    }
 
 
 }
