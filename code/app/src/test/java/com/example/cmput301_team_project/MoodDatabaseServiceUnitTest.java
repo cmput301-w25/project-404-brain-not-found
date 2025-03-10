@@ -23,7 +23,6 @@ public class MoodDatabaseServiceUnitTest {
     private FirebaseFirestore mockFirestore;
     @Mock
     private CollectionReference mockMoodCollection;
-
     @Mock
     private DocumentReference mockDocRef;
 
@@ -47,5 +46,23 @@ public class MoodDatabaseServiceUnitTest {
 
         moodDatabaseService.addMood(mood);
         verify(mockMoodCollection).add(mood);
+    }
+
+    @Test
+    public void testDeleteMood() {
+        Mood mood = Mood.createMood(MoodEmotionEnum.DISGUST, MoodSocialSituationEnum.SEVERAL, "test", "me", new Date(), null);
+        mood.setId("mockId");
+
+        moodDatabaseService.deleteMood(mood);
+        verify(mockDocRef).delete();
+    }
+
+    @Test
+    public void testUpdateMood() {
+        Mood mood = Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.ALONE, "test", "me", new Date(), null);
+        mood.setId("mockId");
+
+        moodDatabaseService.updateMood(mood);
+        verify(mockDocRef).set(mood);
     }
 }

@@ -42,9 +42,7 @@ public class UserDatabaseService extends BaseDatabaseService {
     }
 
     public static void setInstanceForTesting(FirebaseFirestore db) {
-        if(instance == null) {
-            instance = new UserDatabaseService(db);
-        }
+        instance = new UserDatabaseService(db);
     }
 
     public void addUser(AppUser user) {

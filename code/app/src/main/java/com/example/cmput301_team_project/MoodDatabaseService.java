@@ -41,9 +41,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
     }
 
     public static void setInstanceForTesting(FirebaseFirestore db) {
-        if (instance == null) {
-            instance = new MoodDatabaseService(db);
-        }
+        instance = new MoodDatabaseService(db);
     }
 
     public void addMood(Mood mood) {
