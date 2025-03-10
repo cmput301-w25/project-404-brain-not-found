@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">CMPUT301-Team-Project</string>
+    <string name ="app_title">Moodster</string>
     <string name="trigger">Trigger</string>
     <string name="anger">Anger</string>
     <string name="confusion">Confusion</string>
