@@ -104,4 +104,22 @@ public abstract class Mood {
     public void setId(String id) {
         this.id = id;
     }
+
+    public void setSocialSituation(MoodSocialSituationEnum socialSituation) {
+        this.socialSituation = socialSituation;
+    }
+
+    public void setTrigger(String trigger) {
+        this.trigger = trigger;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
+    }
+
+
 }

@@ -48,8 +48,13 @@ public class MoodFormFragment extends DialogFragment {
     private final int MAX_TRIGGER_LENGTH = 20;
     private final int MAX_TRIGGER_WORDS = 3;
 
+    private boolean isEditMode = false; // Flag to check if we're editing
+    private Mood moodBeingEdited = null; // Reference to the mood being edited
+
     interface MoodFormDialogListener {
         void addMood(Mood mood);
+        void updateMood();
+        void replaceMood(Mood oldMood, Mood newMood);
     }
     private MoodFormDialogListener listener;
 
@@ -63,9 +68,15 @@ public class MoodFormFragment extends DialogFragment {
      *
      * @return A new instance of fragment MoodFormFragment.
      */
-    public static MoodFormFragment newInstance() {
-        return new MoodFormFragment();
+    public static MoodFormFragment newInstance(@Nullable Mood moodToEdit) {
+        MoodFormFragment fragment = new MoodFormFragment();
+        if (moodToEdit != null) {
+            fragment.isEditMode = true; // Set edit mode
+            fragment.moodBeingEdited = moodToEdit; // Store reference to existing mood
+        }
+        return fragment;
     }
+
 
 
     @Override
@@ -111,7 +122,7 @@ public class MoodFormFragment extends DialogFragment {
         dialog.setOnShowListener(dialog1 -> {
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
-                if(emotion.getSelectedItemPosition() == 0) {
+                if (emotion.getSelectedItemPosition() == 0) {
                     emotionAdapter.setError(emotion.getSelectedView(), getString(R.string.no_emotional_state_error_msg));
                     return;
                 }
@@ -127,13 +138,44 @@ public class MoodFormFragment extends DialogFragment {
                     return;
                 }
 
-                Mood mood = Mood.createMood(MoodEmotionEnum.values()[emotion.getSelectedItemPosition()],
-                        MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
-                        inputtedTrigger,
-                        SessionManager.getInstance().getCurrentUser(),
-                        null,
-                        imageViewToBase64(view.findViewById(R.id.mood_image_preview)));
-                listener.addMood(mood);
+                MoodEmotionEnum selectedEmotion = MoodEmotionEnum.values()[emotion.getSelectedItemPosition()];
+
+                if (isEditMode) {
+                    if (moodBeingEdited.getEmotion() == selectedEmotion) {
+                        // Emotion is not changed → Modify the existing Mood object in place
+                        moodBeingEdited.setSocialSituation(MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()]);
+                        moodBeingEdited.setTrigger(inputtedTrigger);
+                        moodBeingEdited.setImageBase64(imageViewToBase64(view.findViewById(R.id.mood_image_preview)));
+
+                        listener.updateMood(); // Notify adapter to refresh UI
+                    } else {
+                        // Emotion has changed → Create a new Mood object
+                        Mood newMood = Mood.createMood(
+                                selectedEmotion, // New Emotion
+                                moodBeingEdited.getSocialSituation(),
+                                inputtedTrigger,
+                                moodBeingEdited.getAuthor(),
+                                moodBeingEdited.getDate(),
+                                imageViewToBase64(view.findViewById(R.id.mood_image_preview))
+                        );
+
+                        newMood.setId(moodBeingEdited.getId()); // Preserve Firestore document ID
+                        listener.replaceMood(moodBeingEdited, newMood); // Notify Adapter
+                    }
+                } else {
+                    // Add a new mood event
+                    Mood newMood = Mood.createMood(
+                            selectedEmotion,
+                            MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
+                            inputtedTrigger,
+                            SessionManager.getInstance().getCurrentUser(),
+                            null,
+                            imageViewToBase64(view.findViewById(R.id.mood_image_preview))
+                    );
+
+                    listener.addMood(newMood);
+                }
+
                 dialog.dismiss();
             });
         });
@@ -256,6 +298,8 @@ public class MoodFormFragment extends DialogFragment {
      * @param mood The mood object whose data is used to populate the form fields.
      */
     public void populateFields(Mood mood) {
+        if (!isEditMode || moodBeingEdited == null) return;
+
         Dialog dialog = getDialog();
         if (dialog != null) {
             // Retrieve the form widgets from the dialog

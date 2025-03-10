@@ -37,6 +37,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
         moodsRef.add(mood);
     }
 
+
     /**Find the mood event in database with doc ID and delete it
      * @param mood The mood event in history to be deleted.*/
     public void deleteMood(Mood mood){
@@ -118,4 +119,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
         });
     }
 
+    public void updateMood(Mood mood) {
+        moodsRef.document(mood.getId()).set(mood);
+    }
 }

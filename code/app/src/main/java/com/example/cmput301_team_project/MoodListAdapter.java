@@ -52,6 +52,21 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
     public void addMood(Mood mood){
         // Not implemented as adding mood is not handled here
     }
+    @Override
+    public void updateMood(){
+        Log.d("MoodListAdapter", "updateMood() called!"); // Debugging log
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void replaceMood(Mood oldMood, Mood newMood) {
+        int index = moodList.indexOf(oldMood);
+        if (index != -1) {
+            moodList.set(index, newMood); // 🔹 Replace old Mood with the new one
+            moodDatabaseService.updateMood(newMood); // 🔹 Update Firestore
+            notifyDataSetChanged(); // 🔹 Refresh UI
+        }
+    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -137,7 +152,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> implements MoodFormFragm
      * @param mood The mood object to be edited.
      */
     public void editMoodEvent(Mood mood) {
-        MoodFormFragment editFragment = MoodFormFragment.newInstance();
+        MoodFormFragment editFragment = MoodFormFragment.newInstance(mood);
         editFragment.populateFields(mood);
         if (context instanceof FragmentActivity) {
             FragmentManager fragmentManager = parentFragment.getChildFragmentManager();

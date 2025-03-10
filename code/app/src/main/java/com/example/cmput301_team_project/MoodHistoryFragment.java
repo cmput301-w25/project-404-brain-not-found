@@ -57,7 +57,7 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
 
         ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
         addMoodButton.setOnClickListener(v -> {
-            MoodFormFragment.newInstance().show(getChildFragmentManager(), "Add Mood Event");
+            MoodFormFragment.newInstance(null).show(getChildFragmentManager(), "Add Mood Event");
             //moodList.add(mood);
            // moodListAdapter.notifyDataSetChanged();
         });
@@ -77,6 +77,10 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
         // Refresh mood data when returning to the fragment
         loadMoodData();
     }
+    @Override
+    public void updateMood() {}
+    @Override
+    public void replaceMood(Mood oldMood, Mood newMood) {}
 
     /**
      * Loads mood data from Firestore database
