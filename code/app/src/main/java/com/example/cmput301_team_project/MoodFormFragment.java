@@ -45,16 +45,22 @@ import java.util.Arrays;
  */
 public class MoodFormFragment extends DialogFragment {
     private final int MAX_IMAGE_SIZE = 65536;
-
     private final int MAX_TRIGGER_LENGTH = 20;
     private final int MAX_TRIGGER_WORDS = 3;
+
+    private boolean isEditMode = false; // Flag to check if we're editing
+    private Mood moodBeingEdited = null; // Reference to the mood being edited
+
+    private MoodDatabaseService moodDatabaseService;
+
     interface MoodFormDialogListener {
         void addMood(Mood mood);
+        void replaceMood(Mood newMood);
     }
     private MoodFormDialogListener listener;
 
     public MoodFormFragment() {
-        // Required empty public constructor
+        this.moodDatabaseService = MoodDatabaseService.getInstance();
     }
 
     /**
@@ -63,9 +69,19 @@ public class MoodFormFragment extends DialogFragment {
      *
      * @return A new instance of fragment MoodFormFragment.
      */
-    public static MoodFormFragment newInstance() {
-        return new MoodFormFragment();
+    public static MoodFormFragment newInstance(@Nullable Mood moodToEdit) {
+        Bundle args = new Bundle();
+        MoodFormFragment fragment = new MoodFormFragment();
+        if (moodToEdit != null) {
+            args.putSerializable("mood", moodToEdit);
+            fragment.isEditMode = true; // Set edit mode
+            fragment.moodBeingEdited = moodToEdit; // Store reference to existing mood
+        }
+        fragment.setArguments(args);
+        return fragment;
     }
+
+
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -99,18 +115,41 @@ public class MoodFormFragment extends DialogFragment {
         socialSituation.setOnItemSelectedListener(new HintDropdownItemSelectedListener());
         socialSituation.setAdapter(socialSituationAdapter);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        AlertDialog dialog = builder
-                .setView(view)
-                .setTitle("Add Mood Event")
-                .setNegativeButton("Cancel", null)
-                .setPositiveButton("Add", null)
-                .create();
+        if (isEditMode) {
+            Mood editedMood = (Mood) getArguments().getSerializable("mood");
+            ImageView moodImagePreview = view.findViewById(R.id.mood_image_preview);
+
+            //display old mood's emotion
+            MoodEmotionEnum oldEmotion = editedMood.getEmotion();
+            emotion.setSelection(emotionAdapter.getPosition(oldEmotion.getDropdownDisplayName(getContext())));
+
+            //display old moods social situation
+            MoodSocialSituationEnum oldSituation = editedMood.getSocialSituation();
+            socialSituation.setSelection(socialSituationAdapter.getPosition((oldSituation.getDropdownDisplayName(getContext()))));
+
+            //display old moods trigger
+            trigger.setText(editedMood.getTrigger());
+
+            //display image
+            if (editedMood.getImageBase64() != null && !editedMood.getImageBase64().isEmpty()) {
+                moodImagePreview.setImageBitmap(ImageUtils.decodeBase64(editedMood.getImageBase64()));
+                moodImagePreview.setVisibility(View.VISIBLE);
+                ImageButton removePreviewButton = view.findViewById(R.id.remove_preview);
+                removePreviewButton.setVisibility(View.VISIBLE);
+            }
+        }
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            AlertDialog dialog = builder
+                    .setView(view)
+                    .setTitle(isEditMode ? "Edit Mood Event" :"Add Mood Event")
+                    .setNegativeButton("Cancel", null)
+                    .setPositiveButton(isEditMode ? "Save" : "Add", null)
+                    .create();
 
         dialog.setOnShowListener(dialog1 -> {
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
-                if(emotion.getSelectedItemPosition() == 0) {
+                if (emotion.getSelectedItemPosition() == 0) {
                     emotionAdapter.setError(emotion.getSelectedView(), getString(R.string.no_emotional_state_error_msg));
                     return;
                 }
@@ -125,20 +164,41 @@ public class MoodFormFragment extends DialogFragment {
                     trigger.setError(String.format(getString(R.string.trigger_too_many_words), MAX_TRIGGER_WORDS));
                     return;
                 }
-                Mood mood = Mood.createMood(MoodEmotionEnum.values()[emotion.getSelectedItemPosition()],
-                        MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
-                        inputtedTrigger,
-                        SessionManager.getInstance().getCurrentUser(),
-                        null,
-                        imageViewToBase64(view.findViewById(R.id.mood_image_preview)));
-                listener.addMood(mood);
 
+                MoodEmotionEnum selectedEmotion = MoodEmotionEnum.values()[emotion.getSelectedItemPosition()];
+
+                if (isEditMode) {
+                    Mood newMood = Mood.createMood(
+                            selectedEmotion, // New Emotion
+                            MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
+                            trigger.getText().toString(),
+                            moodBeingEdited.getAuthor(),
+                            moodBeingEdited.getDate(),
+                            imageViewToBase64(view.findViewById(R.id.mood_image_preview))
+                    );
+
+                    newMood.setId(moodBeingEdited.getId()); // Preserve Firestore document ID
+                    listener.replaceMood(newMood); // Notify Adapter
+
+                } else {
+                    // Add a new mood event
+                    Mood newMood = Mood.createMood(
+                            selectedEmotion,
+                            MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
+                            inputtedTrigger,
+                            SessionManager.getInstance().getCurrentUser(),
+                            null,
+                            imageViewToBase64(view.findViewById(R.id.mood_image_preview))
+                    );
+                    listener.addMood(newMood);
+                }
                 dialog.dismiss();
             });
         });
 
         return dialog;
     }
+
     /**
      * Checks if the trigger text is of valid length
      *
@@ -148,6 +208,7 @@ public class MoodFormFragment extends DialogFragment {
     private boolean isValidTriggerLength(String inputtedTrigger) {
         return inputtedTrigger.length() <= MAX_TRIGGER_LENGTH;
     }
+
     /**
      * Checks if the trigger text is of valid word count
      *
@@ -159,6 +220,7 @@ public class MoodFormFragment extends DialogFragment {
         String[] words = inputtedTrigger.trim().split("\\s+");
         return words.length <= MAX_TRIGGER_WORDS;
     }
+
     private void initializePhotoPicker(View view) {
         ImageView preview = view.findViewById(R.id.mood_image_preview);
         ImageButton removePreview = view.findViewById(R.id.remove_preview);
@@ -209,7 +271,7 @@ public class MoodFormFragment extends DialogFragment {
         removePreview.setOnClickListener(v -> {
             preview.setVisibility(View.GONE);
             removePreview.setVisibility(View.GONE);
-            preview.setImageURI(null);
+            preview.setImageDrawable(null);
         });
     }
 
@@ -253,5 +315,40 @@ public class MoodFormFragment extends DialogFragment {
         byte[] byteArray = byteArrayOutputStream.toByteArray();
 
         return Base64.encodeToString(byteArray, Base64.NO_WRAP);
+    }
+
+    /**
+     * Populates the fields of the mood form dialog with the data from an existing mood.
+     * This method is should be used to pre-fill the dialog fields when editing an existing mood entry,
+     * allowing users to see and modify current values.
+     *
+     * @param mood The mood object whose data is used to populate the form fields.
+     */
+    public void populateFields(Mood mood) {
+        if (!isEditMode || moodBeingEdited == null) return;
+
+        Dialog dialog = getDialog();
+        if (dialog != null) {
+            // Retrieve the form widgets from the dialog
+            Spinner emotionSpinner = dialog.findViewById(R.id.form_emotion);
+            Spinner situationSpinner = dialog.findViewById(R.id.form_situation);
+            EditText triggerEditText = dialog.findViewById(R.id.form_trigger);
+            ImageView moodImagePreview = dialog.findViewById(R.id.mood_image_preview);
+
+            // Set emotion and situation spinners (ONLY WORKS IF ENUM ORDER MATCHES SPINNER ORDER)
+            emotionSpinner.setSelection(mood.getEmotion().ordinal());
+            situationSpinner.setSelection(mood.getSocialSituation().ordinal());
+
+            // Set trigger text
+            triggerEditText.setText(mood.getTrigger());
+
+            // Set image if available
+            if (mood.getImageBase64() != null && !mood.getImageBase64().isEmpty()) {
+                moodImagePreview.setImageBitmap(ImageUtils.decodeBase64(mood.getImageBase64()));
+                moodImagePreview.setVisibility(View.VISIBLE);
+                ImageButton removePreviewButton = dialog.findViewById(R.id.remove_preview);
+                removePreviewButton.setVisibility(View.VISIBLE);
+            }
+        }
     }
 }

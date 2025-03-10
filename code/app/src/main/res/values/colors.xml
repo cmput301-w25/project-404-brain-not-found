@@ -10,5 +10,6 @@
     <color name="sadness">#FF2A3B90</color>
     <color name="shame">#FF9E8DAB</color>
     <color name="surprise">#FF00E8BE</color>
+    <color name="default_background">#FFFFFFFF</color>
     <color name="buttons">#0A5475</color>
 </resources>
