@@ -51,6 +51,8 @@ public class MoodFormFragment extends DialogFragment {
     private boolean isEditMode = false; // Flag to check if we're editing
     private Mood moodBeingEdited = null; // Reference to the mood being edited
 
+    private MoodDatabaseService moodDatabaseService;
+
     interface MoodFormDialogListener {
         void addMood(Mood mood);
         void updateMood();
@@ -59,7 +61,7 @@ public class MoodFormFragment extends DialogFragment {
     private MoodFormDialogListener listener;
 
     public MoodFormFragment() {
-        // Required empty public constructor
+        this.moodDatabaseService = MoodDatabaseService.getInstance();
     }
 
     /**
@@ -69,11 +71,14 @@ public class MoodFormFragment extends DialogFragment {
      * @return A new instance of fragment MoodFormFragment.
      */
     public static MoodFormFragment newInstance(@Nullable Mood moodToEdit) {
+        Bundle args = new Bundle();
         MoodFormFragment fragment = new MoodFormFragment();
         if (moodToEdit != null) {
+            args.putSerializable("mood", moodToEdit);
             fragment.isEditMode = true; // Set edit mode
             fragment.moodBeingEdited = moodToEdit; // Store reference to existing mood
         }
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -91,6 +96,8 @@ public class MoodFormFragment extends DialogFragment {
             throw new RuntimeException(parentFragment + " must implement MoodFormDialogListener");
         }
     }
+
+
 
     @NonNull
     @Override
@@ -111,13 +118,36 @@ public class MoodFormFragment extends DialogFragment {
         socialSituation.setOnItemSelectedListener(new HintDropdownItemSelectedListener());
         socialSituation.setAdapter(socialSituationAdapter);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        AlertDialog dialog = builder
-                .setView(view)
-                .setTitle("Add Mood Event")
-                .setNegativeButton("Cancel", null)
-                .setPositiveButton("Add", null)
-                .create();
+        if (isEditMode) {
+            Mood editedMood = (Mood) getArguments().getSerializable("mood");
+            ImageView moodImagePreview = view.findViewById(R.id.mood_image_preview);
+
+            //display old mood's emotion
+            MoodEmotionEnum oldEmotion = editedMood.getEmotion();
+            emotion.setSelection(emotionAdapter.getPosition(oldEmotion.getDropdownDisplayName(getContext())));
+
+            //display old moods social situation
+            MoodSocialSituationEnum oldSituation = editedMood.getSocialSituation();
+            socialSituation.setSelection(socialSituationAdapter.getPosition((oldSituation.getDropdownDisplayName(getContext()))));
+
+            //display old moods trigger
+            trigger.setText(editedMood.getTrigger());
+
+            //display image
+            if (editedMood.getImageBase64() != null && !editedMood.getImageBase64().isEmpty()) {
+                moodImagePreview.setImageBitmap(ImageUtils.decodeBase64(editedMood.getImageBase64()));
+                moodImagePreview.setVisibility(View.VISIBLE);
+                ImageButton removePreviewButton = view.findViewById(R.id.remove_preview);
+                removePreviewButton.setVisibility(View.VISIBLE);
+            }
+        }
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            AlertDialog dialog = builder
+                    .setView(view)
+                    .setTitle(isEditMode ? "Edit Mood Event" :"Add Mood Event")
+                    .setNegativeButton("Cancel", null)
+                    .setPositiveButton(isEditMode ? "Save" : "Add", null)
+                    .create();
 
         dialog.setOnShowListener(dialog1 -> {
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
@@ -141,27 +171,36 @@ public class MoodFormFragment extends DialogFragment {
                 MoodEmotionEnum selectedEmotion = MoodEmotionEnum.values()[emotion.getSelectedItemPosition()];
 
                 if (isEditMode) {
-                    if (moodBeingEdited.getEmotion() == selectedEmotion) {
-                        // Emotion is not changed → Modify the existing Mood object in place
-                        moodBeingEdited.setSocialSituation(MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()]);
-                        moodBeingEdited.setTrigger(inputtedTrigger);
-                        moodBeingEdited.setImageBase64(imageViewToBase64(view.findViewById(R.id.mood_image_preview)));
+                    Mood newMood = Mood.createMood(
+                            selectedEmotion, // New Emotion
+                            MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
+                            trigger.getText().toString(),
+                            moodBeingEdited.getAuthor(),
+                            moodBeingEdited.getDate(),
+                            imageViewToBase64(view.findViewById(R.id.mood_image_preview))
+                    );
 
-                        listener.updateMood(); // Notify adapter to refresh UI
-                    } else {
-                        // Emotion has changed → Create a new Mood object
-                        Mood newMood = Mood.createMood(
-                                selectedEmotion, // New Emotion
-                                moodBeingEdited.getSocialSituation(),
-                                inputtedTrigger,
-                                moodBeingEdited.getAuthor(),
-                                moodBeingEdited.getDate(),
-                                imageViewToBase64(view.findViewById(R.id.mood_image_preview))
-                        );
+//                    if (moodBeingEdited.getEmotion() == selectedEmotion) {
+//                        // Emotion is not changed → Modify the existing Mood object in place
+//                        moodBeingEdited.setSocialSituation(MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()]);
+//                        moodBeingEdited.setTrigger(trigger.getText().toString());
+//                        //moodBeingEdited.setImageBase64(imageViewToBase64(view.findViewById(R.id.mood_image_preview)));
+//
+//                        listener.updateMood(); // Notify adapter to refresh UI
+//                    } else {
+//                        // Emotion has changed → Create a new Mood object
+//                        Mood newMood = Mood.createMood(
+//                                selectedEmotion, // New Emotion
+//                                moodBeingEdited.getSocialSituation(),
+//                                inputtedTrigger,
+//                                moodBeingEdited.getAuthor(),
+//                                moodBeingEdited.getDate(),
+//                                imageViewToBase64(view.findViewById(R.id.mood_image_preview))
+//                        );
 
                         newMood.setId(moodBeingEdited.getId()); // Preserve Firestore document ID
                         listener.replaceMood(moodBeingEdited, newMood); // Notify Adapter
-                    }
+
                 } else {
                     // Add a new mood event
                     Mood newMood = Mood.createMood(

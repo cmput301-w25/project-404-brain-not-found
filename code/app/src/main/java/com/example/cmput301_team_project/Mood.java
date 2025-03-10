@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 
 import com.google.firebase.firestore.Exclude;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -13,7 +14,7 @@ import java.util.TimeZone;
  * Use {@link Mood#createMood(MoodEmotionEnum, MoodSocialSituationEnum, String, String, Date, String)} factory method
  * to create the correct subclass instance of the base class
  */
-public abstract class Mood {
+public abstract class Mood implements Serializable {
     private String id; // Firestore mood document ID
     private MoodSocialSituationEnum socialSituation;
     private String trigger;
