@@ -22,8 +22,8 @@ public class MoodAnger extends Mood {
         return MoodEmotionEnum.ANGER;
     }
 
-    @Override
     @Exclude
+    @Override
     public int getColour() {
         return R.color.anger;
     }
@@ -32,5 +32,9 @@ public class MoodAnger extends Mood {
     @Exclude
     public int getEmoji() {
         return R.string.emoji_anger;
+    }
+
+    public int getDisplayName(){
+        return R.string.mood_anger;
     }
 }
