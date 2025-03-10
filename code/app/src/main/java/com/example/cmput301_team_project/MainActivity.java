@@ -13,6 +13,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+/**
+ * The main activity that serves as the entry point for the application after login.
+ * It manages navigation between different fragments using a bottom navigation bar.
+ */
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -38,6 +42,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Replaces the current fragment with the specified fragment.
+     *
+     * @param fragment The fragment to display.
+     */
     private void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
