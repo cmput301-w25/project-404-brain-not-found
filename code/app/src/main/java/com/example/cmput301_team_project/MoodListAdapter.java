@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -77,12 +78,16 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
 
 
         if (mood != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+            SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
             moodClass.setText(mood.getDisplayName());
             emoji.setText(mood.getEmoji());
-            moodDate.setText(mood.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate().toString());
-            socialSituation.setText(mood.getSocialSituation().toString());
+            moodDate.setText(dateFormat.format(mood.getDate()));
+            if (mood.getSocialSituation() != MoodSocialSituationEnum.NONE){
+                socialSituation.setText(mood.getSocialSituation().getDropdownDisplayName(context).toLowerCase());
+            }
             triggerName.setText(mood.getTrigger());
-            moodTime.setText(mood.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm")).toString());
+            moodTime.setText(timeFormat.format(mood.getDate()));
             moodImage.setImageBitmap(ImageUtils.decodeBase64(mood.getImageBase64()));
 
             cardView.setCardBackgroundColor(getContext().getResources().getColor(mood.getColour(), getContext().getTheme()));
