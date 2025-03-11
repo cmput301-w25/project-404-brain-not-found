@@ -3,7 +3,6 @@ package com.example.cmput301_team_project;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -13,8 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.security.NoSuchAlgorithmException;
@@ -22,7 +19,7 @@ import java.security.spec.InvalidKeySpecException;
 import android.util.Base64;
 
 /**
- * A simple {@link Fragment} subclass for signup.
+ * A simple {@link Fragment} subclass.
  * Use the {@link SignupFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
@@ -58,33 +55,29 @@ public class SignupFragment extends Fragment {
         String password = passwordInput.getText().toString();
 
 
-        TextInputLayout usernameLayout = view.findViewById(R.id.signup_username_layout);
-        TextInputLayout passwordLayout = view.findViewById(R.id.signup_password_layout);
-
-
         if (username.isEmpty()){
-            usernameInput.setError("Username cannot be empty");
+            usernameInput.setError(getString(R.string.empty_username_error));
             return;
         }
         if (password.isEmpty()){
-            passwordInput.setError("Password cannot be empty");
+            passwordInput.setError(getString(R.string.empty_password_error));
             return;
         }
 
         byte[] salt = userDatabaseService.generateSalt();
         String hashed = userDatabaseService.hashPassword(password, salt);
-        userDatabaseService.userExists(username).addOnCompleteListener(new OnCompleteListener<Boolean>() {
-            @Override
-            public void onComplete(@NonNull Task<Boolean> task) {
-                if (!task.getResult().booleanValue()){
-                    AppUser newUser = new AppUser(username, hashed, Base64.encodeToString(salt, Base64.NO_WRAP));
-                    userDatabaseService.addUser(newUser);
-                    sessionManager.setCurrentUser(username);
-                    Intent myIntent = new Intent(getContext(), MainActivity.class);
-                    getContext().startActivity(myIntent);
-                }else{
-                    usernameInput.setError("Username already taken");
-                }
+
+        userDatabaseService.userExists(username).addOnCompleteListener(task -> {
+            if (!task.getResult()){
+                usernameInput.setError(null);
+                AppUser newUser = new AppUser(username, hashed, Base64.encodeToString(salt, Base64.NO_WRAP));
+                userDatabaseService.addUser(newUser);
+                sessionManager.setCurrentUser(username);
+                Intent myIntent = new Intent(getContext(), MainActivity.class);
+                getContext().startActivity(myIntent);
+            }
+            else {
+                usernameInput.setError(getString(R.string.username_exists_error));
             }
         });
     }
