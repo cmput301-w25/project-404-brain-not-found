@@ -17,6 +17,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+/**
+ * UI tests for all login and signup related actions
+ */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class LoginSignupActivityTest extends BaseActivityTest {

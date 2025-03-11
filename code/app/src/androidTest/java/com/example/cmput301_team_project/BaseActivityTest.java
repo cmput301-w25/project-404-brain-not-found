@@ -16,6 +16,10 @@ import java.net.URL;
 import java.util.Objects;
 
 
+/**
+ * Base UI test class. All other intent testing classes must extend this class.
+ * Performs firebase emulator setup, seeding, and teardown.
+ */
 public class BaseActivityTest {
 
     @BeforeClass
