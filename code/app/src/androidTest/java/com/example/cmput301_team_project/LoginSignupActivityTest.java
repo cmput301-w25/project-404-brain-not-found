@@ -2,6 +2,7 @@ package com.example.cmput301_team_project;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -28,7 +29,9 @@ public class LoginSignupActivityTest extends BaseActivityTest {
     public void logInPasswordErrorShown() throws InterruptedException {
         Thread.sleep(500);
         onView(withId(R.id.login_button)).perform(click());
-        onView(withId(R.id.login_username)).perform(ViewActions.typeText("hello"));
+        onView(withId(R.id.login_username))
+                .perform(ViewActions.typeText("hello"))
+                .perform(closeSoftKeyboard());
         onView(withId(R.id.button_login)).perform(click());
         onView(withId(R.id.login_password)).check(matches(hasErrorText("Password cannot be empty")));
 
@@ -38,7 +41,9 @@ public class LoginSignupActivityTest extends BaseActivityTest {
     public void logInUserErrorShown() throws InterruptedException {
         Thread.sleep(500);
         onView(withId(R.id.login_button)).perform(click());
-        onView(withId(R.id.login_password)).perform(ViewActions.typeText("hello"));
+        onView(withId(R.id.login_password))
+                .perform(ViewActions.typeText("hello"))
+                .perform(closeSoftKeyboard());
         onView(withId(R.id.button_login)).perform(click());
         onView(withId(R.id.login_username)).check(matches(hasErrorText("Username cannot be empty")));
     }
@@ -47,7 +52,9 @@ public class LoginSignupActivityTest extends BaseActivityTest {
     public void SignUpPasswordErrorShown() throws InterruptedException {
         Thread.sleep(500);
         onView(withId(R.id.signup_button)).perform(click());
-        onView(withId(R.id.signup_username)).perform(ViewActions.typeText("hello"));
+        onView(withId(R.id.signup_username))
+                .perform(ViewActions.typeText("hello"))
+                .perform(closeSoftKeyboard());
         onView(withId(R.id.button_signin)).perform(click());
         onView(withId(R.id.signup_password)).check(matches(hasErrorText("Password cannot be empty")));
 
@@ -57,7 +64,9 @@ public class LoginSignupActivityTest extends BaseActivityTest {
     public void signUpUserEmptyErrorShown() throws InterruptedException {
         Thread.sleep(500);
         onView(withId(R.id.signup_button)).perform(click());
-        onView(withId(R.id.signup_password)).perform(ViewActions.typeText("hello"));
+        onView(withId(R.id.signup_password))
+                .perform(ViewActions.typeText("hello"))
+                .perform(closeSoftKeyboard());
         onView(withId(R.id.button_signin)).perform(click());
         onView(withId(R.id.signup_username)).check(matches(hasErrorText("Username cannot be empty")));
     }
@@ -67,8 +76,12 @@ public class LoginSignupActivityTest extends BaseActivityTest {
     public void signUpUserErrorShown() throws InterruptedException {
         Thread.sleep(500);
         onView(withId(R.id.signup_button)).perform(click());
-        onView(withId(R.id.signup_username)).perform(ViewActions.typeText("Henrietta"));
-        onView(withId(R.id.signup_password)).perform(ViewActions.typeText("henrietta"));
+        onView(withId(R.id.signup_username))
+                .perform(ViewActions.typeText("Henrietta"))
+                .perform(closeSoftKeyboard());
+        onView(withId(R.id.signup_password))
+                .perform(ViewActions.typeText("henrietta"))
+                .perform(closeSoftKeyboard());
         onView(withId(R.id.button_signin)).perform(click());
         onView(withId(R.id.signup_username)).check(matches(hasErrorText("Username already taken")));
     }
@@ -77,8 +90,12 @@ public class LoginSignupActivityTest extends BaseActivityTest {
     public void incorrectPasswordErrorShown() throws InterruptedException {
         Thread.sleep(500);
         onView(withId(R.id.login_button)).perform(click());
-        onView(withId(R.id.login_username)).perform(ViewActions.typeText("Henrietta"));
-        onView(withId(R.id.login_password)).perform(ViewActions.typeText("Henrietta"));
+        onView(withId(R.id.login_username))
+                .perform(ViewActions.typeText("Henrietta"))
+                .perform(closeSoftKeyboard());
+        onView(withId(R.id.login_password))
+                .perform(ViewActions.typeText("Henrietta"))
+                .perform(closeSoftKeyboard());
         onView(withId(R.id.button_login)).perform(click());
         onView(withId(R.id.login_password)).check(matches(hasErrorText("Incorrect password")));
     }
