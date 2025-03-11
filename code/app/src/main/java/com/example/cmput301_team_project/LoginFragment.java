@@ -12,8 +12,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.google.android.material.textfield.TextInputLayout;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
@@ -50,14 +48,12 @@ public class LoginFragment extends Fragment {
         EditText passwordInput = (EditText) view.findViewById(R.id.login_password);
         String username = usernameInput.getText().toString();
         String password = passwordInput.getText().toString();
-        TextInputLayout usernameLayout = view.findViewById(R.id.login_user_layout);
-        TextInputLayout passwordLayout = view.findViewById(R.id.login_password_layout);
 
 
         if (username.isEmpty()){
-            usernameInput.setError("Username cannot be empty");
+            usernameInput.setError(getString(R.string.empty_username_error));
         }else if (password.isEmpty()){
-            passwordInput.setError("Password cannot be empty");
+            passwordInput.setError(getString(R.string.empty_password_error));
         }else{
             userDatabaseService.userExists(username).addOnCompleteListener(task -> {
                 if (task.getResult()) {
@@ -65,7 +61,7 @@ public class LoginFragment extends Fragment {
 
                     userDatabaseService.validateCredentials(username, password).addOnCompleteListener(validationTask -> {
                         if(validationTask.isSuccessful() && validationTask.getResult()) {
-                            passwordInput.setError("");
+                            passwordInput.setError(null);
                             sessionManager.setCurrentUser(username);
                             Intent myIntent = new Intent(getContext(), MainActivity.class);
                             getContext().startActivity(myIntent);

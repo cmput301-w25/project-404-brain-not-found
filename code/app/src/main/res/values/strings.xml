@@ -42,4 +42,7 @@
     <string name="edit">Edit</string>
     <string name="trigger_too_many_chars">Trigger must be under %d characters</string>
     <string name="trigger_too_many_words">Trigger must have at most %d words</string>
+    <string name="empty_username_error">Username cannot be empty</string>
+    <string name="empty_password_error">Password cannot be empty</string>
+    <string name="username_exists_error">Username already taken</string>
 </resources>
