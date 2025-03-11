@@ -12,13 +12,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.google.android.material.textfield.TextInputLayout;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} subclass for login.
  * Use the {@link LoginFragment#newInstance} factory method to
  * create an instance of this fragment.
  */

@@ -12,14 +12,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.google.android.material.textfield.TextInputLayout;
-
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import android.util.Base64;
 
 /**
- * A simple {@link Fragment} subclass.
+ * A simple {@link Fragment} subclass for signup.
  * Use the {@link SignupFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
