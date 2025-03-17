@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">CMPUT301-Team-Project</string>
-    <string name ="app_title">Moodster</string>
+    <string name="app_title">Moodster</string>
     <string name="trigger">Trigger</string>
     <string name="anger">Anger</string>
     <string name="confusion">Confusion</string>
@@ -45,4 +45,10 @@
     <string name="empty_username_error">Username cannot be empty</string>
     <string name="empty_password_error">Password cannot be empty</string>
     <string name="username_exists_error">Username already taken</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="requests">Requests</string>
+    <string name="find_people">People</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
 </resources>

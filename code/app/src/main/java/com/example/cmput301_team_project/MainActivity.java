@@ -38,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
             if(item.getItemId() == R.id.mood_history_icon) {
                 replaceFragment(MoodHistoryFragment.newInstance());
             }
+            else if(item.getItemId() == R.id.user_icon) {
+                replaceFragment(UserFragment.newInstance());
+            }
             return true;
         });
     }
