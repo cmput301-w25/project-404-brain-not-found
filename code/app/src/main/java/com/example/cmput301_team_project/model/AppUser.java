@@ -6,6 +6,7 @@ package com.example.cmput301_team_project.model;
  */
 public class AppUser {
     private String username;
+    private String name;
     private String password;
     private String salt;
 
@@ -16,8 +17,9 @@ public class AppUser {
      * @param password The hashed password of the user.
      * @param salt The salt used for password hashing.
      */
-    public AppUser(String username, String password, String salt){
+    public AppUser(String username, String name, String password, String salt){
         this.username = username;
+        this.name = name;
         this.password = password;
         this.salt = salt;
     }
@@ -31,5 +33,9 @@ public class AppUser {
 
     public String getSalt() {
         return salt;
+    }
+
+    public String getName() {
+        return name;
     }
 }

@@ -53,8 +53,10 @@ public class SignupFragment extends Fragment {
      */
     public void signUp(View view) throws NoSuchAlgorithmException, InvalidKeySpecException {
         EditText usernameInput = view.findViewById(R.id.signup_username);
+        EditText nameInput = view.findViewById(R.id.signup_name);
         EditText passwordInput = view.findViewById(R.id.signup_password);
         String username = usernameInput.getText().toString();
+        String name = nameInput.getText().toString();
         String password = passwordInput.getText().toString();
 
 
@@ -73,7 +75,7 @@ public class SignupFragment extends Fragment {
         userDatabaseService.userExists(username).addOnCompleteListener(task -> {
             if (!task.getResult()){
                 usernameInput.setError(null);
-                AppUser newUser = new AppUser(username, hashed, Base64.encodeToString(salt, Base64.NO_WRAP));
+                AppUser newUser = new AppUser(username, name, hashed, Base64.encodeToString(salt, Base64.NO_WRAP));
                 userDatabaseService.addUser(newUser);
                 sessionManager.setCurrentUser(username);
                 Intent myIntent = new Intent(getContext(), MainActivity.class);
