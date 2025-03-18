@@ -4,6 +4,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.example.cmput301_team_project.db.MoodDatabaseService;
+import com.example.cmput301_team_project.enums.MoodEmotionEnum;
+import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
+import com.example.cmput301_team_project.model.Mood;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
