@@ -27,6 +27,8 @@ import android.util.Base64;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
+import kotlin.NotImplementedError;
+
 /**
  * Singleton class to manage user-related operations with the firestore database
  * Handles all user-related queries
@@ -113,7 +115,7 @@ public class UserDatabaseService extends BaseDatabaseService {
      * Searches for users in the database
      *
      * @param query search query
-     * @return A {@link Task} that resolves to list of users matching the query
+     * @return A {@link Task} that resolves to a list of users matching the query
      */
     public Task<List<PublicUser>> userSearch(String query) {
         Task<QuerySnapshot> usernameQuery = usersRef.orderBy("usernameLower")
@@ -144,6 +146,30 @@ public class UserDatabaseService extends BaseDatabaseService {
                     return new ArrayList<>();
                 }
         });
+    }
+
+    /**
+     * Searches for followers of a given user in the database
+     *
+     * @param username username of the user whose followers the query searches in
+     * @param query search query
+     * @return A {@link Task} that resolves to a list of followers of the user matching the query
+     */
+    public Task<List<PublicUser>> userFollowersSearch(String username, String query) {
+        // TODO: implement search among followers, preferably using the existing userSearch function or with some refactoring of it
+        throw new NotImplementedError();
+    }
+
+    /**
+     * Searches for users followed by a given user in the database
+     *
+     * @param username username of the user whose following the query searches in
+     * @param query search query
+     * @return A {@link Task} that resolves to a list of users followed by the user matching the query
+     */
+    public Task<List<PublicUser>> userFollowingSearch(String username, String query) {
+        // TODO: implement search among following, preferably using the existing userSearch function or with some refactoring of it
+        throw new NotImplementedError();
     }
 
     /**

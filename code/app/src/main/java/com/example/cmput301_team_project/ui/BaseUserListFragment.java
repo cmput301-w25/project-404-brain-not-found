@@ -11,10 +11,14 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.example.cmput301_team_project.R;
+import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.UserButtonAction;
+import com.example.cmput301_team_project.model.PublicUser;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,12 +53,19 @@ public abstract class BaseUserListFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                // TODO: this should be different for each case depending on button action after we implement following
-                userDatabaseService.userSearch(query).addOnCompleteListener(task -> {
-                    if(task.isSuccessful()) {
-                        userAdapter.replaceItems(task.getResult());
-                    }
-                });
+                String currentUser = SessionManager.getInstance().getCurrentUser();
+                Task<List<PublicUser>> searchTask;
+
+                switch (getUserButtonAction()) {
+                    case FOLLOW -> searchTask = userDatabaseService.userSearch(query);
+                    case UNFOLLOW -> searchTask = userDatabaseService.userFollowingSearch(currentUser, query);
+                    case REMOVE -> searchTask = userDatabaseService.userFollowersSearch(currentUser, query);
+                    default -> throw new IllegalStateException("Unexpected action: " + getUserButtonAction());
+                }
+
+                searchTask.addOnSuccessListener(users -> userAdapter.replaceItems(users))
+                        .addOnFailureListener(users -> userAdapter.clear());
+
                 return true;
             }
 
