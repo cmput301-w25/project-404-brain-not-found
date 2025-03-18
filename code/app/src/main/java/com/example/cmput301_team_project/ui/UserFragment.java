@@ -10,6 +10,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.example.cmput301_team_project.R;
 import com.google.android.material.tabs.TabLayout;
@@ -59,7 +60,7 @@ public class UserFragment extends Fragment {
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             switch (position) {
                 case 0: tab.setText("Requests"); break;
-                case 1: tab.setText("Find People"); break;
+                case 1: tab.setText("People"); break;
                 case 2: tab.setText("Followers"); break;
                 case 3: tab.setText("Following"); break;
             }

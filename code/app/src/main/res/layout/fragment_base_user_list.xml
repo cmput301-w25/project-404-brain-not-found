@@ -23,7 +23,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:iconifiedByDefault="false"
-            android:searchHintIcon="@null"
             android:queryHint="Search..."
             android:queryBackground="@android:color/transparent"
             android:closeIcon="@drawable/ic_baseline_close_24"
@@ -33,6 +32,7 @@
     <ListView
         android:id="@+id/user_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"/>
 
 </LinearLayout>
