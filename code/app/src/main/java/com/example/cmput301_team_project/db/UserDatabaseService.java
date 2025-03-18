@@ -2,14 +2,26 @@ package com.example.cmput301_team_project.db;
 
 
 import com.example.cmput301_team_project.model.AppUser;
+import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import android.util.Base64;
 
 import javax.crypto.SecretKeyFactory;
@@ -49,6 +61,12 @@ public class UserDatabaseService extends BaseDatabaseService {
     public void addUser(AppUser user) {
         DocumentReference uref = usersRef.document(user.getUsername());
         uref.set(user);
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("usernameLower", user.getUsername().toLowerCase());
+        updates.put("nameLower", user.getName().toLowerCase());
+
+        uref.update(updates);
     }
 
     /**
@@ -90,8 +108,42 @@ public class UserDatabaseService extends BaseDatabaseService {
                 });
     }
 
-    public void userSearch(String query) {
 
+    /**
+     * Searches for users in the database
+     *
+     * @param query search query
+     * @return A {@link Task} that resolves to list of users matching the query
+     */
+    public Task<List<PublicUser>> userSearch(String query) {
+        Task<QuerySnapshot> usernameQuery = usersRef.orderBy("usernameLower")
+                .startAt(query.toLowerCase())
+                .endAt(query.toLowerCase() + "\uf8ff")
+                .get();
+
+        Task<QuerySnapshot> nameQuery = usersRef.orderBy("nameLower")
+                .startAt(query.toLowerCase())
+                .endAt(query.toLowerCase() + "\uf8ff")
+                .get();
+
+        return Tasks.whenAllComplete(usernameQuery, nameQuery).continueWith(results -> {
+                if(results.isSuccessful()) {
+                    Set<DocumentSnapshot> documentSnapshotSet = new HashSet<>();
+
+                    for(Task<?> task : results.getResult()) {
+                        if(task.isSuccessful() && task.getResult() instanceof QuerySnapshot documents) {
+                            documentSnapshotSet.addAll(documents.getDocuments());
+                        }
+                    }
+
+                    return documentSnapshotSet.stream()
+                            .map(d -> new PublicUser(d.getString("username"), d.getString("name")))
+                            .collect(Collectors.toCollection(ArrayList::new));
+                }
+                else {
+                    return new ArrayList<>();
+                }
+        });
     }
 
     /**

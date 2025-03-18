@@ -61,4 +61,10 @@ public class UserListAdapter extends ArrayAdapter<PublicUser> {
 
         return view;
     }
+
+    public void replaceItems(List<PublicUser> items) {
+        clear();
+        addAll(items);
+        notifyDataSetChanged();
+    }
 }
