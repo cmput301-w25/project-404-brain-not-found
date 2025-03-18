@@ -12,12 +12,12 @@ public class UserPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        switch (position) {
-            case 1: return RequestsFragment.newInstance();
-            case 2: return PeopleFragment.newInstance();
+        return switch (position) {
+            case 0 -> RequestsFragment.newInstance();
+            case 2 -> FollowersFragment.newInstance();
+            case 3 -> FollowingFragment.newInstance();
+            default -> PeopleFragment.newInstance();
         };
-
-        return PeopleFragment.newInstance();
     }
 
     @Override

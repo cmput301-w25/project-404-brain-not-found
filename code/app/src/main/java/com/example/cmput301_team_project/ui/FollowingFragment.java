@@ -18,7 +18,7 @@ public class FollowingFragment extends BaseUserListFragment {
         super();
     }
 
-    public FollowingFragment getInstance() {
+    public static FollowingFragment newInstance() {
         return new FollowingFragment();
     }
 }

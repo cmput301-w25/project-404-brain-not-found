@@ -90,6 +90,10 @@ public class UserDatabaseService extends BaseDatabaseService {
                 });
     }
 
+    public void userSearch(String query) {
+
+    }
+
     /**
      * One user requests permission from another user to follow
      *

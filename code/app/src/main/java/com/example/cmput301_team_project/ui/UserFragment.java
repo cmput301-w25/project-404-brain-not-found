@@ -2,13 +2,18 @@ package com.example.cmput301_team_project.ui;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.cmput301_team_project.R;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -39,5 +44,25 @@ public class UserFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_user, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        UserPagerAdapter userPagerAdapter = new UserPagerAdapter(this);
+        TabLayout tabLayout = view.findViewById(R.id.user_tab_layout);
+        ViewPager2 viewPager = view.findViewById(R.id.view_pager);
+
+        viewPager.setAdapter(userPagerAdapter);
+
+        new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+            switch (position) {
+                case 0: tab.setText("Requests"); break;
+                case 1: tab.setText("Find People"); break;
+                case 2: tab.setText("Followers"); break;
+                case 3: tab.setText("Following"); break;
+            }
+        }).attach();
     }
 }

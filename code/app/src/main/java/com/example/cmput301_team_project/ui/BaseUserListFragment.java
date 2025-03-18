@@ -2,12 +2,15 @@ package com.example.cmput301_team_project.ui;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.enums.UserButtonAction;
@@ -38,7 +41,13 @@ public abstract class BaseUserListFragment extends Fragment {
         ListView userList = view.findViewById(R.id.user_list);
         // TODO: Fetch users according to current search
         userList.setAdapter(new UserListAdapter(requireContext(), new ArrayList<>(), getString(getUserButtonTextId()), getUserButtonAction()));
-        // Inflate the layout for this fragment
+
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Toast.makeText(getContext(), "View initialized", Toast.LENGTH_SHORT).show();
     }
 }
