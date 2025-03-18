@@ -5,9 +5,9 @@ package com.example.cmput301_team_project.model;
  * This class stores the username, password (hashed), and salt for password hashing.
  */
 public class AppUser {
-    public String username;
-    public String password;
-    public String salt;
+    private String username;
+    private String password;
+    private String salt;
 
     /**
      * Constructs an AppUser object with the specified username, password, and salt.
@@ -25,4 +25,11 @@ public class AppUser {
         return username;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
 }

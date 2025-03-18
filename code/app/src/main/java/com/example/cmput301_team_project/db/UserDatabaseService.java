@@ -47,7 +47,7 @@ public class UserDatabaseService extends BaseDatabaseService {
     }
 
     public void addUser(AppUser user) {
-        DocumentReference uref = usersRef.document(user.username);
+        DocumentReference uref = usersRef.document(user.getUsername());
         uref.set(user);
     }
 
@@ -89,6 +89,37 @@ public class UserDatabaseService extends BaseDatabaseService {
                 return task.isSuccessful() && task.getResult().exists();
                 });
     }
+
+    /**
+     * One user requests permission from another user to follow
+     *
+     * @param follower username of the user who initiates the follow action
+     * @param target username of the user who is being followed
+     */
+    public void followUser(String follower, String target) {
+        // TODO: implement follow db query
+    }
+
+    /**
+     * One user unfollows another user
+     *
+     * @param follower username of the user who initiates the unfollow action
+     * @param target username of the user who is being unfollowed
+     */
+    public void unfollowUser(String follower, String target) {
+        // TODO: implement unfollow db query
+    }
+
+    /**
+     * One user revokes permission to follow them from another user
+     *
+     * @param following username of the user who is being followed by the other user
+     * @param target username of the user whose follow permission should be revoked
+     */
+    public void revokeFollow(String following, String target) {
+        // TODO: implement revoke permission db query
+    }
+
 
     /**
      * Hashes a password using the PBKDF2 algorithm with HMAC-SHA1.
