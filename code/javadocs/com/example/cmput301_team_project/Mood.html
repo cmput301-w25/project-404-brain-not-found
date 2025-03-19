@@ -85,7 +85,7 @@ loadScripts(document, 'script');</script>
 <h1 title="Class Mood" class="title">Class Mood</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance">com.example.cmput301_team_project.Mood</div>
+<div class="inheritance">com.example.cmput301_team_project.model.Mood</div>
 </div>
 <section class="class-description" id="class-description">
 <dl class="notes">
@@ -101,13 +101,13 @@ loadScripts(document, 'script');</script>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/io/Serializable.html" title="class or interface in java.io" class="external-link">Serializable</a></span></div>
 <div class="block">Base class for mood event.
- Use <a href="#createMood(com.example.cmput301_team_project.MoodEmotionEnum,com.example.cmput301_team_project.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.util.Date,java.lang.String)"><code>createMood(MoodEmotionEnum, MoodSocialSituationEnum, String, String, Date, String)</code></a> factory method
+ Use <a href="#createMood(com.example.cmput301_team_project.enums.MoodEmotionEnum,com.example.cmput301_team_project.enums.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.util.Date,java.lang.String)"><code>createMood(MoodEmotionEnum, MoodSocialSituationEnum, String, String, Date, String)</code></a> factory method
  to create the correct subclass instance of the base class</div>
 <dl class="notes">
 <dt>See Also:</dt>
 <dd>
 <ul class="tag-list">
-<li><a href="../../../serialized-form.html#com.example.cmput301_team_project.Mood">Serialized Form</a></li>
+<li><a href="../../../serialized-form.html#com.example.cmput301_team_project.model.Mood">Serialized Form</a></li>
 </ul>
 </dd>
 </dl>
@@ -124,13 +124,13 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <div class="table-header col-second">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>protected </code></div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.example.cmput301_team_project.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">Mood</a><wbr>(<a href="MoodSocialSituationEnum.html" title="enum class in com.example.cmput301_team_project">MoodSocialSituationEnum</a>&nbsp;socialSituation,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.example.cmput301_team_project.enums.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.lang.String)" class="member-name-link">Mood</a><wbr>(<a href="MoodSocialSituationEnum.html" title="enum class in com.example.cmput301_team_project">MoodSocialSituationEnum</a>&nbsp;socialSituation,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;trigger,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;author,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;imageBase64)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 <div class="col-first odd-row-color"><code>protected </code></div>
-<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(com.example.cmput301_team_project.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.util.Date,java.lang.String)" class="member-name-link">Mood</a><wbr>(<a href="MoodSocialSituationEnum.html" title="enum class in com.example.cmput301_team_project">MoodSocialSituationEnum</a>&nbsp;socialSituation,
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(com.example.cmput301_team_project.enums.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.util.Date,java.lang.String)" class="member-name-link">Mood</a><wbr>(<a href="MoodSocialSituationEnum.html" title="enum class in com.example.cmput301_team_project">MoodSocialSituationEnum</a>&nbsp;socialSituation,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;trigger,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;author,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Date.html" title="class or interface in java.util" class="external-link">Date</a>&nbsp;date,
@@ -151,7 +151,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createMood(com.example.cmput301_team_project.MoodEmotionEnum,com.example.cmput301_team_project.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.util.Date,java.lang.String)" class="member-name-link">createMood</a><wbr>(<a href="MoodEmotionEnum.html" title="enum class in com.example.cmput301_team_project">MoodEmotionEnum</a>&nbsp;emotion,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createMood(com.example.cmput301_team_project.enums.MoodEmotionEnum,com.example.cmput301_team_project.enums.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.util.Date,java.lang.String)" class="member-name-link">createMood</a><wbr>(<a href="MoodEmotionEnum.html" title="enum class in com.example.cmput301_team_project">MoodEmotionEnum</a>&nbsp;emotion,
  <a href="MoodSocialSituationEnum.html" title="enum class in com.example.cmput301_team_project">MoodSocialSituationEnum</a>&nbsp;socialSituation,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;trigger,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;author,
@@ -159,7 +159,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;imageBase64)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(com.example.cmput301_team_project.Mood)" class="member-name-link">equals</a><wbr>(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#equals(com.example.cmput301_team_project.model.Mood)" class="member-name-link">equals</a><wbr>(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getAuthor()" class="member-name-link">getAuthor</a>()</code></div>
@@ -204,7 +204,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setImageBase64(java.lang.String)" class="member-name-link">setImageBase64</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;imageBase64)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSocialSituation(com.example.cmput301_team_project.MoodSocialSituationEnum)" class="member-name-link">setSocialSituation</a><wbr>(<a href="MoodSocialSituationEnum.html" title="enum class in com.example.cmput301_team_project">MoodSocialSituationEnum</a>&nbsp;socialSituation)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setSocialSituation(com.example.cmput301_team_project.enums.MoodSocialSituationEnum)" class="member-name-link">setSocialSituation</a><wbr>(<a href="MoodSocialSituationEnum.html" title="enum class in com.example.cmput301_team_project">MoodSocialSituationEnum</a>&nbsp;socialSituation)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setTrigger(java.lang.String)" class="member-name-link">setTrigger</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;trigger)</code></div>
@@ -227,7 +227,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(com.example.cmput301_team_project.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.lang.String)">
+<section class="detail" id="&lt;init&gt;(com.example.cmput301_team_project.enums.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.lang.String)">
 <h3>Mood</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="element-name">Mood</span><wbr><span class="parameters">(<a href="MoodSocialSituationEnum.html" title="enum class in com.example.cmput301_team_project">MoodSocialSituationEnum</a>&nbsp;socialSituation,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;trigger,
@@ -236,7 +236,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 </section>
 </li>
 <li>
-<section class="detail" id="&lt;init&gt;(com.example.cmput301_team_project.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.util.Date,java.lang.String)">
+<section class="detail" id="&lt;init&gt;(com.example.cmput301_team_project.enums.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.util.Date,java.lang.String)">
 <h3>Mood</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="element-name">Mood</span><wbr><span class="parameters">(<a href="MoodSocialSituationEnum.html" title="enum class in com.example.cmput301_team_project">MoodSocialSituationEnum</a>&nbsp;socialSituation,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;trigger,
@@ -254,7 +254,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="createMood(com.example.cmput301_team_project.MoodEmotionEnum,com.example.cmput301_team_project.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.util.Date,java.lang.String)">
+<section class="detail" id="createMood(com.example.cmput301_team_project.enums.MoodEmotionEnum,com.example.cmput301_team_project.enums.MoodSocialSituationEnum,java.lang.String,java.lang.String,java.util.Date,java.lang.String)">
 <h3>createMood</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a></span>&nbsp;<span class="element-name">createMood</span><wbr><span class="parameters">(<a href="MoodEmotionEnum.html" title="enum class in com.example.cmput301_team_project">MoodEmotionEnum</a>&nbsp;emotion,
  <a href="MoodSocialSituationEnum.html" title="enum class in com.example.cmput301_team_project">MoodSocialSituationEnum</a>&nbsp;socialSituation,
@@ -318,7 +318,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 </section>
 </li>
 <li>
-<section class="detail" id="equals(com.example.cmput301_team_project.Mood)">
+<section class="detail" id="equals(com.example.cmput301_team_project.model.Mood)">
 <h3>equals</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a></span>&nbsp;<span class="element-name">equals</span><wbr><span class="parameters">(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</span></div>
 </section>
@@ -354,7 +354,7 @@ implements <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base
 </section>
 </li>
 <li>
-<section class="detail" id="setSocialSituation(com.example.cmput301_team_project.MoodSocialSituationEnum)">
+<section class="detail" id="setSocialSituation(com.example.cmput301_team_project.enums.MoodSocialSituationEnum)">
 <h3>setSocialSituation</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setSocialSituation</span><wbr><span class="parameters">(<a href="MoodSocialSituationEnum.html" title="enum class in com.example.cmput301_team_project">MoodSocialSituationEnum</a>&nbsp;socialSituation)</span></div>
 </section>

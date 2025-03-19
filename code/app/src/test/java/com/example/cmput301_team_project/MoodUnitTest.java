@@ -3,6 +3,18 @@ package com.example.cmput301_team_project;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
+import com.example.cmput301_team_project.enums.MoodEmotionEnum;
+import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
+import com.example.cmput301_team_project.model.Mood;
+import com.example.cmput301_team_project.model.MoodAnger;
+import com.example.cmput301_team_project.model.MoodConfusion;
+import com.example.cmput301_team_project.model.MoodDisgust;
+import com.example.cmput301_team_project.model.MoodFear;
+import com.example.cmput301_team_project.model.MoodHappiness;
+import com.example.cmput301_team_project.model.MoodSadness;
+import com.example.cmput301_team_project.model.MoodShame;
+import com.example.cmput301_team_project.model.MoodSurprise;
+
 import org.junit.Test;
 
 

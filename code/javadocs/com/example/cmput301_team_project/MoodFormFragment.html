@@ -87,7 +87,7 @@ loadScripts(document, 'script');</script>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
 <div class="inheritance">androidx.fragment.app.Fragment
 <div class="inheritance">androidx.fragment.app.DialogFragment
-<div class="inheritance">com.example.cmput301_team_project.MoodFormFragment</div>
+<div class="inheritance">com.example.cmput301_team_project.ui.MoodFormFragment</div>
 </div>
 </div>
 </div>
@@ -100,7 +100,7 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">MoodFormFragment</span>
 <span class="extends-implements">extends androidx.fragment.app.DialogFragment</span></div>
 <div class="block">A <code>DialogFragment</code> subclass that implements form for adding and editing moods
- Use the <a href="#newInstance(com.example.cmput301_team_project.Mood)"><code>newInstance(com.example.cmput301_team_project.Mood)</code></a> factory method to
+ Use the <a href="#newInstance(com.example.cmput301_team_project.model.Mood)"><code>newInstance(com.example.cmput301_team_project.model.Mood)</code></a> factory method to
  create an instance of this fragment.</div>
 </section>
 <section class="summary">
@@ -151,7 +151,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="MoodFormFragment.html" title="class in com.example.cmput301_team_project">MoodFormFragment</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newInstance(com.example.cmput301_team_project.Mood)" class="member-name-link">newInstance</a><wbr>(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;moodToEdit)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#newInstance(com.example.cmput301_team_project.model.Mood)" class="member-name-link">newInstance</a><wbr>(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;moodToEdit)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Use this factory method to create a new instance of
  this fragment using the provided parameters.</div>
@@ -163,7 +163,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#onCreateDialog(android.os.Bundle)" class="member-name-link">onCreateDialog</a><wbr>(android.os.Bundle&nbsp;savedInstanceState)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#populateFields(com.example.cmput301_team_project.Mood)" class="member-name-link">populateFields</a><wbr>(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#populateFields(com.example.cmput301_team_project.model.Mood)" class="member-name-link">populateFields</a><wbr>(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Populates the fields of the mood form dialog with the data from an existing mood.</div>
 </div>
@@ -205,7 +205,7 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="newInstance(com.example.cmput301_team_project.Mood)">
+<section class="detail" id="newInstance(com.example.cmput301_team_project.model.Mood)">
 <h3>newInstance</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="MoodFormFragment.html" title="class in com.example.cmput301_team_project">MoodFormFragment</a></span>&nbsp;<span class="element-name">newInstance</span><wbr><span class="parameters">(@Nullable
  <a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;moodToEdit)</span></div>
@@ -241,7 +241,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="populateFields(com.example.cmput301_team_project.Mood)">
+<section class="detail" id="populateFields(com.example.cmput301_team_project.model.Mood)">
 <h3>populateFields</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">populateFields</span><wbr><span class="parameters">(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</span></div>
 <div class="block">Populates the fields of the mood form dialog with the data from an existing mood.
