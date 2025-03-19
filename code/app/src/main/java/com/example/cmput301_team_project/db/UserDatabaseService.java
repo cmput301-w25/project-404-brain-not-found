@@ -110,6 +110,12 @@ public class UserDatabaseService extends BaseDatabaseService {
                 });
     }
 
+    private Task<QuerySnapshot> getBaseUserSearchQuery(String field, String query) {
+        return usersRef.orderBy(field)
+                .startAt(query.toLowerCase())
+                .endAt(query.toLowerCase() + "\uf8ff")
+                .get();
+    }
 
     /**
      * Searches for users in the database
@@ -118,17 +124,7 @@ public class UserDatabaseService extends BaseDatabaseService {
      * @return A {@link Task} that resolves to a list of users matching the query
      */
     public Task<List<PublicUser>> userSearch(String query) {
-        Task<QuerySnapshot> usernameQuery = usersRef.orderBy("usernameLower")
-                .startAt(query.toLowerCase())
-                .endAt(query.toLowerCase() + "\uf8ff")
-                .get();
-
-        Task<QuerySnapshot> nameQuery = usersRef.orderBy("nameLower")
-                .startAt(query.toLowerCase())
-                .endAt(query.toLowerCase() + "\uf8ff")
-                .get();
-
-        return Tasks.whenAllComplete(usernameQuery, nameQuery).continueWith(results -> {
+        return Tasks.whenAllComplete(getBaseUserSearchQuery("usernameLower", query), getBaseUserSearchQuery("nameLower", query)).continueWith(results -> {
                 if(results.isSuccessful()) {
                     Set<DocumentSnapshot> documentSnapshotSet = new HashSet<>();
 
@@ -156,7 +152,7 @@ public class UserDatabaseService extends BaseDatabaseService {
      * @return A {@link Task} that resolves to a list of followers of the user matching the query
      */
     public Task<List<PublicUser>> userFollowersSearch(String username, String query) {
-        // TODO: implement search among followers, preferably using the existing userSearch function or with some refactoring of it
+        // TODO: implement search among followers, getBaseUserSearchQuery can be reused here
         throw new NotImplementedError();
     }
 
@@ -168,7 +164,7 @@ public class UserDatabaseService extends BaseDatabaseService {
      * @return A {@link Task} that resolves to a list of users followed by the user matching the query
      */
     public Task<List<PublicUser>> userFollowingSearch(String username, String query) {
-        // TODO: implement search among following, preferably using the existing userSearch function or with some refactoring of it
+        // TODO: implement search among following, getBaseUserSearchQuery can be reused here
         throw new NotImplementedError();
     }
 
