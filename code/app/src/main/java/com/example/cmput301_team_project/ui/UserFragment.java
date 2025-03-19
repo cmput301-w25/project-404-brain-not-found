@@ -14,8 +14,10 @@ import android.widget.TextView;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.SessionManager;
+import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
-import com.example.cmput301_team_project.model.AppUser;
+import com.example.cmput301_team_project.enums.MoodEmotionEnum;
+import com.example.cmput301_team_project.model.Mood;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -27,10 +29,12 @@ import com.google.android.material.tabs.TabLayoutMediator;
 public class UserFragment extends Fragment {
     private SessionManager sessionManager;
     private final UserDatabaseService userDatabaseService;
+    private final MoodDatabaseService moodDatabaseService;
 
     public UserFragment() {
         sessionManager = SessionManager.getInstance();
         userDatabaseService = UserDatabaseService.getInstance();
+        moodDatabaseService = MoodDatabaseService.getInstance();
     }
 
     /**
@@ -57,13 +61,26 @@ public class UserFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        TextView userEmoji = view.findViewById(R.id.appUserEmoji);
+        userEmoji.setVisibility(View.INVISIBLE);
         TextView displayName = view.findViewById(R.id.displayName);
+        displayName.setVisibility(View.INVISIBLE);
         TextView username = view.findViewById(R.id.usernameDisplay);
         String currUser = sessionManager.getCurrentUser();
         username.setText(currUser);
         userDatabaseService.getDisplayName(currUser).addOnSuccessListener(name->{
             displayName.setText(name);
+            displayName.setVisibility(View.VISIBLE);
         });
+
+        moodDatabaseService.getMostRecentMood(currUser).addOnSuccessListener(emotion ->{
+            if (emotion != null){
+                Mood tempMood = Mood.createMood(MoodEmotionEnum.valueOf(emotion), null, null, null, null, null);
+                userEmoji.setText(tempMood.getEmoji());
+                userEmoji.setVisibility(View.VISIBLE);
+            }
+        });
+
 
 
         UserPagerAdapter userPagerAdapter = new UserPagerAdapter(this);
