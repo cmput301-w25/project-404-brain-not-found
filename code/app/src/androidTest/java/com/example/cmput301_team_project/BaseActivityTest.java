@@ -2,6 +2,10 @@ package com.example.cmput301_team_project;
 
 import android.util.Log;
 
+import com.example.cmput301_team_project.enums.MoodEmotionEnum;
+import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
+import com.example.cmput301_team_project.model.AppUser;
+import com.example.cmput301_team_project.model.Mood;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -46,7 +50,7 @@ public class BaseActivityTest {
         }
 
         AppUser[] users = {
-                new AppUser("Henrietta", "some_password", "salt")
+                new AppUser("Henrietta", "", "some_password", "salt")
         };
 
         for (AppUser user: users) {

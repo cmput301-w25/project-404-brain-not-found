@@ -85,8 +85,8 @@ loadScripts(document, 'script');</script>
 <h1 title="Class MoodDatabaseService" class="title">Class MoodDatabaseService</h1>
 </div>
 <div class="inheritance" title="Inheritance Tree"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">java.lang.Object</a>
-<div class="inheritance"><a href="BaseDatabaseService.html" title="class in com.example.cmput301_team_project">com.example.cmput301_team_project.BaseDatabaseService</a>
-<div class="inheritance">com.example.cmput301_team_project.MoodDatabaseService</div>
+<div class="inheritance"><a href="BaseDatabaseService.html" title="class in com.example.cmput301_team_project">com.example.cmput301_team_project.db.BaseDatabaseService</a>
+<div class="inheritance">com.example.cmput301_team_project.db.MoodDatabaseService</div>
 </div>
 </div>
 <section class="class-description" id="class-description">
@@ -103,7 +103,7 @@ loadScripts(document, 'script');</script>
 <section class="field-summary" id="field-summary">
 <h2>Field Summary</h2>
 <div class="inherited-list">
-<h3 id="fields-inherited-from-class-com.example.cmput301_team_project.BaseDatabaseService">Fields inherited from class&nbsp;com.example.cmput301_team_project.<a href="BaseDatabaseService.html" title="class in com.example.cmput301_team_project">BaseDatabaseService</a></h3>
+<h3 id="fields-inherited-from-class-com.example.cmput301_team_project.db.BaseDatabaseService">Fields inherited from class&nbsp;com.example.cmput301_team_project.<a href="BaseDatabaseService.html" title="class in com.example.cmput301_team_project">BaseDatabaseService</a></h3>
 <code><a href="BaseDatabaseService.html#db">db</a></code></div>
 </section>
 </li>
@@ -119,10 +119,10 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addMood(com.example.cmput301_team_project.Mood)" class="member-name-link">addMood</a><wbr>(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addMood(com.example.cmput301_team_project.model.Mood)" class="member-name-link">addMood</a><wbr>(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#deleteMood(com.example.cmput301_team_project.Mood)" class="member-name-link">deleteMood</a><wbr>(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#deleteMood(com.example.cmput301_team_project.model.Mood)" class="member-name-link">deleteMood</a><wbr>(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Find the mood event in database with doc ID and delete it</div>
 </div>
@@ -135,7 +135,7 @@ loadScripts(document, 'script');</script>
 <div class="block">this is the method to get all the documents in the moods collection</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateMood(com.example.cmput301_team_project.Mood)" class="member-name-link">updateMood</a><wbr>(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#updateMood(com.example.cmput301_team_project.model.Mood)" class="member-name-link">updateMood</a><wbr>(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -161,13 +161,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="addMood(com.example.cmput301_team_project.Mood)">
+<section class="detail" id="addMood(com.example.cmput301_team_project.model.Mood)">
 <h3>addMood</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addMood</span><wbr><span class="parameters">(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="deleteMood(com.example.cmput301_team_project.Mood)">
+<section class="detail" id="deleteMood(com.example.cmput301_team_project.model.Mood)">
 <h3>deleteMood</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">deleteMood</span><wbr><span class="parameters">(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</span></div>
 <div class="block">Find the mood event in database with doc ID and delete it</div>
@@ -185,7 +185,7 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="updateMood(com.example.cmput301_team_project.Mood)">
+<section class="detail" id="updateMood(com.example.cmput301_team_project.model.Mood)">
 <h3>updateMood</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">updateMood</span><wbr><span class="parameters">(<a href="Mood.html" title="class in com.example.cmput301_team_project">Mood</a>&nbsp;mood)</span></div>
 </section>
