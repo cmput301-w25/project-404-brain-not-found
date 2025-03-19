@@ -12,6 +12,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -59,6 +60,23 @@ public class MoodDatabaseService extends BaseDatabaseService {
         moodsRef.document(mood.getId()).delete();
     }
 
+    public Task<String> getMostRecentMood(String username){
+        return moodsRef
+                .whereEqualTo("author", username)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .limit(1)
+                .get().continueWith(task ->{
+                    if (!task.isSuccessful()){
+                        throw task.getException();
+                    }
+                    QuerySnapshot snap =  task.getResult();
+                    if (snap == null || snap.isEmpty()){
+                        return null;
+                    }
+                    DocumentSnapshot document = snap.getDocuments().get(0);
+                    return document.getString("emotion");
+                });
+    }
     /**this is the method to get all the documents in the moods collection*/
     public Task<List<Mood>> getMoodList() {
         //Log.d("username", SessionManager.getInstance().getCurrentUser());
@@ -133,6 +151,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
             return moodList;
         });
     }
+
 
     public void updateMood(Mood mood) {
         moodsRef.document(mood.getId()).set(mood);

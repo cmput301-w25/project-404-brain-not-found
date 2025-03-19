@@ -71,6 +71,16 @@ public class UserDatabaseService extends BaseDatabaseService {
         uref.update(updates);
     }
 
+    public Task<String> getDisplayName(String username){
+        DocumentReference uref = usersRef.document(username);
+        return uref.get().continueWith(task -> {
+            if(!task.isSuccessful()) {
+                throw task.getException();
+            }
+            return task.getResult().getString("name");
+        });
+    }
+
     /**
      * Validates a user's credentials by checking the hashed password.
      * This method retrieves the stored password hash and salt from Firestore,
