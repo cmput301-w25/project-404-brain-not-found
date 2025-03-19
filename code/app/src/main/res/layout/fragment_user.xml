@@ -6,19 +6,41 @@
     android:orientation="vertical"
     tools:context=".ui.UserFragment">
 
-    <TextView
-        android:id="@+id/displayName"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20sp"
-        android:text="Name"
-        android:textSize="48sp" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/appUserEmoji"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10sp"
+            android:layout_marginRight="1sp"
+            android:layout_weight="1"
+            android:text="😃"
+            android:textAlignment="center"
+            android:textSize="50sp" />
+
+        <TextView
+            android:id="@+id/displayName"
+            android:layout_width="310dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20sp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Name"
+            android:textSize="40sp" />
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/usernameDisplay"
-        android:layout_width="match_parent"
+        android:layout_width="365dp"
         android:layout_height="41dp"
-        android:layout_marginLeft="40sp"
+        android:layout_marginLeft="20sp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:text="TextView"
         android:textSize="24sp" />
 
