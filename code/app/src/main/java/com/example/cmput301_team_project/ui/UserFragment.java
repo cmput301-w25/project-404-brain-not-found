@@ -11,8 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.example.cmput301_team_project.R;
+import com.example.cmput301_team_project.SessionManager;
+import com.example.cmput301_team_project.db.UserDatabaseService;
+import com.example.cmput301_team_project.model.AppUser;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -22,9 +26,12 @@ import com.google.android.material.tabs.TabLayoutMediator;
  * create an instance of this fragment.
  */
 public class UserFragment extends Fragment {
+    private SessionManager sessionManager;
+    private final UserDatabaseService userDatabaseService;
 
     public UserFragment() {
-        // Required empty public constructor
+        sessionManager = SessionManager.getInstance();
+        userDatabaseService = UserDatabaseService.getInstance();
     }
 
     /**
@@ -32,6 +39,7 @@ public class UserFragment extends Fragment {
      * this fragment using the provided parameters.
      */
     public static UserFragment newInstance() {
+
         return new UserFragment();
     }
 
@@ -50,6 +58,14 @@ public class UserFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        TextView displayName = view.findViewById(R.id.displayName);
+        TextView username = view.findViewById(R.id.usernameDisplay);
+        String currUser = sessionManager.getCurrentUser();
+        username.setText(currUser);
+        userDatabaseService.getDisplayName(currUser).addOnSuccessListener(name->{
+            displayName.setText(name);
+        });
+
 
         UserPagerAdapter userPagerAdapter = new UserPagerAdapter(this);
         TabLayout tabLayout = view.findViewById(R.id.user_tab_layout);
