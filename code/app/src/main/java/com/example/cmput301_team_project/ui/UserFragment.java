@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
@@ -54,7 +55,7 @@ public class UserFragment extends Fragment {
         UserPagerAdapter userPagerAdapter = new UserPagerAdapter(this);
         TabLayout tabLayout = view.findViewById(R.id.user_tab_layout);
         ViewPager2 viewPager = view.findViewById(R.id.view_pager);
-
+        viewPager.setOffscreenPageLimit(userPagerAdapter.getItemCount());
         viewPager.setAdapter(userPagerAdapter);
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {

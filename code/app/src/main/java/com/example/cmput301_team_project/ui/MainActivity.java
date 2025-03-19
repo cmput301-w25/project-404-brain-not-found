@@ -1,9 +1,11 @@
 package com.example.cmput301_team_project.ui;
 
 import android.os.Bundle;
+import android.view.View;
+import android.view.WindowInsets;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -18,7 +20,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  * The main activity that serves as the entry point for the application after login.
  * It manages navigation between different fragments using a bottom navigation bar.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,11 +29,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, 0);
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
         BottomNavigationView navigation = findViewById(R.id.navigation_main);
+        navigation.setOnApplyWindowInsetsListener((v, insets) -> {
+            v.setPadding(0, 0, 0, 0);
+            return insets;
+        });
+
         // TODO: This should probably be changed to mood following list once its fragment is created so that's the first tab user sees
         replaceFragment(new MoodHistoryFragment());
 
