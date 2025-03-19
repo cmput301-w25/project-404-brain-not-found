@@ -18,10 +18,10 @@
             android:layout_marginLeft="10sp"
             android:layout_marginRight="1sp"
             android:layout_weight="1"
-            android:text="😃"
+            android:text="@string/emoji_emotionless"
             android:textAlignment="center"
             android:textSize="50sp"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
         <TextView
             android:id="@+id/displayName"

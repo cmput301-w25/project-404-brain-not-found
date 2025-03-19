@@ -20,6 +20,7 @@
     <string name="emoji_sadness">☹️</string>
     <string name="emoji_shame">😳</string>
     <string name="emoji_surprise">🫢</string>
+    <string name="emoji_emotionless">😶</string>
     <string name="social_alone">Alone</string>
     <string name="social_pair">With one other person</string>
     <string name="social_several">With two to several people</string>

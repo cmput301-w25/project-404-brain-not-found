@@ -78,6 +78,8 @@ public class UserFragment extends Fragment {
                 Mood tempMood = Mood.createMood(MoodEmotionEnum.valueOf(emotion), null, null, null, null, null);
                 userEmoji.setText(tempMood.getEmoji());
                 userEmoji.setVisibility(View.VISIBLE);
+            }else{
+                userEmoji.setVisibility(View.VISIBLE);
             }
         });
 
