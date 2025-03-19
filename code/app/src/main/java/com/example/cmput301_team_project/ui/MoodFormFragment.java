@@ -57,8 +57,6 @@ public class MoodFormFragment extends DialogFragment {
     private boolean isEditMode = false; // Flag to check if we're editing
     private Mood moodBeingEdited = null; // Reference to the mood being edited
 
-    private MoodDatabaseService moodDatabaseService;
-
     interface MoodFormDialogListener {
         void addMood(Mood mood);
         void replaceMood(Mood newMood);
@@ -66,7 +64,7 @@ public class MoodFormFragment extends DialogFragment {
     private MoodFormDialogListener listener;
 
     public MoodFormFragment() {
-        this.moodDatabaseService = MoodDatabaseService.getInstance();
+
     }
 
     /**

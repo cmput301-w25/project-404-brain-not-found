@@ -14,18 +14,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/navigation_main"/>
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navigation_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:elevation="8dp"
+        android:background="@drawable/nav_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:labelVisibilityMode="unlabeled"
         app:menu="@menu/bottom_nav_menu"
-        app:itemActiveIndicatorStyle="@style/Widget.Design.BottomNavigationView"
-        app:itemIconSize="32dp"/>
+        app:itemActiveIndicatorStyle="@null"
+        app:itemRippleColor="@null"
+        app:itemIconSize="28dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
