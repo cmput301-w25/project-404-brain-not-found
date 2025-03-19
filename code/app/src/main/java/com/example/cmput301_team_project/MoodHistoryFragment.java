@@ -19,7 +19,8 @@ import java.util.ArrayList;
  * Use the {@link MoodHistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MoodHistoryFragment extends Fragment implements MoodFormFragment.MoodFormDialogListener {
+public class MoodHistoryFragment extends Fragment implements MoodFormFragment.MoodFormDialogListener,
+                                                             MoodFilterFragment.MoodFilterDialogListener {
     private final MoodDatabaseService moodDatabaseService;
     private ListView moodListView;
     private MoodListAdapter moodListAdapter;
@@ -60,6 +61,10 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
             MoodFormFragment.newInstance(null).show(getChildFragmentManager(), "Add Mood Event");
         });
 
+        ImageButton filterMoodButton = view.findViewById(R.id.filter_button);
+        filterMoodButton.setOnClickListener( v -> {
+            MoodFilterFragment.newInstance().show(getChildFragmentManager(), "Filter Moods");
+        });
         loadMoodData();
         return view;
     }

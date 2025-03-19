@@ -7,20 +7,34 @@
     android:orientation="vertical"
     tools:context=".MoodHistoryFragment">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="6dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="6dp">
 
         <ImageButton
             android:id="@+id/add_mood_button"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:scaleType="fitXY"
             android:background="@null"
-            android:src="@drawable/ic_baseline_add_24"/>
-    </LinearLayout>
+            android:scaleType="fitXY"
+            android:layout_alignParentLeft="true"
+            android:src="@drawable/ic_baseline_add_24" />
+
+        <!-- change the button src if neccesary -->
+        <ImageButton
+            android:id="@+id/filter_button"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@null"
+            android:scaleType="fitXY"
+            android:layout_alignParentRight="true"
+            android:src="@android:drawable/ic_menu_sort_by_size"
+            android:tintMode="src_in"
+            app:tint="@color/black" />
+
+    </RelativeLayout>
 
     <ListView
         android:id="@+id/Mood_List"
