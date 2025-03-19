@@ -13,7 +13,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.cmput301_team_project.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import org.w3c.dom.Text;
 
 /**
  * The main activity that serves as the entry point for the application after login.
