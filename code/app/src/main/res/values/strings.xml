@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">CMPUT301-Team-Project</string>
+    <string name="app_title">Moodster</string>
     <string name="trigger">Trigger</string>
     <string name="anger">Anger</string>
     <string name="confusion">Confusion</string>
@@ -27,7 +28,27 @@
     <string name="add_image">Add Image</string>
     <string name="mood_image_preview">Mood Image Preview</string>
     <string name="remove_image">Remove Image</string>
-    <string name="image_size_exceeded">Image exceeds the size limit of 64KB</string>
+    <string name="image_size_exceeded">Image exceeds the size limit.</string>
     <string name="image_invalid">Invalid image. Please try again</string>
+    <string name="mood_disgusted">Disgusted</string>
+    <string name="mood_anger">Angry</string>
+    <string name="mood_confusion">Confused</string>
+    <string name="mood_fear">Scared</string>
+    <string name="mood_happiness">Happy</string>
+    <string name="mood_sadness">Sad</string>
+    <string name="mood_shame">Ashamed</string>
+    <string name="mood_surprise">Surprised</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
     <string name="trigger_too_many_chars">Trigger must be under %d characters</string>
+    <string name="empty_username_error">Username cannot be empty</string>
+    <string name="empty_password_error">Password cannot be empty</string>
+    <string name="username_exists_error">Username already taken</string>
+    <string name="requests">Requests</string>
+    <string name="find_people">People</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="remove">Remove</string>
 </resources>
