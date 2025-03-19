@@ -45,4 +45,5 @@
     <string name="empty_username_error">Username cannot be empty</string>
     <string name="empty_password_error">Password cannot be empty</string>
     <string name="username_exists_error">Username already taken</string>
+    <string name="get_current_location">Get Current Location</string>
 </resources>

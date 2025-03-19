@@ -7,6 +7,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
@@ -110,8 +111,9 @@ public class MoodDatabaseService extends BaseDatabaseService {
                         } catch (IllegalArgumentException e) {
                             // Keep the default NONE value
                         }
+                        GeoPoint location = null;
                         // Creating mood objects based on the emotion
-                        Mood mood = Mood.createMood(emotion, socialSituation, trigger, author, date, imageBase64);
+                        Mood mood = Mood.createMood(emotion, socialSituation, trigger, author, date, imageBase64, location);
                         if (mood != null) {
                             mood.setId(doc.getId()); // Set the Firestore document ID
                             moodList.add(mood);

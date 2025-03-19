@@ -5,16 +5,22 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-
+import android.Manifest;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -22,21 +28,31 @@ import androidx.fragment.app.Fragment;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.GeoPoint;
+
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * A {@link DialogFragment} subclass that implements form for adding and editing moods
@@ -52,6 +68,9 @@ public class MoodFormFragment extends DialogFragment {
     private Mood moodBeingEdited = null; // Reference to the mood being edited
 
     private MoodDatabaseService moodDatabaseService;
+
+    FusedLocationProviderClient fusedLocationProviderClient;
+    private final static int REQUEST_CODE=100;
 
     interface MoodFormDialogListener {
         void addMood(Mood mood);
@@ -114,6 +133,13 @@ public class MoodFormFragment extends DialogFragment {
 
         socialSituation.setOnItemSelectedListener(new HintDropdownItemSelectedListener());
         socialSituation.setAdapter(socialSituationAdapter);
+        Switch locationAcess = view.findViewById(R.id.Get_current_location);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(requireContext());
+        locationAcess.setOnCheckedChangeListener(((buttonView, isChecked) -> {
+             if (isChecked){
+                    getLastLocation(view);
+             }
+        }));
 
         if (isEditMode) {
             Mood editedMood = (Mood) getArguments().getSerializable("mood");
@@ -168,13 +194,15 @@ public class MoodFormFragment extends DialogFragment {
                 MoodEmotionEnum selectedEmotion = MoodEmotionEnum.values()[emotion.getSelectedItemPosition()];
 
                 if (isEditMode) {
+                    // New Emotion
                     Mood newMood = Mood.createMood(
                             selectedEmotion, // New Emotion
                             MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
                             trigger.getText().toString(),
                             moodBeingEdited.getAuthor(),
                             moodBeingEdited.getDate(),
-                            imageViewToBase64(view.findViewById(R.id.mood_image_preview))
+                            imageViewToBase64(view.findViewById(R.id.mood_image_preview)
+                            ), null
                     );
 
                     newMood.setId(moodBeingEdited.getId()); // Preserve Firestore document ID
@@ -188,8 +216,8 @@ public class MoodFormFragment extends DialogFragment {
                             inputtedTrigger,
                             SessionManager.getInstance().getCurrentUser(),
                             null,
-                            imageViewToBase64(view.findViewById(R.id.mood_image_preview))
-                    );
+                            imageViewToBase64(view.findViewById(R.id.mood_image_preview)
+                            ), null);
                     listener.addMood(newMood);
                 }
                 dialog.dismiss();
@@ -198,6 +226,53 @@ public class MoodFormFragment extends DialogFragment {
 
         return dialog;
     }
+    private void getLastLocation(View view) {
+        // Check if location permissions are granted
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            // Get the last known location using FusedLocationProviderClient
+            fusedLocationProviderClient.getLastLocation()
+                    .addOnSuccessListener(new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                // Get the latitude and longitude
+                                double latitude = location.getLatitude();
+                                double longitude = location.getLongitude();
+
+                                // Use Geocoder to reverse geocode if needed (optional)
+                                Geocoder geocoder = new Geocoder(requireContext(), Locale.getDefault());
+                                new Thread(() -> {
+                                    try {
+                                        List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+                                        if (addresses != null && !addresses.isEmpty()) {
+                                            String address = addresses.get(0).getAddressLine(0);  // Full address or you can extract parts like city, etc.
+                                            // Update UI on the main thread
+                                            getActivity().runOnUiThread(() -> {
+                                                TextView locationAddress = view.findViewById(R.id.current_location);
+                                                //Log.e("address", address);
+                                                locationAddress.setText(address);
+
+                                                // Create a GeoPoint (use your custom GeoPoint class or LatLng from Google Maps)
+                                                GeoPoint geoPoint = new GeoPoint(latitude, longitude);  // Or LatLng
+                                            });
+                                        }
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                        Log.e("Geocoder", "Unable to get address", e);
+                                    }
+                                }).start();
+                            }
+                        }
+                    });
+        } else {
+            // If permission is not granted, request permissions
+            ActivityCompat.requestPermissions(requireActivity(),
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    1);  // Request code, you can customize it
+        }
+    }
+
 
     /**
      * Checks if the trigger text is of valid length
