@@ -3,7 +3,6 @@ package com.example.cmput301_team_project.ui;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -17,7 +16,7 @@ import com.example.cmput301_team_project.R;
  * Handles user authentication flow by managing the login and signup fragments.
  * This activity allows users to navigate between the login, signup, and selection screens.
  */
-public class LoginSignupActivity extends AppCompatActivity implements LoginSignupFragment.onButtonClickListener{
+public class LoginSignupActivity extends BaseActivity implements LoginSignupFragment.onButtonClickListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

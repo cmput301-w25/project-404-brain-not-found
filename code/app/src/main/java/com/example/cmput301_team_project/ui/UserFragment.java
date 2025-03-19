@@ -10,7 +10,6 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.example.cmput301_team_project.R;
@@ -70,7 +69,7 @@ public class UserFragment extends Fragment {
         UserPagerAdapter userPagerAdapter = new UserPagerAdapter(this);
         TabLayout tabLayout = view.findViewById(R.id.user_tab_layout);
         ViewPager2 viewPager = view.findViewById(R.id.view_pager);
-
+        viewPager.setOffscreenPageLimit(userPagerAdapter.getItemCount());
         viewPager.setAdapter(userPagerAdapter);
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {

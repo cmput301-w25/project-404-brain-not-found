@@ -52,13 +52,10 @@ import java.util.Arrays;
  */
 public class MoodFormFragment extends DialogFragment {
     private final int MAX_IMAGE_SIZE = 65536;
-    private final int MAX_TRIGGER_LENGTH = 20;
-    private final int MAX_TRIGGER_WORDS = 3;
+    private final int MAX_TRIGGER_LENGTH = 200;
 
     private boolean isEditMode = false; // Flag to check if we're editing
     private Mood moodBeingEdited = null; // Reference to the mood being edited
-
-    private MoodDatabaseService moodDatabaseService;
 
     interface MoodFormDialogListener {
         void addMood(Mood mood);
@@ -67,7 +64,7 @@ public class MoodFormFragment extends DialogFragment {
     private MoodFormDialogListener listener;
 
     public MoodFormFragment() {
-        this.moodDatabaseService = MoodDatabaseService.getInstance();
+
     }
 
     /**
@@ -167,10 +164,6 @@ public class MoodFormFragment extends DialogFragment {
                     trigger.setError(String.format(getString(R.string.trigger_too_many_chars), MAX_TRIGGER_LENGTH));
                     return;
                 }
-                if (!isValidTriggerWordCount(inputtedTrigger)) {
-                    trigger.setError(String.format(getString(R.string.trigger_too_many_words), MAX_TRIGGER_WORDS));
-                    return;
-                }
 
                 MoodEmotionEnum selectedEmotion = MoodEmotionEnum.values()[emotion.getSelectedItemPosition()];
 
@@ -214,18 +207,6 @@ public class MoodFormFragment extends DialogFragment {
      * */
     private boolean isValidTriggerLength(String inputtedTrigger) {
         return inputtedTrigger.length() <= MAX_TRIGGER_LENGTH;
-    }
-
-    /**
-     * Checks if the trigger text is of valid word count
-     *
-     * @param inputtedTrigger The trigger to be validated
-     * @return {@code true} if the length of the trigger is less than {@code MAX_TRIGGER_WORDS} otherwise {@code false}
-     * */
-    private boolean isValidTriggerWordCount(String inputtedTrigger) {
-        // splits the trigger string into a list of words (separated by whitespace)
-        String[] words = inputtedTrigger.trim().split("\\s+");
-        return words.length <= MAX_TRIGGER_WORDS;
     }
 
     /**
