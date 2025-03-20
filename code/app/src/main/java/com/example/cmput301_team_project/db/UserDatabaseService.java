@@ -228,43 +228,62 @@ public class UserDatabaseService extends BaseDatabaseService {
         throw new NotImplementedError();
     }
 
-    public Task<List<Follow>> getRequests(String username) {
-        return requestsRef.whereEqualTo("target", username)
+    public Task<List<String>> getRequests(String username) {
+        return usersRef.document(username)
+                .collection("requestsReceived")
                 .get()
                 .continueWith(task -> {
-                   if(task.isSuccessful()) {
+                    if(task.isSuccessful()) {
                         return task.getResult().getDocuments()
                                 .stream()
-                                .map(d -> new Follow(d.getString("follower"), d.getString("target"), d.getId()))
+                                .map(DocumentSnapshot::getId)
                                 .collect(Collectors.toList());
-                   }
-                   return new ArrayList<>();
+                    }
+                    return new ArrayList<>();
                 });
     }
 
     /**
      * One user requests permission from another user to follow
      *
-     * @param follow follow request object to be added
      */
-    public void requestFollow(Follow follow) {
-        usersRef.document(follow.getTarget())
+    public void requestFollow(String follower, String target) {
+        usersRef.document(target)
                 .collection("requestsReceived")
-                .document(follow.getFollower())
+                .document(follower)
                 .set(new HashMap<>());
-        usersRef.document(follow.getFollower())
+        usersRef.document(follower)
                 .collection("requestsSent")
-                .document(follow.getTarget())
+                .document(target)
                 .set(new HashMap<>());
     }
 
-    public Task<DocumentReference> acceptRequest(Follow follow) {
-        return followersRef.add(follow)
-                .addOnSuccessListener(documentReference -> removeRequest(follow));
+    public Task<Void> acceptRequest(String follower, String target) {
+        Task<Void> followingTask = usersRef.document(follower)
+                .collection("following")
+                .document(target)
+                .set(new HashMap<>());
+
+        Task<Void> followerTask = usersRef.document(target)
+                .collection("followers")
+                .document(follower)
+                .set(new HashMap<>());
+
+        return Tasks.whenAll(followingTask, followerTask)
+                .continueWithTask(voidTask -> removeRequest(follower, target));
     }
 
-    public Task<Void> removeRequest(Follow follow) {
-        return requestsRef.document(follow.getId()).delete();
+    public Task<Void> removeRequest(String follower, String target) {
+        Task<Void> recievedTask = usersRef.document(target)
+                .collection("requestsReceived")
+                .document(follower)
+                .delete();
+        Task<Void> sentTask = usersRef.document(follower)
+                .collection("requestsSent")
+                .document(target)
+                .delete();
+
+        return Tasks.whenAll(recievedTask, sentTask);
     }
 
     /**

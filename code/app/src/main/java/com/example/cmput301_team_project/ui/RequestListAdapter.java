@@ -18,13 +18,12 @@ import androidx.annotation.Nullable;
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.UserDatabaseService;
-import com.example.cmput301_team_project.model.Follow;
 
 import java.util.List;
 
-public class RequestListAdapter extends ArrayAdapter<Follow> {
+public class RequestListAdapter extends ArrayAdapter<String> {
     private final UserDatabaseService userDatabaseService;
-    public RequestListAdapter(@NonNull Context context, @NonNull List<Follow> objects) {
+    public RequestListAdapter(@NonNull Context context, @NonNull List<String> objects) {
         super(context, 0, objects);
         userDatabaseService = UserDatabaseService.getInstance();
     }
@@ -39,23 +38,22 @@ public class RequestListAdapter extends ArrayAdapter<Follow> {
         else {
             view = convertView;
         }
-        Follow follow = getItem(position);
+        String follower = getItem(position);
+        String currentUser = SessionManager.getInstance().getCurrentUser();
 
-        if(follow != null) {
-            TextView requestText = view.findViewById(R.id.request_text);
-            String text = "@" + follow.getFollower() + " " + getContext().getString(R.string.follow_request);
+        TextView requestText = view.findViewById(R.id.request_text);
+        String text = "@" + follower + " " + getContext().getString(R.string.follow_request);
 
-            SpannableString spannable = new SpannableString(text);
-            spannable.setSpan(new StyleSpan(Typeface.BOLD), 0, 1 + follow.getFollower().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableString spannable = new SpannableString(text);
+        spannable.setSpan(new StyleSpan(Typeface.BOLD), 0, 1 + follower.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-            requestText.setText(spannable);
+        requestText.setText(spannable);
 
-            Button acceptButton = view.findViewById(R.id.accept_button);
-            Button declineButton = view.findViewById(R.id.decline_button);
+        Button acceptButton = view.findViewById(R.id.accept_button);
+        Button declineButton = view.findViewById(R.id.decline_button);
 
-            acceptButton.setOnClickListener(v -> userDatabaseService.acceptRequest(follow).addOnSuccessListener(d -> remove(follow)));
-            declineButton.setOnClickListener(v -> userDatabaseService.removeRequest(follow).addOnSuccessListener(n -> remove(follow)));
-        }
+        acceptButton.setOnClickListener(v -> userDatabaseService.acceptRequest(follower, currentUser).addOnSuccessListener(d -> remove(follower)));
+        declineButton.setOnClickListener(v -> userDatabaseService.removeRequest(follower, currentUser).addOnSuccessListener(n -> remove(follower)));
 
         return view;
     }

@@ -54,7 +54,7 @@ public class UserListAdapter extends ArrayAdapter<PublicUser> {
         SessionManager sessionManager = SessionManager.getInstance();
         button.setOnClickListener(v -> {
             switch (buttonAction) {
-                case FOLLOW -> userDatabaseService.requestFollow(new Follow(sessionManager.getCurrentUser(), user.getUsername()));
+                case FOLLOW -> userDatabaseService.requestFollow(sessionManager.getCurrentUser(), user.getUsername());
                 case UNFOLLOW -> userDatabaseService.removefollow(sessionManager.getCurrentUser(), user.getUsername());
                 case REMOVE -> userDatabaseService.removefollow(user.getUsername(), sessionManager.getCurrentUser());
             }
