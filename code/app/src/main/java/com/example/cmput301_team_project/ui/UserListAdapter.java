@@ -15,6 +15,7 @@ import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.UserButtonAction;
+import com.example.cmput301_team_project.model.Follow;
 import com.example.cmput301_team_project.model.PublicUser;
 
 import java.util.List;
@@ -53,8 +54,8 @@ public class UserListAdapter extends ArrayAdapter<PublicUser> {
         SessionManager sessionManager = SessionManager.getInstance();
         button.setOnClickListener(v -> {
             switch (buttonAction) {
-                case FOLLOW -> userDatabaseService.followUser(sessionManager.getCurrentUser(), user.getUsername());
-                case UNFOLLOW -> userDatabaseService.unfollowUser(sessionManager.getCurrentUser(), user.getUsername());
+                case FOLLOW -> userDatabaseService.requestFollow(new Follow(sessionManager.getCurrentUser(), user.getUsername()));
+                case UNFOLLOW -> userDatabaseService.unfollow(sessionManager.getCurrentUser(), user.getUsername());
                 case REMOVE -> userDatabaseService.revokeFollow(sessionManager.getCurrentUser(), user.getUsername());
             }
         });

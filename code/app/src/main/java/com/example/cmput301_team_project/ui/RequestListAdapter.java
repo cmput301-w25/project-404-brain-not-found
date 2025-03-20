@@ -9,21 +9,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.text.HtmlCompat;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.UserDatabaseService;
+import com.example.cmput301_team_project.model.Follow;
 
 import java.util.List;
 
-public class RequestListAdapter extends ArrayAdapter<String> {
+public class RequestListAdapter extends ArrayAdapter<Follow> {
     private final UserDatabaseService userDatabaseService;
-    public RequestListAdapter(@NonNull Context context, @NonNull List<String> objects) {
+    public RequestListAdapter(@NonNull Context context, @NonNull List<Follow> objects) {
         super(context, 0, objects);
         userDatabaseService = UserDatabaseService.getInstance();
     }
@@ -38,15 +39,23 @@ public class RequestListAdapter extends ArrayAdapter<String> {
         else {
             view = convertView;
         }
-        String username = SessionManager.getInstance().getCurrentUser();
+        Follow follow = getItem(position);
 
-        TextView requestText = view.findViewById(R.id.request_text);
-        String text = "@" + username + " " + getContext().getString(R.string.follow_request);
+        if(follow != null) {
+            TextView requestText = view.findViewById(R.id.request_text);
+            String text = "@" + follow.getFollower() + " " + getContext().getString(R.string.follow_request);
 
-        SpannableString spannable = new SpannableString(text);
-        spannable.setSpan(new StyleSpan(Typeface.BOLD), 0, 1 + username.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            SpannableString spannable = new SpannableString(text);
+            spannable.setSpan(new StyleSpan(Typeface.BOLD), 0, 1 + follow.getFollower().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        requestText.setText(spannable);
+            requestText.setText(spannable);
+
+            Button acceptButton = view.findViewById(R.id.accept_button);
+            Button declineButton = view.findViewById(R.id.decline_button);
+
+            acceptButton.setOnClickListener(v -> userDatabaseService.acceptRequest(follow).addOnSuccessListener(d -> remove(follow)));
+            declineButton.setOnClickListener(v -> userDatabaseService.removeRequest(follow).addOnSuccessListener(n -> remove(follow)));
+        }
 
         return view;
     }

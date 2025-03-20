@@ -2,6 +2,7 @@ package com.example.cmput301_team_project.db;
 
 
 import com.example.cmput301_team_project.model.AppUser;
+import com.example.cmput301_team_project.model.Follow;
 import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -193,14 +194,14 @@ public class UserDatabaseService extends BaseDatabaseService {
         throw new NotImplementedError();
     }
 
-    public Task<List<String>> getRequests(String username) {
+    public Task<List<Follow>> getRequests(String username) {
         return requestsRef.whereEqualTo("target", username)
                 .get()
                 .continueWith(task -> {
                    if(task.isSuccessful()) {
                         return task.getResult().getDocuments()
                                 .stream()
-                                .map(d -> d.getString("follower"))
+                                .map(d -> new Follow(d.getString("follower"), d.getString("target"), d.getId()))
                                 .collect(Collectors.toList());
                    }
                    return new ArrayList<>();
@@ -210,15 +211,19 @@ public class UserDatabaseService extends BaseDatabaseService {
     /**
      * One user requests permission from another user to follow
      *
-     * @param follower username of the user who initiates the follow action
-     * @param target username of the user who is being followed
+     * @param follow follow request object to be added
      */
-    public void followUser(String follower, String target) {
-        Map<String, String> data = new HashMap<>();
-        data.put("follower", follower);
-        data.put("target", target);
+    public void requestFollow(Follow follow) {
+        requestsRef.add(follow);
+    }
 
-        requestsRef.add(data);
+    public Task<DocumentReference> acceptRequest(Follow follow) {
+        return followersRef.add(follow)
+                .addOnSuccessListener(documentReference -> removeRequest(follow));
+    }
+
+    public Task<Void> removeRequest(Follow follow) {
+        return requestsRef.document(follow.getId()).delete();
     }
 
     /**
@@ -227,7 +232,7 @@ public class UserDatabaseService extends BaseDatabaseService {
      * @param follower username of the user who initiates the unfollow action
      * @param target username of the user who is being unfollowed
      */
-    public void unfollowUser(String follower, String target) {
+    public void unfollow(String follower, String target) {
         // TODO: implement unfollow db query
     }
 
