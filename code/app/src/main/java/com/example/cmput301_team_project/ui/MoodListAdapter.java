@@ -78,6 +78,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         TextView moodTime = view.findViewById(R.id.timeAns);
         ImageView moodImage = view.findViewById(R.id.ImageBase64);
         ImageView menuButton = view.findViewById(R.id.mood_menu_button);
+        ImageView expandButton = view.findViewById(R.id.drop_down);
         androidx.cardview.widget.CardView cardView = view.findViewById(R.id.cardView);
 
 
@@ -95,6 +96,36 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
             moodImage.setImageBitmap(ImageUtils.decodeBase64(mood.getImageBase64()));
 
             cardView.setCardBackgroundColor(getContext().getResources().getColor(mood.getColour(), getContext().getTheme()));
+
+            // Track expanded state using a tag
+            Boolean isExpanded = (Boolean) view.getTag();
+            if (isExpanded == null) {
+                isExpanded = Boolean.FALSE; // Use Boolean wrapper safely
+                view.setTag(isExpanded);    // Set initial state to avoid null
+            }
+
+            // Set visibility based on expanded state
+            triggerName.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            moodImage.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            expandButton.setImageResource(isExpanded ? R.drawable.baseline_arrow_drop_up_24 : R.drawable.baseline_arrow_drop_down_24);
+
+            expandButton.setOnClickListener(v -> {
+                // Retrieve the current expanded state dynamically
+                Boolean isExpandedNow = (Boolean) view.getTag();
+                if (isExpandedNow == null) {
+                    isExpandedNow = false; // Default to collapsed if null
+                }
+
+                // Toggle the state
+                boolean newExpandedState = !isExpandedNow;
+                view.setTag(newExpandedState);
+
+                // Update UI based on new state
+                triggerName.setVisibility(newExpandedState ? View.VISIBLE : View.GONE);
+                moodImage.setVisibility(newExpandedState ? View.VISIBLE : View.GONE);
+                expandButton.setImageResource(newExpandedState ? R.drawable.baseline_arrow_drop_up_24 : R.drawable.baseline_arrow_drop_down_24);
+            });
+
 
             // If the three-dot menu icon is clicked, a pop-up menu shows up
             menuButton.setOnClickListener(new View.OnClickListener() {
