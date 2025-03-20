@@ -12,6 +12,7 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Singleton class to manage mood-related operations with the firestore database
@@ -31,6 +32,10 @@ public class MoodDatabaseService extends BaseDatabaseService {
         super(db);
 
         moodsRef = db.collection("moods");
+    }
+
+    public interface OnMoodFetchedListener {
+        void onMoodsFetched(ArrayList<Mood> moods);
     }
 
     public static MoodDatabaseService getInstance() {
@@ -132,5 +137,21 @@ public class MoodDatabaseService extends BaseDatabaseService {
 
     public void updateMood(Mood mood) {
         moodsRef.document(mood.getId()).set(mood);
+    }
+
+    public void filterByEmotion(String emotion, OnMoodFetchedListener listener) {
+        getMoodList().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+              List<Mood> allMoods = task.getResult(); // get all users moods
+              List<Mood> filteredMoods = allMoods.stream() // filter based on emotion
+                      .filter(mood -> mood.getEmotion().toString().equalsIgnoreCase(emotion))
+                      .collect(Collectors.toList());
+
+              listener.onMoodsFetched(new ArrayList<>(filteredMoods));
+            } else {
+                Log.e("MoodDatabaseService", "error filtering moods by emotion: ", task.getException());
+                listener.onMoodsFetched(new ArrayList<>()); // empty list returned on failure
+            }
+        });
     }
 }

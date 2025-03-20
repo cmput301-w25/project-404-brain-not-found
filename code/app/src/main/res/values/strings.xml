@@ -45,4 +45,9 @@
     <string name="empty_username_error">Username cannot be empty</string>
     <string name="empty_password_error">Password cannot be empty</string>
     <string name="username_exists_error">Username already taken</string>
+    <string name="filter_moods_by_time_title">Filter by time:</string>
+    <string name="filter_moods_by_day">Today</string>
+    <string name="filter_moods_by_week">This week</string>
+    <string name="filter_moods_by_month">This month</string>
+    <string name="filter_by_text_hint">Find text in moods</string>
 </resources>

@@ -23,6 +23,9 @@ public abstract class Mood implements Serializable {
     private Date date;
     private String imageBase64;
 
+    public Mood() {
+        // Required no-arg constructor for Firestore (queries)
+    }
     protected Mood(MoodSocialSituationEnum socialSituation, String trigger, String author, String imageBase64) {
         this(socialSituation, trigger, author, new Date(), imageBase64);
     }

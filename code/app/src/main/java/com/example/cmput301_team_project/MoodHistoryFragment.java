@@ -12,6 +12,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A simple {@link Fragment} subclass for user mood history screen.
@@ -107,5 +109,18 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
                 });
     }
 
+    public void filterByEmotion(String emotion) {
+        moodDatabaseService.filterByEmotion(emotion, this::updateFilters);
+    }
 
+    public void resetFilters() {
+        moodListAdapter.clear();
+        loadMoodData();
+    }
+
+    public void updateFilters(ArrayList<Mood> filteredMoods) {
+        moodListAdapter.clear();
+        moodListAdapter.addAll(filteredMoods);
+        moodListAdapter.notifyDataSetChanged();
+    }
 }
