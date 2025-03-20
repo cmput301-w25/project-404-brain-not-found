@@ -7,14 +7,13 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.UserDatabaseService;
-import com.example.cmput301_team_project.enums.UserButtonAction;
+import com.example.cmput301_team_project.enums.UserButtonActionEnum;
 import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
 
@@ -26,7 +25,7 @@ import java.util.List;
  */
 public abstract class BaseUserListFragment extends Fragment {
     protected abstract int getUserButtonTextId();
-    protected abstract UserButtonAction getUserButtonAction();
+    protected abstract UserButtonActionEnum getUserButtonAction();
 
     private UserListAdapter userAdapter;
     private UserDatabaseService userDatabaseService;
@@ -75,12 +74,9 @@ public abstract class BaseUserListFragment extends Fragment {
                 return true;
             }
         });
-        userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                PublicUser user = userAdapter.getItem(position);
-                ViewProfileFragment.newInstance(user.getUsername(), user.getName()).show(requireActivity().getSupportFragmentManager(), "Profile");
-            }
+        userList.setOnItemClickListener((parent, view1, position, id) -> {
+            PublicUser user = userAdapter.getItem(position);
+            ViewProfileFragment.newInstance(user.getUsername(), user.getName()).show(requireActivity().getSupportFragmentManager(), "Profile");
         });
         return view;
     }

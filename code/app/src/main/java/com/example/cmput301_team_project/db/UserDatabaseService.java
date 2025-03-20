@@ -1,6 +1,7 @@
 package com.example.cmput301_team_project.db;
 
 
+import com.example.cmput301_team_project.enums.FollowRelationshipEnum;
 import com.example.cmput301_team_project.model.AppUser;
 import com.example.cmput301_team_project.model.Follow;
 import com.example.cmput301_team_project.model.PublicUser;
@@ -136,6 +137,32 @@ public class UserDatabaseService extends BaseDatabaseService {
     }
 
     /**
+     * Get follow relationship of user1 with respect to user2
+     *
+     * @param user1
+     * @param user2
+     * @return
+     */
+    private Task<FollowRelationshipEnum> getFollowRelationship(String user1, String user2) {
+        DocumentReference userRef = usersRef.document(user1);
+        Task<DocumentSnapshot> followingCheck = userRef.collection("following")
+                .document(user2).get();
+        Task<DocumentSnapshot> requestedCheck = userRef.collection("requestsSent")
+                .document(user2).get();
+
+        return Tasks.whenAllComplete(followingCheck, requestedCheck)
+                .continueWith(task -> {
+                    if(followingCheck.isSuccessful() && followingCheck.getResult().exists()) {
+                        return FollowRelationshipEnum.FOLLOWED;
+                    }
+                    if(requestedCheck.isSuccessful() && followingCheck.getResult().exists()) {
+                        return FollowRelationshipEnum.REQUESTED;
+                    }
+                    return FollowRelationshipEnum.NONE;
+                });
+    }
+
+    /**
      * Searches for users in the database
      *
      * @param currentUser username of the user making the search
@@ -148,7 +175,7 @@ public class UserDatabaseService extends BaseDatabaseService {
                 getBaseUserSearchQuery("nameLower", query)
         );
 
-        return Tasks.whenAllComplete(searchTasks).continueWith(results -> {
+        return Tasks.whenAllComplete(searchTasks).continueWithTask(results -> {
             if(results.isSuccessful()) {
                 Set<DocumentSnapshot> documentSnapshotSet = new HashSet<>();
 
@@ -158,14 +185,21 @@ public class UserDatabaseService extends BaseDatabaseService {
                     }
                 }
 
+                List<Task<PublicUser>> userMappingTasks = new ArrayList<>();
+                for (DocumentSnapshot d : documentSnapshotSet) {
+                    String username = d.getString("username");
+                    String name = d.getString("name");
 
-                return documentSnapshotSet.stream()
-                        .filter(d -> !Objects.equals(d.getString("username"), currentUser))
-                        .map(d -> new PublicUser(d.getString("username"), d.getString("name")))
-                        .collect(Collectors.toCollection(ArrayList::new));
+                    if (!Objects.equals(username, currentUser)) {
+                        userMappingTasks.add(getFollowRelationship(currentUser, username)
+                                .continueWith(task -> new PublicUser(username, name, task.getResult())));
+                    }
+                }
+
+                return Tasks.whenAllSuccess(userMappingTasks);
             }
             else {
-                return new ArrayList<>();
+                return Tasks.forResult(new ArrayList<>());
             }
         });
     }
@@ -214,7 +248,14 @@ public class UserDatabaseService extends BaseDatabaseService {
      * @param follow follow request object to be added
      */
     public void requestFollow(Follow follow) {
-        requestsRef.add(follow);
+        usersRef.document(follow.getTarget())
+                .collection("requestsReceived")
+                .document(follow.getFollower())
+                .set(new HashMap<>());
+        usersRef.document(follow.getFollower())
+                .collection("requestsSent")
+                .document(follow.getTarget())
+                .set(new HashMap<>());
     }
 
     public Task<DocumentReference> acceptRequest(Follow follow) {
@@ -229,21 +270,10 @@ public class UserDatabaseService extends BaseDatabaseService {
     /**
      * One user unfollows another user
      *
-     * @param follower username of the user who initiates the unfollow action
-     * @param target username of the user who is being unfollowed
-     */
-    public void unfollow(String follower, String target) {
-        // TODO: implement unfollow db query
-    }
-
-    /**
-     * One user revokes permission to follow them from another user
      *
-     * @param following username of the user who is being followed by the other user
-     * @param target username of the user whose follow permission should be revoked
      */
-    public void revokeFollow(String following, String target) {
-        // TODO: implement revoke permission db query
+    public void removefollow(String follower, String target) {
+        // TODO: implement unfollow db query
     }
 
 
