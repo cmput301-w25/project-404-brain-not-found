@@ -109,15 +109,45 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
                 });
     }
 
+    /**
+     * calls {@link MoodDatabaseService} filterByEmotion() to make the database query
+     * to filter based on {@param emotion}. It then uses updateFilters to update
+     * the listview with the new filtered list
+     */
     public void filterByEmotion(String emotion) {
-        moodDatabaseService.filterByEmotion(emotion, this::updateFilters);
+        moodDatabaseService.filterByEmotion(emotion, this::updateFilters); // calls updateFilters after
     }
 
+    /**
+     * calls {@link MoodDatabaseService} filterByTime() to make the database query
+     * to filter based on {@param time}. It then uses updateFilters to update
+     * the listview with the new filtered list
+     */
+    public void filterByTime(int time) {
+        moodDatabaseService.filterByTime(time, this::updateFilters);
+    }
+
+    /**
+     * calls {@link MoodDatabaseService} filterByText() to make the database query
+     * to filter based on moods that include {@param text}. It then uses updateFilters
+     * to update the listview with the new filtered list
+     */
+    public void filterByText(String text) {
+        System.out.println("Filtering by text:" + text);
+    }
+
+    /**
+     * Clears the ListView and replaces with all of the users inputted moods
+     */
     public void resetFilters() {
         moodListAdapter.clear();
         loadMoodData();
     }
 
+    /**
+     *  Clears the ListView and replaces with the {@param filteredMoods} based
+     *  on what the inputted filter was
+     */
     public void updateFilters(ArrayList<Mood> filteredMoods) {
         moodListAdapter.clear();
         moodListAdapter.addAll(filteredMoods);

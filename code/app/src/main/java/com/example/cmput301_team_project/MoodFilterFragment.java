@@ -20,9 +20,10 @@ import java.util.Arrays;
 
 public class MoodFilterFragment extends DialogFragment {
 
-    private final int FILTER_BY_DAY = 1;
-    private final int FILTER_BY_WEEK = 7;
-    private final int FILTER_BY_MONTH = 30;
+    // filters for time (-x days)
+    private final int FILTER_BY_DAY = -1;
+    private final int FILTER_BY_WEEK = -7;
+    private final int FILTER_BY_MONTH = -30;
 
     public MoodDatabaseService moodDatabaseService;
 
@@ -32,6 +33,8 @@ public class MoodFilterFragment extends DialogFragment {
 
     interface MoodFilterDialogListener {
         void filterByEmotion(String emotion);
+        void filterByTime(int time);
+        void filterByText(String text);
         void resetFilters();
     }
     private MoodFilterDialogListener listener;
@@ -91,15 +94,21 @@ public class MoodFilterFragment extends DialogFragment {
                     listener.filterByEmotion(emotionFilter.getSelectedItem().toString().toUpperCase()); // method to be used in classes where filtering is needed
                 }
 //              TODO: add filters for time, trigger text, and find way to make them work together if possible
-//
-//                if (lastDayFilter.isActivated())
-//                    listener.filterByTime(FILTER_BY_DAY);
-//                else if (lastWeekFilter.isActivated())
-//                    listener.filterByTime(FILTER_BY_WEEK);
-//                else if (lastMonthFilter.isActivated())
-//                    listener.filterByTime(FILTER_BY_MONTH);
-//
-//                check for filter by trigger text here
+                if (lastDayFilter.isChecked()) {
+                    System.out.println("filter : show moods from past 24 hrs");
+                    listener.filterByTime(FILTER_BY_DAY);
+                }
+                else if (lastWeekFilter.isChecked()) {
+                    listener.filterByTime(FILTER_BY_WEEK);
+                }
+                else if (lastMonthFilter.isChecked()) {
+                    listener.filterByTime(FILTER_BY_MONTH);
+                }
+
+                String triggerFilterInput = triggerFilter.getText().toString();
+                if (!triggerFilterInput.isEmpty()) {
+                    listener.filterByText(triggerFilterInput);
+                }
                 dialog.dismiss();
             });
             Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);

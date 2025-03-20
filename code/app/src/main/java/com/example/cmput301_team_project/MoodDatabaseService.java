@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Calendar;
 
 /**
  * Singleton class to manage mood-related operations with the firestore database
@@ -139,6 +140,12 @@ public class MoodDatabaseService extends BaseDatabaseService {
         moodsRef.document(mood.getId()).set(mood);
     }
 
+
+    /**
+     *  This function gets the users posted moods and then filters by the requested {@param emotion}
+     *  It returns the filtered ArrayList via the {@param listener} to then use the List to display the
+     *  new filtered moods.
+     */
     public void filterByEmotion(String emotion, OnMoodFetchedListener listener) {
         getMoodList().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
@@ -147,10 +154,34 @@ public class MoodDatabaseService extends BaseDatabaseService {
                       .filter(mood -> mood.getEmotion().toString().equalsIgnoreCase(emotion))
                       .collect(Collectors.toList());
 
-              listener.onMoodsFetched(new ArrayList<>(filteredMoods));
+              listener.onMoodsFetched(new ArrayList<>(filteredMoods)); // return to the original call with new list
             } else {
                 Log.e("MoodDatabaseService", "error filtering moods by emotion: ", task.getException());
                 listener.onMoodsFetched(new ArrayList<>()); // empty list returned on failure
+            }
+        });
+    }
+    // get the current date / time
+    // subtract by the inputted amount of days
+    // filter moods by date that are made after the requested date
+    public void filterByTime(int time, OnMoodFetchedListener listener) {
+        getMoodList().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                Date currentDate = new Date();
+                // get instance of calendar to find requested filtered Date
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(currentDate);
+                calendar.add(Calendar.DAY_OF_MONTH, time);
+                Date requestedDate = calendar.getTime();
+
+                List<Mood> allMoods = task.getResult();
+                List<Mood> filteredMoods = allMoods.stream()
+                        .filter(mood -> mood.getDate().compareTo(requestedDate) >= 0) // not sure about this
+                        .collect(Collectors.toList());
+                listener.onMoodsFetched(new ArrayList<>(filteredMoods));
+            } else {
+                Log.e("MoodDatabaseService", "Error filtering moods by time " + time, task.getException());
+                listener.onMoodsFetched(new ArrayList<>());
             }
         });
     }
