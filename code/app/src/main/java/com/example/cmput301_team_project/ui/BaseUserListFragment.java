@@ -7,14 +7,13 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.UserDatabaseService;
-import com.example.cmput301_team_project.enums.UserButtonAction;
+import com.example.cmput301_team_project.enums.UserButtonActionEnum;
 import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
 
@@ -26,7 +25,7 @@ import java.util.List;
  */
 public abstract class BaseUserListFragment extends Fragment {
     protected abstract int getUserButtonTextId();
-    protected abstract UserButtonAction getUserButtonAction();
+    protected abstract UserButtonActionEnum getUserButtonAction();
 
     private UserListAdapter userAdapter;
     private UserDatabaseService userDatabaseService;
@@ -51,6 +50,10 @@ public abstract class BaseUserListFragment extends Fragment {
         userList.setAdapter(userAdapter);
 
         SearchView searchView = view.findViewById(R.id.user_search);
+        searchView.setOnCloseListener(() -> {
+            userAdapter.clear();
+            return false;
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -58,7 +61,7 @@ public abstract class BaseUserListFragment extends Fragment {
                 Task<List<PublicUser>> searchTask;
 
                 switch (getUserButtonAction()) {
-                    case FOLLOW -> searchTask = userDatabaseService.userSearch(query);
+                    case FOLLOW -> searchTask = userDatabaseService.userSearch(currentUser, query);
                     case UNFOLLOW -> searchTask = userDatabaseService.userFollowingSearch(currentUser, query);
                     case REMOVE -> searchTask = userDatabaseService.userFollowersSearch(currentUser, query);
                     default -> throw new IllegalStateException("Unexpected action: " + getUserButtonAction());
@@ -75,12 +78,9 @@ public abstract class BaseUserListFragment extends Fragment {
                 return true;
             }
         });
-        userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                PublicUser user = userAdapter.getItem(position);
-                ViewProfileFragment.newInstance(user.getUsername(), user.getName()).show(requireActivity().getSupportFragmentManager(), "Profile");
-            }
+        userList.setOnItemClickListener((parent, view1, position, id) -> {
+            PublicUser user = userAdapter.getItem(position);
+            ViewProfileFragment.newInstance(user.getUsername(), user.getName()).show(requireActivity().getSupportFragmentManager(), "Profile");
         });
         return view;
     }

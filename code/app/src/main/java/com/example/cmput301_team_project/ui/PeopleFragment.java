@@ -1,7 +1,7 @@
 package com.example.cmput301_team_project.ui;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.enums.UserButtonAction;
+import com.example.cmput301_team_project.enums.UserButtonActionEnum;
 
 public class PeopleFragment extends BaseUserListFragment {
     @Override
@@ -10,8 +10,8 @@ public class PeopleFragment extends BaseUserListFragment {
     }
 
     @Override
-    protected UserButtonAction getUserButtonAction() {
-        return UserButtonAction.FOLLOW;
+    protected UserButtonActionEnum getUserButtonAction() {
+        return UserButtonActionEnum.FOLLOW;
     }
 
     public PeopleFragment() {
