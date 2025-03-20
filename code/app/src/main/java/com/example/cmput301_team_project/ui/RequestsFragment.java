@@ -11,7 +11,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.db.UserDatabaseService;
 
 import java.util.ArrayList;
 
