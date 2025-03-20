@@ -18,6 +18,9 @@ android {
     }
 
     buildTypes {
+        debug{
+            buildConfigField("String", "API_KEY", "\"${project.properties["API_KEY"]}\"")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -32,6 +35,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -50,4 +54,5 @@ dependencies {
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation ("com.google.android.libraries.places:places:3.3.0")
 }

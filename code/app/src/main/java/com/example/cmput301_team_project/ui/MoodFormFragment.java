@@ -1,4 +1,4 @@
-package com.example.cmput301_team_project;
+package com.example.cmput301_team_project.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
