@@ -10,6 +10,7 @@
         android:id="@+id/no_requests"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:text="@string/no_follow_requests"
         android:textColor="@android:color/tertiary_text_light"
         app:layout_constraintEnd_toEndOf="parent"
