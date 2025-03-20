@@ -3,7 +3,6 @@ package com.example.cmput301_team_project.db;
 
 import com.example.cmput301_team_project.enums.FollowRelationshipEnum;
 import com.example.cmput301_team_project.model.AppUser;
-import com.example.cmput301_team_project.model.Follow;
 import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -30,8 +29,6 @@ import android.util.Base64;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
-
-import kotlin.NotImplementedError;
 
 /**
  * Singleton class to manage user-related operations with the firestore database
@@ -200,6 +197,32 @@ public class UserDatabaseService extends BaseDatabaseService {
         });
     }
 
+
+    private Task<List<PublicUser>> userSearchNestedCollection(String username, String collection, String query) {
+        CollectionReference collectionReference = usersRef.document(username).collection(collection);
+        List<Task<QuerySnapshot>> searchTasks = Arrays.asList(
+                getBaseUserSearchQuery(collectionReference,"usernameLower", query),
+                getBaseUserSearchQuery(collectionReference,"nameLower", query)
+        );
+
+        return Tasks.whenAllComplete(searchTasks).continueWith(results -> {
+            if(results.isSuccessful()) {
+                Set<DocumentSnapshot> documentSnapshotSet = new HashSet<>();
+
+                for (Task<?> task : results.getResult()) {
+                    if (task.isSuccessful() && task.getResult() instanceof QuerySnapshot documents) {
+                        documentSnapshotSet.addAll(documents.getDocuments());
+                    }
+                }
+
+                return documentSnapshotSet.stream()
+                        .map(d -> new PublicUser(d.getId(), d.getString("name"))).collect(Collectors.toList());
+            }
+
+            return new ArrayList<>();
+        });
+    }
+
     /**
      * Searches for followers of a given user in the database
      *
@@ -208,8 +231,7 @@ public class UserDatabaseService extends BaseDatabaseService {
      * @return A {@link Task} that resolves to a list of followers of the user matching the query
      */
     public Task<List<PublicUser>> userFollowersSearch(String username, String query) {
-        // TODO: implement search among followers, getBaseUserSearchQuery can be reused here
-        throw new NotImplementedError();
+        return userSearchNestedCollection(username, "followers", query);
     }
 
     /**
@@ -220,8 +242,7 @@ public class UserDatabaseService extends BaseDatabaseService {
      * @return A {@link Task} that resolves to a list of users followed by the user matching the query
      */
     public Task<List<PublicUser>> userFollowingSearch(String username, String query) {
-        // TODO: implement search among following, getBaseUserSearchQuery can be reused here
-        throw new NotImplementedError();
+        return userSearchNestedCollection(username, "following", query);
     }
 
     public Task<List<String>> getRequests(String username) {
@@ -244,26 +265,27 @@ public class UserDatabaseService extends BaseDatabaseService {
      *
      */
     public void requestFollow(String follower, String target) {
-        usersRef.document(target)
+        getDisplayName(follower).addOnSuccessListener(name -> usersRef.document(target)
                 .collection("requestsReceived")
                 .document(follower)
-                .set(new HashMap<>());
-        usersRef.document(follower)
+                .set(new PublicUser(follower, name)));
+
+        getDisplayName(target).addOnSuccessListener(name -> usersRef.document(follower)
                 .collection("requestsSent")
                 .document(target)
-                .set(new HashMap<>());
+                .set(new PublicUser(target, name)));
     }
 
     public Task<Void> acceptRequest(String follower, String target) {
-        Task<Void> followingTask = usersRef.document(follower)
-                .collection("following")
-                .document(target)
-                .set(new HashMap<>());
+        Task<Void> followingTask = getDisplayName(target).continueWithTask(task -> usersRef.document(follower)
+            .collection("following")
+            .document(target)
+            .set(new PublicUser(target, task.getResult())));
 
-        Task<Void> followerTask = usersRef.document(target)
+        Task<Void> followerTask = getDisplayName(target).continueWithTask(task -> usersRef.document(target)
                 .collection("followers")
                 .document(follower)
-                .set(new HashMap<>());
+                .set(new PublicUser(follower, task.getResult())));
 
         return Tasks.whenAll(followingTask, followerTask)
                 .continueWithTask(voidTask -> removeRequest(follower, target));

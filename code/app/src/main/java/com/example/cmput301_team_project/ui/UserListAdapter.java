@@ -15,7 +15,6 @@ import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.UserButtonActionEnum;
-import com.example.cmput301_team_project.model.Follow;
 import com.example.cmput301_team_project.model.PublicUser;
 
 import java.util.List;
