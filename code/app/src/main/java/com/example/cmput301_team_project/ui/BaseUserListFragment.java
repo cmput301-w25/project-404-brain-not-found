@@ -58,7 +58,7 @@ public abstract class BaseUserListFragment extends Fragment {
                 Task<List<PublicUser>> searchTask;
 
                 switch (getUserButtonAction()) {
-                    case FOLLOW -> searchTask = userDatabaseService.userSearch(query);
+                    case FOLLOW -> searchTask = userDatabaseService.userSearch(currentUser, query);
                     case UNFOLLOW -> searchTask = userDatabaseService.userFollowingSearch(currentUser, query);
                     case REMOVE -> searchTask = userDatabaseService.userFollowersSearch(currentUser, query);
                     default -> throw new IllegalStateException("Unexpected action: " + getUserButtonAction());

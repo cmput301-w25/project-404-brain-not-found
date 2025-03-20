@@ -15,10 +15,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,17 +38,21 @@ import kotlin.NotImplementedError;
 public class UserDatabaseService extends BaseDatabaseService {
     private static UserDatabaseService instance = null;
     private final CollectionReference usersRef;
+    private final CollectionReference followersRef;
+    private final CollectionReference requestsRef;
+
+    {
+        usersRef = db.collection("users");
+        followersRef = db.collection("followers");
+        requestsRef = db.collection("requests");
+    }
 
     private UserDatabaseService() {
         super();
-
-        usersRef = db.collection("users");
     }
 
     private UserDatabaseService(FirebaseFirestore db) {
         super(db);
-
-        usersRef = db.collection("users");
     }
 
     public static UserDatabaseService getInstance() {
@@ -116,41 +122,50 @@ public class UserDatabaseService extends BaseDatabaseService {
         DocumentReference docRef = usersRef.document(username);
 
         return docRef.get().continueWith(task ->{
-                return task.isSuccessful() && task.getResult().exists();
-                });
+            return task.isSuccessful() && task.getResult().exists();
+        });
     }
 
     private Task<QuerySnapshot> getBaseUserSearchQuery(String field, String query) {
+        String searchQuery = query.toLowerCase();
         return usersRef.orderBy(field)
-                .startAt(query.toLowerCase())
-                .endAt(query.toLowerCase() + "\uf8ff")
+                .startAt(searchQuery)
+                .endAt(searchQuery + "\uf8ff")
                 .get();
     }
 
     /**
      * Searches for users in the database
      *
+     * @param currentUser username of the user making the search
      * @param query search query
      * @return A {@link Task} that resolves to a list of users matching the query
      */
-    public Task<List<PublicUser>> userSearch(String query) {
-        return Tasks.whenAllComplete(getBaseUserSearchQuery("usernameLower", query), getBaseUserSearchQuery("nameLower", query)).continueWith(results -> {
-                if(results.isSuccessful()) {
-                    Set<DocumentSnapshot> documentSnapshotSet = new HashSet<>();
+    public Task<List<PublicUser>> userSearch(String currentUser, String query) {
+        List<Task<QuerySnapshot>> searchTasks = Arrays.asList(
+                getBaseUserSearchQuery("usernameLower", query),
+                getBaseUserSearchQuery("nameLower", query)
+        );
 
-                    for(Task<?> task : results.getResult()) {
-                        if(task.isSuccessful() && task.getResult() instanceof QuerySnapshot documents) {
-                            documentSnapshotSet.addAll(documents.getDocuments());
-                        }
+        return Tasks.whenAllComplete(searchTasks).continueWith(results -> {
+            if(results.isSuccessful()) {
+                Set<DocumentSnapshot> documentSnapshotSet = new HashSet<>();
+
+                for(Task<?> task : results.getResult()) {
+                    if(task.isSuccessful() && task.getResult() instanceof QuerySnapshot documents) {
+                        documentSnapshotSet.addAll(documents.getDocuments());
                     }
+                }
 
-                    return documentSnapshotSet.stream()
-                            .map(d -> new PublicUser(d.getString("username"), d.getString("name")))
-                            .collect(Collectors.toCollection(ArrayList::new));
-                }
-                else {
-                    return new ArrayList<>();
-                }
+
+                return documentSnapshotSet.stream()
+                        .filter(d -> !Objects.equals(d.getString("username"), currentUser))
+                        .map(d -> new PublicUser(d.getString("username"), d.getString("name")))
+                        .collect(Collectors.toCollection(ArrayList::new));
+            }
+            else {
+                return new ArrayList<>();
+            }
         });
     }
 
@@ -178,6 +193,20 @@ public class UserDatabaseService extends BaseDatabaseService {
         throw new NotImplementedError();
     }
 
+    public Task<List<String>> getRequests(String username) {
+        return requestsRef.whereEqualTo("target", username)
+                .get()
+                .continueWith(task -> {
+                   if(task.isSuccessful()) {
+                        return task.getResult().getDocuments()
+                                .stream()
+                                .map(d -> d.getString("follower"))
+                                .collect(Collectors.toList());
+                   }
+                   return new ArrayList<>();
+                });
+    }
+
     /**
      * One user requests permission from another user to follow
      *
@@ -185,7 +214,11 @@ public class UserDatabaseService extends BaseDatabaseService {
      * @param target username of the user who is being followed
      */
     public void followUser(String follower, String target) {
-        // TODO: implement follow db query
+        Map<String, String> data = new HashMap<>();
+        data.put("follower", follower);
+        data.put("target", target);
+
+        requestsRef.add(data);
     }
 
     /**
