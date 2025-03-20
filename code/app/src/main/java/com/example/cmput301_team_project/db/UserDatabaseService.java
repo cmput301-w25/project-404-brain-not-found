@@ -124,9 +124,9 @@ public class UserDatabaseService extends BaseDatabaseService {
         });
     }
 
-    private Task<QuerySnapshot> getBaseUserSearchQuery(String field, String query) {
+    private Task<QuerySnapshot> getBaseUserSearchQuery(CollectionReference collectionRef, String field, String query) {
         String searchQuery = query.toLowerCase();
-        return usersRef.orderBy(field)
+        return collectionRef.orderBy(field)
                 .startAt(searchQuery)
                 .endAt(searchQuery + "\uf8ff")
                 .get();
@@ -167,8 +167,8 @@ public class UserDatabaseService extends BaseDatabaseService {
      */
     public Task<List<PublicUser>> userSearch(String currentUser, String query) {
         List<Task<QuerySnapshot>> searchTasks = Arrays.asList(
-                getBaseUserSearchQuery("usernameLower", query),
-                getBaseUserSearchQuery("nameLower", query)
+                getBaseUserSearchQuery(usersRef,"usernameLower", query),
+                getBaseUserSearchQuery(usersRef,"nameLower", query)
         );
 
         return Tasks.whenAllComplete(searchTasks).continueWithTask(results -> {
@@ -287,8 +287,16 @@ public class UserDatabaseService extends BaseDatabaseService {
      *
      *
      */
-    public void removefollow(String follower, String target) {
-        // TODO: implement unfollow db query
+    public void removeFollow(String follower, String target) {
+        usersRef.document(follower)
+                .collection("following")
+                .document(target)
+                .delete();
+
+        usersRef.document(target)
+                .collection("followers")
+                .document(follower)
+                .delete();
     }
 
 
