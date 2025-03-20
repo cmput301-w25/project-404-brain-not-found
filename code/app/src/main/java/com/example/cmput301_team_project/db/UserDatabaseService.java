@@ -264,16 +264,18 @@ public class UserDatabaseService extends BaseDatabaseService {
      * One user requests permission from another user to follow
      *
      */
-    public void requestFollow(String follower, String target) {
-        getDisplayName(follower).addOnSuccessListener(name -> usersRef.document(target)
+    public Task<Void> requestFollow(String follower, String target) {
+        Task<Void> receivedTask = getDisplayName(follower).continueWithTask(task -> usersRef.document(target)
                 .collection("requestsReceived")
                 .document(follower)
-                .set(new PublicUser(follower, name)));
+                .set(new PublicUser(follower, task.getResult())));
 
-        getDisplayName(target).addOnSuccessListener(name -> usersRef.document(follower)
+        Task<Void> sentTask = getDisplayName(target).continueWithTask(task -> usersRef.document(follower)
                 .collection("requestsSent")
                 .document(target)
-                .set(new PublicUser(target, name)));
+                .set(new PublicUser(target, task.getResult())));
+
+        return Tasks.whenAll(receivedTask, sentTask);
     }
 
     public Task<Void> acceptRequest(String follower, String target) {
@@ -309,16 +311,18 @@ public class UserDatabaseService extends BaseDatabaseService {
      *
      *
      */
-    public void removeFollow(String follower, String target) {
-        usersRef.document(follower)
+    public Task<Void> removeFollow(String follower, String target) {
+        Task<Void> followingTask = usersRef.document(follower)
                 .collection("following")
                 .document(target)
                 .delete();
 
-        usersRef.document(target)
+        Task<Void> followersTask = usersRef.document(target)
                 .collection("followers")
                 .document(follower)
                 .delete();
+
+        return Tasks.whenAll(followingTask, followersTask);
     }
 
 

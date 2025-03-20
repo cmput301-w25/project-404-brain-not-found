@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.UserDatabaseService;
+import com.example.cmput301_team_project.enums.FollowRelationshipEnum;
 import com.example.cmput301_team_project.enums.UserButtonActionEnum;
 import com.example.cmput301_team_project.model.PublicUser;
 
@@ -48,18 +49,47 @@ public class UserListAdapter extends ArrayAdapter<PublicUser> {
         PublicUser user = getItem(position);
         username.setText(user.getUsername());
         name.setText(user.getName());
-        button.setText(buttonText);
+        setButtonView(button, user);
 
         SessionManager sessionManager = SessionManager.getInstance();
         button.setOnClickListener(v -> {
             switch (buttonAction) {
-                case FOLLOW -> userDatabaseService.requestFollow(sessionManager.getCurrentUser(), user.getUsername());
-                case UNFOLLOW -> userDatabaseService.removeFollow(sessionManager.getCurrentUser(), user.getUsername());
-                case REMOVE -> userDatabaseService.removeFollow(user.getUsername(), sessionManager.getCurrentUser());
+                case FOLLOW -> userDatabaseService.requestFollow(sessionManager.getCurrentUser(), user.getUsername())
+                        .addOnSuccessListener(vd -> {
+                            user.setFollowRelationshipWithCurrUser(FollowRelationshipEnum.REQUESTED);
+                            setButtonView(button, user);
+                        });
+                case UNFOLLOW -> userDatabaseService.removeFollow(sessionManager.getCurrentUser(), user.getUsername())
+                        .addOnSuccessListener(vd -> { remove(user); notifyDataSetChanged(); });
+                case REMOVE -> userDatabaseService.removeFollow(user.getUsername(), sessionManager.getCurrentUser())
+                        .addOnSuccessListener(vd -> { remove(user); notifyDataSetChanged(); });
             }
         });
 
         return view;
+    }
+
+    private void setButtonView(Button button, PublicUser user) {
+        button.setText(getButtonText(user));
+        button.setEnabled(buttonAction != UserButtonActionEnum.FOLLOW || user.getFollowRelationshipWithCurrUser() == FollowRelationshipEnum.NONE);
+    }
+
+    private int getButtonText(PublicUser user) {
+        return switch(buttonAction) {
+            case FOLLOW -> getFollowText(user.getFollowRelationshipWithCurrUser());
+            case REMOVE -> R.string.remove;
+            case UNFOLLOW -> R.string.unfollow;
+        };
+    }
+
+    private int getFollowText(FollowRelationshipEnum relationship) {
+        if (relationship == FollowRelationshipEnum.NONE) {
+            return R.string.follow;
+        } else if (relationship == FollowRelationshipEnum.REQUESTED) {
+            return R.string.requested;
+        } else {
+            return R.string.following;
+        }
     }
 
     public void replaceItems(List<PublicUser> items) {

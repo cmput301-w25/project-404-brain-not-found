@@ -6,7 +6,7 @@ import com.google.firebase.firestore.Exclude;
 public class PublicUser {
     private final String username;
     private final String name;
-    private final FollowRelationshipEnum followRelationshipWithCurrUser;
+    private FollowRelationshipEnum followRelationshipWithCurrUser;
 
     public PublicUser(String username, String name) {
         this(username, name, FollowRelationshipEnum.NONE);
@@ -39,5 +39,9 @@ public class PublicUser {
     @Exclude
     public FollowRelationshipEnum getFollowRelationshipWithCurrUser() {
         return followRelationshipWithCurrUser;
+    }
+
+    public void setFollowRelationshipWithCurrUser(FollowRelationshipEnum followRelationshipWithCurrUser) {
+        this.followRelationshipWithCurrUser = followRelationshipWithCurrUser;
     }
 }
