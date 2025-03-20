@@ -123,7 +123,9 @@ public class UserDatabaseService extends BaseDatabaseService {
 
     private Task<QuerySnapshot> getBaseUserSearchQuery(CollectionReference collectionRef, String field, String query) {
         String searchQuery = query.toLowerCase();
-        return collectionRef.orderBy(field)
+        return searchQuery.isEmpty()
+                ? collectionRef.orderBy(field).get()
+                : collectionRef.orderBy(field)
                 .startAt(searchQuery)
                 .endAt(searchQuery + "\uf8ff")
                 .get();

@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.UserDatabaseService;
+import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
@@ -58,10 +59,17 @@ public class RequestListAdapter extends ArrayAdapter<String> {
         return view;
     }
 
-    public void refreshRequests() {
+    public Task<Integer> refreshRequests() {
         clear();
 
-        userDatabaseService.getRequests(SessionManager.getInstance().getCurrentUser())
-                .addOnSuccessListener(this::addAll);
+        return userDatabaseService.getRequests(SessionManager.getInstance().getCurrentUser())
+                .continueWith(task -> {
+                    if(task.isSuccessful()) {
+                        addAll(task.getResult());
+                        notifyDataSetChanged();
+                        return task.getResult().size();
+                    }
+                    return 0;
+                });
     }
 }

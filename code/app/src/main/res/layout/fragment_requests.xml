@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.RequestsFragment">
 
+    <TextView
+        android:id="@+id/no_requests"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_follow_requests"
+        android:textColor="@android:color/tertiary_text_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ListView
         android:id="@+id/request_list"
         android:layout_width="match_parent"

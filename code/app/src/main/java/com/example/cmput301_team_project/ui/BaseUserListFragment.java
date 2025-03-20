@@ -50,6 +50,10 @@ public abstract class BaseUserListFragment extends Fragment {
         userList.setAdapter(userAdapter);
 
         SearchView searchView = view.findViewById(R.id.user_search);
+        searchView.setOnCloseListener(() -> {
+            userAdapter.clear();
+            return false;
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
