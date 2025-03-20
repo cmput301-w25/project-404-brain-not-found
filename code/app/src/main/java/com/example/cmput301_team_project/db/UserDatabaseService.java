@@ -317,7 +317,7 @@ public class UserDatabaseService extends BaseDatabaseService {
             .document(target)
             .set(new PublicUser(target, task.getResult())));
 
-        Task<Void> followerTask = getDisplayName(target).continueWithTask(task -> usersRef.document(target)
+        Task<Void> followerTask = getDisplayName(follower).continueWithTask(task -> usersRef.document(target)
                 .collection("followers")
                 .document(follower)
                 .set(new PublicUser(follower, task.getResult())));
