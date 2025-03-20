@@ -40,13 +40,9 @@ import kotlin.NotImplementedError;
 public class UserDatabaseService extends BaseDatabaseService {
     private static UserDatabaseService instance = null;
     private final CollectionReference usersRef;
-    private final CollectionReference followersRef;
-    private final CollectionReference requestsRef;
 
     {
         usersRef = db.collection("users");
-        followersRef = db.collection("followers");
-        requestsRef = db.collection("requests");
     }
 
     private UserDatabaseService() {
@@ -274,7 +270,7 @@ public class UserDatabaseService extends BaseDatabaseService {
     }
 
     public Task<Void> removeRequest(String follower, String target) {
-        Task<Void> recievedTask = usersRef.document(target)
+        Task<Void> receivedTask = usersRef.document(target)
                 .collection("requestsReceived")
                 .document(follower)
                 .delete();
@@ -283,7 +279,7 @@ public class UserDatabaseService extends BaseDatabaseService {
                 .document(target)
                 .delete();
 
-        return Tasks.whenAll(recievedTask, sentTask);
+        return Tasks.whenAll(receivedTask, sentTask);
     }
 
     /**
