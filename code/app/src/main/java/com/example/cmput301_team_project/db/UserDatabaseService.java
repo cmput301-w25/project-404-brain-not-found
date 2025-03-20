@@ -121,6 +121,14 @@ public class UserDatabaseService extends BaseDatabaseService {
         });
     }
 
+    /**
+     * Base query that searches field for query in the given collection. The search is case-insensitive
+     *
+     * @param collectionRef collection reference to search in
+     * @param field field to search in
+     * @param query query to search for
+     * @return IF query is empty, returns all documents in the collection, otherwise returns all documents that start with query (case-insensitive)
+     */
     private Task<QuerySnapshot> getBaseUserSearchQuery(CollectionReference collectionRef, String field, String query) {
         String searchQuery = query.toLowerCase();
         return searchQuery.isEmpty()
@@ -132,11 +140,11 @@ public class UserDatabaseService extends BaseDatabaseService {
     }
 
     /**
-     * Get follow relationship of user1 with respect to user2
+     * Get follow relationship of one user with respect another user
      *
-     * @param user1
-     * @param user2
-     * @return
+     * @param user1 username of the first user
+     * @param user2 username of the second user
+     * @return A {@link Task} that resolves to the follow relationship of the first user with respect to the second user
      */
     private Task<FollowRelationshipEnum> getFollowRelationship(String user1, String user2) {
         DocumentReference userRef = usersRef.document(user1);
@@ -199,7 +207,14 @@ public class UserDatabaseService extends BaseDatabaseService {
         });
     }
 
-
+    /**
+     * Searches for users in a nested collection of a given user
+     *
+     * @param username username of the user
+     * @param collection nested collection name
+     * @param query search query
+     * @return A {@link Task} that resolves to a list of users matching the query in the nested collection
+     */
     private Task<List<PublicUser>> userSearchNestedCollection(String username, String collection, String query) {
         CollectionReference collectionReference = usersRef.document(username).collection(collection);
         List<Task<QuerySnapshot>> searchTasks = Arrays.asList(
@@ -247,6 +262,12 @@ public class UserDatabaseService extends BaseDatabaseService {
         return userSearchNestedCollection(username, "following", query);
     }
 
+    /**
+     * Gets all follow requests to a given user
+     *
+     * @param username username of the user whose requests the method gets
+     * @return A {@link Task} that resolves to a list of follow requests to the user
+     */
     public Task<List<String>> getRequests(String username) {
         return usersRef.document(username)
                 .collection("requestsReceived")
@@ -263,8 +284,11 @@ public class UserDatabaseService extends BaseDatabaseService {
     }
 
     /**
-     * One user requests permission from another user to follow
+     * Request one user to follow another
      *
+     * @param follower username of the user making the follow request
+     * @param target username of the user being requested to follow
+     * @return A {@link Task} that resolves when request is processed
      */
     public Task<Void> requestFollow(String follower, String target) {
         Task<Void> receivedTask = getDisplayName(follower).continueWithTask(task -> usersRef.document(target)
@@ -280,6 +304,13 @@ public class UserDatabaseService extends BaseDatabaseService {
         return Tasks.whenAll(receivedTask, sentTask);
     }
 
+    /**
+     * Accepts a follow request
+     *
+     * @param follower username of the user making the follow request
+     * @param target username of the user accepting the follow request
+     * @return A {@link Task} that resolves when request is accepted
+     */
     public Task<Void> acceptRequest(String follower, String target) {
         Task<Void> followingTask = getDisplayName(target).continueWithTask(task -> usersRef.document(follower)
             .collection("following")
@@ -295,6 +326,12 @@ public class UserDatabaseService extends BaseDatabaseService {
                 .continueWithTask(voidTask -> removeRequest(follower, target));
     }
 
+    /**
+     * Removes a follow request
+     * @param follower username of the user making the follow request
+     * @param target username of the user being requested to follow
+     * @return A {@link Task} that resolves when removal is processed
+     */
     public Task<Void> removeRequest(String follower, String target) {
         Task<Void> receivedTask = usersRef.document(target)
                 .collection("requestsReceived")
@@ -309,9 +346,10 @@ public class UserDatabaseService extends BaseDatabaseService {
     }
 
     /**
-     * One user unfollows another user
-     *
-     *
+     * Removes a follow relationship
+     * @param follower username of the user following
+     * @param target username of the user being followed
+     * @return A {@link Task} that resolves when removal is processed
      */
     public Task<Void> removeFollow(String follower, String target) {
         Task<Void> followingTask = usersRef.document(follower)
