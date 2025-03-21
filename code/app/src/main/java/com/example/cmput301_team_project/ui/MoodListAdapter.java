@@ -75,6 +75,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
      */
     private void setupMoodItemView(View view, Mood mood, int position) {
         // Find views and set values
+        TextView moodPrefix = view.findViewById(R.id.mood_prefix);
         TextView moodClass = view.findViewById(R.id.emotionName);
         TextView emoji = view.findViewById(R.id.moodEmoji);
         TextView moodDate = view.findViewById(R.id.dateAns);
@@ -87,10 +88,22 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         ImageView menuButton = null;
         if(isOwned) {
             ViewStub menuStub = view.findViewById(R.id.edit_delete_stub);
-            menuButton = (ImageView) menuStub.inflate();
+            if(menuStub == null) {
+                menuButton = view.findViewById(R.id.mood_menu_button);
+            }
+            else {
+                menuButton = (ImageView) menuStub.inflate();
+            }
         }
 
         if (mood != null) {
+            if(isOwned) {
+                moodPrefix.setText(R.string.i_am);
+            }
+            else {
+                moodPrefix.setText(String.format("@%s %s", mood.getAuthor(), getContext().getString(R.string.is)));
+            }
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
             moodClass.setText(mood.getDisplayName());

@@ -10,7 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.cmput301_team_project.R;
+import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
+import com.example.cmput301_team_project.db.UserDatabaseService;
 
 import java.util.ArrayList;
 
@@ -21,10 +23,12 @@ import java.util.ArrayList;
  */
 public class MoodFollowingFragment extends BaseMoodListFragment {
     private final MoodDatabaseService moodDatabaseService;
+    private final UserDatabaseService userDatabaseService;
     private MoodListAdapter moodListAdapter;
 
     public MoodFollowingFragment() {
         moodDatabaseService = MoodDatabaseService.getInstance();
+        userDatabaseService = UserDatabaseService.getInstance();
     }
 
     /**
@@ -50,6 +54,12 @@ public class MoodFollowingFragment extends BaseMoodListFragment {
 
     @Override
     protected void loadMoodData() {
-
+        userDatabaseService.getFollowing(SessionManager.getInstance().getCurrentUser())
+                        .addOnSuccessListener(following -> moodDatabaseService.getFollowingMoods(following)
+                                .addOnSuccessListener(moods -> {
+                                    moodListAdapter.clear();
+                                    moodListAdapter.addAll(moods);
+                                    moodListAdapter.notifyDataSetChanged();
+                                }));
     }
 }
