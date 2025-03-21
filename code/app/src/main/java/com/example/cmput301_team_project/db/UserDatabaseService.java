@@ -385,6 +385,22 @@ public class UserDatabaseService extends BaseDatabaseService {
         return Tasks.whenAll(followingTask, followersTask);
     }
 
+    public Task<List<String>> getFollowing(String username) {
+        return usersRef.document(username)
+                .collection("following")
+                .get()
+                .continueWith(task -> {
+                    if(task.isSuccessful()) {
+                        return task.getResult()
+                                .getDocuments()
+                                .stream()
+                                .map(DocumentSnapshot::getId)
+                                .collect(Collectors.toList());
+                    }
+                    return new ArrayList<>();
+                });
+    }
+
 
     /**
      * Hashes a password using the PBKDF2 algorithm with HMAC-SHA1.

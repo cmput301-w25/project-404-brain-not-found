@@ -137,6 +137,8 @@ public class MoodFormFragment extends DialogFragment {
             //display old moods trigger
             trigger.setText(editedMood.getTrigger());
 
+            isPublicSwitch.setOn(editedMood.isPublic());
+
             //display image
             if (editedMood.getImageBase64() != null && !editedMood.getImageBase64().isEmpty()) {
                 moodImagePreview.setImageBitmap(ImageUtils.decodeBase64(editedMood.getImageBase64()));

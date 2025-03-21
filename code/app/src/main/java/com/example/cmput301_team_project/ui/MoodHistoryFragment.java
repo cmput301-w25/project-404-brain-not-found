@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.cmput301_team_project.R;
+import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.model.Mood;
 
@@ -23,9 +24,8 @@ import java.util.ArrayList;
  * Use the {@link MoodHistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MoodHistoryFragment extends Fragment implements MoodFormFragment.MoodFormDialogListener {
+public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFormFragment.MoodFormDialogListener {
     private final MoodDatabaseService moodDatabaseService;
-    private ListView moodListView;
     private MoodListAdapter moodListAdapter;
     private ArrayList<Mood> moodList;
 
@@ -55,8 +55,8 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_mood_history, container, false);
-        moodListView = view.findViewById(R.id.Mood_List);
-        moodListAdapter = new MoodListAdapter(getContext(), moodList, this);
+        ListView moodListView = view.findViewById(R.id.mood_List);
+        moodListAdapter = new MoodListAdapter(getContext(), moodList, this, true);
         moodListView.setAdapter(moodListAdapter);
 
         ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
@@ -73,12 +73,6 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
         moodDatabaseService.addMood(mood);
         loadMoodData();
     }
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Refresh mood data when returning to the fragment
-        loadMoodData();
-    }
 
     @Override
     public void replaceMood(Mood newMood) {
@@ -89,8 +83,8 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
     /**
      * Loads mood data from Firestore database
      */
-    private void loadMoodData() {
-        moodDatabaseService.getMoodList()
+    protected void loadMoodData() {
+        moodDatabaseService.getMoodList(SessionManager.getInstance().getCurrentUser())
                 .addOnSuccessListener(moods -> {
                     // Clear existing list and add new data
                     moodList.clear();
