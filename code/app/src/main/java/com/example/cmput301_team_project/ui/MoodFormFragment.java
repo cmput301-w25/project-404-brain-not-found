@@ -38,10 +38,13 @@ import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.example.cmput301_team_project.BuildConfig;
 import com.example.cmput301_team_project.ui.HintDropdownAdapter;
 import com.example.cmput301_team_project.ui.HintDropdownItemSelectedListener;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.SessionManager;
@@ -50,6 +53,11 @@ import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.utils.ImageUtils;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.firestore.GeoPoint;
 
@@ -74,6 +82,8 @@ public class MoodFormFragment extends DialogFragment {
 
     private boolean isEditMode = false; // Flag to check if we're editing
     private Mood moodBeingEdited = null; // Reference to the mood being edited
+
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 1; //to automatically show the locations or compelte it
 
     private MoodDatabaseService moodDatabaseService;
 
@@ -149,6 +159,11 @@ public class MoodFormFragment extends DialogFragment {
              }
         }));
 
+        if (!Places.isInitialized()) {
+            Places.initialize(requireContext(), BuildConfig.API_KEY);
+        }
+
+
         if (isEditMode) {
             Mood editedMood = (Mood) getArguments().getSerializable("mood");
             ImageView moodImagePreview = view.findViewById(R.id.mood_image_preview);
@@ -194,10 +209,11 @@ public class MoodFormFragment extends DialogFragment {
                     trigger.setError(String.format(getString(R.string.trigger_too_many_chars), MAX_TRIGGER_LENGTH));
                     return;
                 }
-                if (!isValidTriggerWordCount(inputtedTrigger)) {
-                    trigger.setError(String.format(getString(R.string.trigger_too_many_words), MAX_TRIGGER_WORDS));
-                    return;
-                }
+
+                //if (!isValidTriggerWordCount(inputtedTrigger)) {
+                //    trigger.setError(String.format(getString(R.string.trigger_too_many_words), MAX_TRIGGER_WORDS));
+                //    return;
+                //}
 
                 MoodEmotionEnum selectedEmotion = MoodEmotionEnum.values()[emotion.getSelectedItemPosition()];
 
@@ -281,6 +297,46 @@ public class MoodFormFragment extends DialogFragment {
         }
     }
 
+
+    private void startAutocomplete() {
+        // Set the fields to specify which types of place data to return
+        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
+
+        // Start the autocomplete intent
+        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                .build(requireContext());
+        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+    }
+
+    private void handleSelectedPlace(Place place) {
+        // Update UI with the selected place details
+        TextView locationAddress = getView().findViewById(R.id.current_location);
+        locationAddress.setText(place.getAddress());
+
+        // You can also get the latitude and longitude
+        LatLng latLng = place.getLatLng();
+        if (latLng != null) {
+            double latitude = latLng.latitude;
+            double longitude = latLng.longitude;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                // Get the selected place
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                handleSelectedPlace(place); // Handle the selected place
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // Handle the error
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.e("Places", "Error: " + status.getStatusMessage());
+            }
+        }
+    }
 
     /**
      * Checks if the trigger text is of valid length

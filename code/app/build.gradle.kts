@@ -19,7 +19,7 @@ android {
 
     buildTypes {
         debug{
-            buildConfigField("String", "API_KEY", "\"${project.properties["API_KEY"]}\"")
+            buildConfigField("String", "API_KEY", "\"${project.properties["AIzaSyDNuF9n82L22f561AtjRy8L7ok2cHNewp0"]}\"")
         }
         release {
             isMinifyEnabled = false
