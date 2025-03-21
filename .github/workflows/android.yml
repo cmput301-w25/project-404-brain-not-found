@@ -56,6 +56,12 @@ jobs:
         run: firebase emulators:start --only firestore &
         working-directory: code
 
+      # Retrieve contents of MAPS_API_KEY secret from GitHub Secrets
+      # and save it as mapskey.properties file in the workflow workspace.
+         
+      -  name: Get mapskey.properties from secrets
+         run: echo "${{ secrets.MAPS_API_KEY }}" > $GITHUB_WORKSPACE/mapskey.properties
+
       - name: run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
