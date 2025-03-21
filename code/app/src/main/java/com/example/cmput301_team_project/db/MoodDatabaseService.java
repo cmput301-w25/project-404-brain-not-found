@@ -7,7 +7,6 @@ import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -15,7 +14,6 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -116,9 +114,10 @@ public class MoodDatabaseService extends BaseDatabaseService {
         List<Task<QuerySnapshot>> fetchTasks = new ArrayList<>();
         for(String username : following) {
             fetchTasks.add(moodsRef.orderBy("date", Query.Direction.DESCENDING)
-                    .whereEqualTo("author", username)
-                    .limit(3)
-                    .get());
+                            .whereEqualTo("author", username)
+                            .whereEqualTo("public", true)
+                            .limit(3)
+                            .get());
         }
 
         return Tasks.whenAllSuccess(fetchTasks)
