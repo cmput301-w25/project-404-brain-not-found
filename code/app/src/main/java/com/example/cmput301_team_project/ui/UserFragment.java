@@ -75,7 +75,7 @@ public class UserFragment extends Fragment {
 
         moodDatabaseService.getMostRecentMood(currUser).addOnSuccessListener(emotion ->{
             if (emotion != null){
-                Mood tempMood = Mood.createMood(MoodEmotionEnum.valueOf(emotion), null, null, null, null, null);
+                Mood tempMood = Mood.createMood(MoodEmotionEnum.valueOf(emotion), null, null, false,null, null, null);
                 userEmoji.setText(tempMood.getEmoji());
                 userEmoji.setVisibility(View.VISIBLE);
             }else{
