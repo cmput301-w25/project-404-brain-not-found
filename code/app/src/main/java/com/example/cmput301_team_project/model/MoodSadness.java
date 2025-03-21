@@ -37,6 +37,7 @@ public class MoodSadness extends Mood {
         return R.string.emoji_sadness;
     }
 
+    @Exclude
     public int getDisplayName(){
         return R.string.mood_sadness;
     }

@@ -38,6 +38,7 @@ public class MoodSurprise extends Mood {
         return R.string.emoji_surprise;
     }
 
+    @Exclude
     public int getDisplayName(){
         return R.string.mood_surprise;
     }

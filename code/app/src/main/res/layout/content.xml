@@ -105,15 +105,12 @@
                 </LinearLayout>
             </FrameLayout>
 
-            <!-- Three-dot edit/delete menu icon-->
-            <ImageView
-                android:id="@+id/mood_menu_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="top|end"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="4dp"
-                android:src="@drawable/ic_baseline_more_vert_24" />
+        <ViewStub
+            android:id="@+id/edit_delete_stub"
+            android:layout="@layout/edit_delete_menu_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end" />
 
         </LinearLayout>
 

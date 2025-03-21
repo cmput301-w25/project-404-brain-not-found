@@ -36,9 +36,9 @@ public class MainActivity extends BaseActivity {
             v.setPadding(0, 0, 0, 0);
             return insets;
         });
+        navigation.setSelectedItemId(R.id.mood_following_icon);
 
-        // TODO: This should probably be changed to mood following list once its fragment is created so that's the first tab user sees
-        replaceFragment(new MoodHistoryFragment());
+        replaceFragment(MoodFollowingFragment.newInstance());
 
         navigation.setOnItemSelectedListener(item -> {
             if(item.getItemId() == R.id.mood_history_icon) {
@@ -46,6 +46,9 @@ public class MainActivity extends BaseActivity {
             }
             else if(item.getItemId() == R.id.user_icon) {
                 replaceFragment(UserFragment.newInstance());
+            }
+            else if(item.getItemId() == R.id.mood_following_icon) {
+                replaceFragment(MoodFollowingFragment.newInstance());
             }
             return true;
         });

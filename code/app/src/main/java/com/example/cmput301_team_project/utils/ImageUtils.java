@@ -17,6 +17,9 @@ public class ImageUtils {
      * @return A Bitmap derived from the decoded bytes of the Base64 string, or null if decoding fails.
      */
     public static Bitmap decodeBase64(String base64Str) {
+        if(base64Str == null) {
+            return null;
+        }
         byte[] decodedBytes = Base64.decode(base64Str, Base64.NO_WRAP);
         return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
     }

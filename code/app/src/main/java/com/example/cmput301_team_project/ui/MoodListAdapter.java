@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -34,22 +36,25 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
     private ArrayList<Mood> moodList;
     private MoodDatabaseService moodDatabaseService; // Reference to the database service
     private Fragment parentFragment;
+    private boolean isOwned;
 
     /**
      * Constructs a new MoodListAdapter.
      * @param context the current context.
      * @param moodList the list of Mood objects to display.
      */
-    public MoodListAdapter(Context context, ArrayList<Mood> moodList, Fragment parentFragment) {
+    public MoodListAdapter(Context context, ArrayList<Mood> moodList, Fragment parentFragment, boolean isOwned) {
         super(context, 0, moodList);
         this.context = context;
         this.moodList = moodList;
         this.moodDatabaseService = MoodDatabaseService.getInstance(); // Get a singleton instance
         this.parentFragment = parentFragment;
+        this.isOwned = isOwned;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         // Inflate the layout if not already created
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.content, parent, false);
@@ -70,6 +75,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
      */
     private void setupMoodItemView(View view, Mood mood, int position) {
         // Find views and set values
+        TextView moodPrefix = view.findViewById(R.id.mood_prefix);
         TextView moodClass = view.findViewById(R.id.emotionName);
         TextView emoji = view.findViewById(R.id.moodEmoji);
         TextView moodDate = view.findViewById(R.id.dateAns);
@@ -77,11 +83,27 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         TextView triggerName = view.findViewById(R.id.triggerName);
         TextView moodTime = view.findViewById(R.id.timeAns);
         ImageView moodImage = view.findViewById(R.id.ImageBase64);
-        ImageView menuButton = view.findViewById(R.id.mood_menu_button);
         androidx.cardview.widget.CardView cardView = view.findViewById(R.id.cardView);
 
+        ImageView menuButton = null;
+        if(isOwned) {
+            ViewStub menuStub = view.findViewById(R.id.edit_delete_stub);
+            if(menuStub == null) {
+                menuButton = view.findViewById(R.id.mood_menu_button);
+            }
+            else {
+                menuButton = (ImageView) menuStub.inflate();
+            }
+        }
 
         if (mood != null) {
+            if(isOwned) {
+                moodPrefix.setText(R.string.i_am);
+            }
+            else {
+                moodPrefix.setText(String.format("@%s %s", mood.getAuthor(), getContext().getString(R.string.is)));
+            }
+
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
             SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
             moodClass.setText(mood.getDisplayName());
@@ -96,13 +118,10 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
 
             cardView.setCardBackgroundColor(getContext().getResources().getColor(mood.getColour(), getContext().getTheme()));
 
-            // If the three-dot menu icon is clicked, a pop-up menu shows up
-            menuButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    openPopupMenu(v, position);
-                }
-            });
+            if(menuButton != null) {
+                // If the three-dot menu icon is clicked, a pop-up menu shows up
+                menuButton.setOnClickListener(v -> openPopupMenu(v, position));
+            }
         }
     }
 
