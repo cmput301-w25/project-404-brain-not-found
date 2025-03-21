@@ -16,7 +16,6 @@ import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.model.Mood;
-import com.google.firebase.firestore.auth.User;
 
 public class ViewProfileFragment extends DialogFragment {
 
@@ -44,11 +43,11 @@ public class ViewProfileFragment extends DialogFragment {
 
         TextView followerCount = view.findViewById(R.id.followerCount);
         udb.followerCount(username).addOnSuccessListener(count -> {
-            followerCount.setText(count+"");
+            followerCount.setText(String.valueOf(count));
         });
         TextView followingCount = view.findViewById(R.id.followingCount);
         udb.followingCount(username).addOnSuccessListener(count -> {
-            followingCount.setText(count+"");
+            followingCount.setText(String.valueOf(count));
         });
         TextView emoji = view.findViewById(R.id.recentEmoji);
         MoodDatabaseService mdb = MoodDatabaseService.getInstance();
