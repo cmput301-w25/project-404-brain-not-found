@@ -1,5 +1,7 @@
 package com.example.cmput301_team_project.ui;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -55,6 +57,7 @@ import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.utils.ImageUtils;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
@@ -162,6 +165,9 @@ public class MoodFormFragment extends DialogFragment {
         if (!Places.isInitialized()) {
             Places.initialize(requireContext(), BuildConfig.API_KEY);
         }
+
+        Button searchButton = view.findViewById(R.id.btn_autocomplete);
+        searchButton.setOnClickListener(v -> startAutocomplete());
 
 
         if (isEditMode) {
@@ -297,16 +303,40 @@ public class MoodFormFragment extends DialogFragment {
         }
     }
 
-
+//for autocomplete
+// reference: https://developers.google.com/maps/documentation/places/android-sdk/autocomplete-tutorial?apix_params=%7B%22resource%22%3A%7B%22input%22%3A%22%22%7D%7D
     private void startAutocomplete() {
         // Set the fields to specify which types of place data to return
         List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS);
 
         // Start the autocomplete intent
-        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+        Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                .setCountries(Arrays.asList("US"))
+                .setTypesFilter(new ArrayList<String>() {{
+                    add(TypeFilter.ADDRESS.toString().toLowerCase());
+                }})
                 .build(requireContext());
-        startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+        startAutocomplete.launch(intent);
     }
+
+    private final ActivityResultLauncher<Intent> startAutocomplete = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent intent = result.getData();
+                    if (intent != null) {
+                        Place place = Autocomplete.getPlaceFromIntent(intent);
+                        handleSelectedPlace(place); // Handle the selected place
+                        Log.d(TAG, "Place: " + place.getAddressComponents());
+                        //fillInAddress(place);
+                    }
+                } else if (result.getResultCode() == AutocompleteActivity.RESULT_ERROR) {
+                    // Handle the error
+                    Status status = Autocomplete.getStatusFromIntent(result.getData());
+                    Log.e("Places", "Error: " + status.getStatusMessage());
+                }
+            }
+    );
 
     private void handleSelectedPlace(Place place) {
         // Update UI with the selected place details
@@ -318,23 +348,6 @@ public class MoodFormFragment extends DialogFragment {
         if (latLng != null) {
             double latitude = latLng.latitude;
             double longitude = latLng.longitude;
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                // Get the selected place
-                Place place = Autocomplete.getPlaceFromIntent(data);
-                handleSelectedPlace(place); // Handle the selected place
-            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                // Handle the error
-                Status status = Autocomplete.getStatusFromIntent(data);
-                Log.e("Places", "Error: " + status.getStatusMessage());
-            }
         }
     }
 

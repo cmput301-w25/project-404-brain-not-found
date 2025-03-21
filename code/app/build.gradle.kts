@@ -15,12 +15,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "API_KEY", "\"${project.properties["API_KEY"]}\"")
     }
 
     buildTypes {
-        debug{
-            buildConfigField("String", "API_KEY", "\"${project.properties["AIzaSyDNuF9n82L22f561AtjRy8L7ok2cHNewp0"]}\"")
-        }
         release {
             isMinifyEnabled = false
             proguardFiles(
