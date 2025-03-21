@@ -1,3 +1,6 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
@@ -15,7 +18,17 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "API_KEY", "\"${project.properties["API_KEY"]}\"")
+        //load the values from .properties file
+        val mapsKeyFile = project.rootProject.file("local.properties")
+        val properties = Properties()
+        properties.load(mapsKeyFile.inputStream())
+
+//fetch the map key
+        val apiKey = properties.getProperty("MAPS_API_KEY") ?: ""
+
+//inject the key dynamically into the manifest
+        manifestPlaceholders["GOOGLE_KEY"] = apiKey
+        //buildConfigField("String", "API_KEY", "\"${project.properties["API_KEY"]}\"")
     }
 
     buildTypes {

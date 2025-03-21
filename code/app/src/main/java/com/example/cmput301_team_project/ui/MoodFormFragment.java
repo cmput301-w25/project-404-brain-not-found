@@ -163,7 +163,9 @@ public class MoodFormFragment extends DialogFragment {
         }));
 
         if (!Places.isInitialized()) {
-            Places.initialize(requireContext(), BuildConfig.API_KEY);
+            String apiKey = getString(R.string.google_maps_key);
+            Places.initialize(requireContext(), apiKey);
+
         }
 
         Button searchButton = view.findViewById(R.id.btn_autocomplete);
