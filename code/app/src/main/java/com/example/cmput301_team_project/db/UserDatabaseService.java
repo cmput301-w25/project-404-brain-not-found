@@ -6,11 +6,13 @@ import com.example.cmput301_team_project.model.AppUser;
 import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -165,6 +167,25 @@ public class UserDatabaseService extends BaseDatabaseService {
                 });
     }
 
+    public Task<Long> followerCount(String username){
+        CollectionReference userRef = usersRef.document(username).collection("followers");
+        return userRef.count().get(AggregateSource.SERVER).continueWith(task -> {
+            if (!task.isSuccessful()){
+                throw task.getException();
+            }
+            return task.getResult().getCount();
+        });
+    }
+
+    public Task<Long> followingCount(String username){
+        CollectionReference userRef = usersRef.document(username).collection("following");
+        return userRef.count().get(AggregateSource.SERVER).continueWith(task -> {
+            if (!task.isSuccessful()){
+                throw task.getException();
+            }
+            return task.getResult().getCount();
+        });
+    }
     /**
      * Searches for users in the database
      *

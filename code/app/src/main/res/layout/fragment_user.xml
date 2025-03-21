@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20sp"
             android:ellipsize="end"
-            android:maxLines="1"
+            android:maxLines="2"
             android:text="Name"
             android:textSize="40sp"
             android:visibility="visible" />
@@ -42,7 +42,7 @@
         android:layout_height="41dp"
         android:layout_marginLeft="20sp"
         android:ellipsize="end"
-        android:maxLines="1"
+        android:maxLines="2"
         android:text="TextView"
         android:textSize="24sp" />
 
