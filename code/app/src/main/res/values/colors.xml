@@ -13,4 +13,6 @@
     <color name="default_background">#FFFFFFFF</color>
     <color name="buttons">#0A5475</color>
     <color name="text_colour2">#EA212121</color>
+    <color name="accept_button">#FF2196F3</color>
+    <color name="decline_button">#FFD14249</color>
 </resources>

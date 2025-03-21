@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">CMPUT301-Team-Project</string>
-    <string name ="app_title">Moodster</string>
+    <string name="app_title">Moodster</string>
     <string name="trigger">Trigger</string>
     <string name="anger">Anger</string>
     <string name="confusion">Confusion</string>
@@ -20,6 +20,7 @@
     <string name="emoji_sadness">☹️</string>
     <string name="emoji_shame">😳</string>
     <string name="emoji_surprise">🫢</string>
+    <string name="emoji_emotionless">😶</string>
     <string name="social_alone">Alone</string>
     <string name="social_pair">With one other person</string>
     <string name="social_several">With two to several people</string>
@@ -41,7 +42,6 @@
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="trigger_too_many_chars">Trigger must be under %d characters</string>
-    <string name="trigger_too_many_words">Trigger must have at most %d words</string>
     <string name="empty_username_error">Username cannot be empty</string>
     <string name="empty_password_error">Password cannot be empty</string>
     <string name="username_exists_error">Username already taken</string>
@@ -50,4 +50,18 @@
     <string name="filter_moods_by_week">Past week</string>
     <string name="filter_moods_by_month">Past month</string>
     <string name="filter_by_text_hint">Find text in moods</string>
+    <string name="requests">Requests</string>
+    <string name="find_people">People</string>
+    <string name="followers">Followers</string>
+    <string name="following">Following</string>
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
+    <string name="remove">Remove</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+    <string name="follow_request">requested to follow you</string>
+    <string name="requested">Requested</string>
+    <string name="no_follow_requests">You have no follow requests</string>
+    <string name="i_am">I am</string>
+    <string name="is">is</string>
 </resources>

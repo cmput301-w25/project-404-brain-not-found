@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".MoodHistoryFragment">
+    tools:context=".ui.MoodHistoryFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -36,10 +36,5 @@
 
     </RelativeLayout>
 
-    <ListView
-        android:id="@+id/Mood_List"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@color/default_background"
-        android:dividerHeight="10dp"/>
+    <include layout="@layout/mood_list_layout"/>
 </LinearLayout>

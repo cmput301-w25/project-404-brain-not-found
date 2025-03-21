@@ -3,6 +3,18 @@ package com.example.cmput301_team_project;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
+import com.example.cmput301_team_project.enums.MoodEmotionEnum;
+import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
+import com.example.cmput301_team_project.model.Mood;
+import com.example.cmput301_team_project.model.MoodAnger;
+import com.example.cmput301_team_project.model.MoodConfusion;
+import com.example.cmput301_team_project.model.MoodDisgust;
+import com.example.cmput301_team_project.model.MoodFear;
+import com.example.cmput301_team_project.model.MoodHappiness;
+import com.example.cmput301_team_project.model.MoodSadness;
+import com.example.cmput301_team_project.model.MoodShame;
+import com.example.cmput301_team_project.model.MoodSurprise;
+
 import org.junit.Test;
 
 
@@ -14,7 +26,7 @@ public class MoodUnitTest {
     public void testCreateMood() {
         class TestHelper {
             Mood createMoodUtil(MoodEmotionEnum emotion) {
-                return Mood.createMood(emotion, MoodSocialSituationEnum.ALONE, "", "", null, null);
+                return Mood.createMood(emotion, MoodSocialSituationEnum.ALONE, "", true,"", null, null);
             }
         }
         TestHelper testHelper = new TestHelper();
@@ -31,7 +43,7 @@ public class MoodUnitTest {
     @Test
     public void testIllegalCreateMood() {
         assertThrows(IllegalArgumentException.class, () -> {
-            Mood.createMood(MoodEmotionEnum.NONE, MoodSocialSituationEnum.ALONE, "", "", null, null);
+            Mood.createMood(MoodEmotionEnum.NONE, MoodSocialSituationEnum.ALONE, "", true,"", null, null);
         });
     }
 }

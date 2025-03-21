@@ -2,6 +2,10 @@ package com.example.cmput301_team_project;
 
 import android.util.Log;
 
+import com.example.cmput301_team_project.enums.MoodEmotionEnum;
+import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
+import com.example.cmput301_team_project.model.AppUser;
+import com.example.cmput301_team_project.model.Mood;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -37,16 +41,16 @@ public class BaseActivityTest {
         CollectionReference moviesRef = db.collection("movies");
         CollectionReference usersRef = db.collection("users");
         Mood[] moods = {
-                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "fassdfa", "Urkel", null, null),
-                Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.CROWD, "fassdfa", "Vance", null, null),
-                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.SEVERAL, "fassdfa", "Henrietta", null, null),
+                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "fassdfa", true, "Urkel", null, null),
+                Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.CROWD, "fassdfa", true, "Vance", null, null),
+                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.SEVERAL, "fassdfa",true, "Henrietta", null, null),
         };
         for (Mood mood : moods) {
             moviesRef.document().set(mood);
         }
 
         AppUser[] users = {
-                new AppUser("Henrietta", "some_password", "salt")
+                new AppUser("Henrietta", "", "some_password", "salt")
         };
 
         for (AppUser user: users) {

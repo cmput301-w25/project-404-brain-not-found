@@ -8,6 +8,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.google.android.gms.tasks.Task;
+import com.example.cmput301_team_project.db.MoodDatabaseService;
+import com.example.cmput301_team_project.enums.MoodEmotionEnum;
+import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
+import com.example.cmput301_team_project.model.Mood;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -61,7 +65,7 @@ public class MoodDatabaseServiceUnitTest {
         List<DocumentSnapshot> mockDocuments = new ArrayList<>();
 
         DocumentSnapshot mockDocument = mock(DocumentSnapshot.class);
-        when(mockDocument.toObject(Mood.class)).thenReturn(Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test", "me", new Date(), null));
+        when(mockDocument.toObject(Mood.class)).thenReturn(Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test", true, "me", new Date(), null));
         mockDocuments.add(mockDocument);
 
         when(mockQuerySnapshot.getDocuments()).thenReturn(mockDocuments);
@@ -73,7 +77,7 @@ public class MoodDatabaseServiceUnitTest {
 
     @Test
     public void testAddMood() {
-        Mood mood = Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test", "me", new Date(), null);
+        Mood mood = Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test", true, "me", new Date(), null);
 
         moodDatabaseService.addMood(mood);
         verify(mockMoodCollection).add(mood);
@@ -81,7 +85,7 @@ public class MoodDatabaseServiceUnitTest {
 
     @Test
     public void testDeleteMood() {
-        Mood mood = Mood.createMood(MoodEmotionEnum.DISGUST, MoodSocialSituationEnum.SEVERAL, "test", "me", new Date(), null);
+        Mood mood = Mood.createMood(MoodEmotionEnum.DISGUST, MoodSocialSituationEnum.SEVERAL, "test", true, "me", new Date(), null);
         mood.setId("mockId");
 
         moodDatabaseService.deleteMood(mood);
@@ -90,7 +94,7 @@ public class MoodDatabaseServiceUnitTest {
 
     @Test
     public void testUpdateMood() {
-        Mood mood = Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.ALONE, "test", "me", new Date(), null);
+        Mood mood = Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.ALONE, "test", true, "me", new Date(), null);
         mood.setId("mockId");
 
         moodDatabaseService.updateMood(mood);
@@ -100,17 +104,17 @@ public class MoodDatabaseServiceUnitTest {
     @Test
     public void filterByEmotionShouldShowProperMoods() {
         List<Mood> mockMoods = Arrays.asList(
-                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1", "me", new Date(), null),
-                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "test1", "me", new Date(), null),
-                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1", "me", new Date(), null)
+                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1", true, "me", new Date(), null),
+                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "test1",true, "me", new Date(), null),
+                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1",true, "me", new Date(), null)
         );
 
         Task<List<Mood>> mockTask = mock(Task.class);
         when(mockTask.isSuccessful()).thenReturn(true);
         when(mockTask.getResult()).thenReturn(mockMoods);
-        when(moodDatabaseService.getMoodList()).thenReturn(mockTask);
+        when(moodDatabaseService.getMoodList("me")).thenReturn(mockTask);
 
-        moodDatabaseService.filterByEmotion("ANGER", filteredMoods -> {
+        moodDatabaseService.filterByEmotion("me","ANGER", filteredMoods -> {
             assertEquals(2, filteredMoods.size());
             assertEquals(MoodEmotionEnum.ANGER, filteredMoods.get(0).getEmotion());
             assertEquals(MoodEmotionEnum.ANGER, filteredMoods.get(1).getEmotion());
@@ -127,16 +131,16 @@ public class MoodDatabaseServiceUnitTest {
         Date yesterday = calendar.getTime();
 
         List<Mood> mockMoods = Arrays.asList(
-                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "not filtered", "me", today, null),
-                Mood.createMood(MoodEmotionEnum.SHAME, MoodSocialSituationEnum.ALONE, "filtered", "me", yesterday, null)
+                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "not filtered", true, "me", today, null),
+                Mood.createMood(MoodEmotionEnum.SHAME, MoodSocialSituationEnum.ALONE, "filtered", true, "me", yesterday, null)
         );
 
         Task<List<Mood>> mockTask = mock(Task.class);
         when(mockTask.isSuccessful()).thenReturn(true);
         when(mockTask.getResult()).thenReturn(mockMoods);
-        when(moodDatabaseService.getMoodList()).thenReturn(mockTask);
+        when(moodDatabaseService.getMoodList("me")).thenReturn(mockTask);
 
-        moodDatabaseService.filterByTime(-1, filteredMoods -> {
+        moodDatabaseService.filterByTime("me",-1, filteredMoods -> {
             assertEquals(1, filteredMoods.size());
             assertEquals("filtered", filteredMoods.get(0).getTrigger());
         });
@@ -151,16 +155,16 @@ public class MoodDatabaseServiceUnitTest {
         Date lastWeek = calendar.getTime();
 
         List<Mood> mockMoods = Arrays.asList(
-                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "not filtered", "me", today, null),
-                Mood.createMood(MoodEmotionEnum.SHAME, MoodSocialSituationEnum.ALONE, "filtered", "me", lastWeek, null)
+                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "not filtered", true,"me", today, null),
+                Mood.createMood(MoodEmotionEnum.SHAME, MoodSocialSituationEnum.ALONE, "filtered", true,"me", lastWeek, null)
         );
 
         Task<List<Mood>> mockTask = mock(Task.class);
         when(mockTask.isSuccessful()).thenReturn(true);
         when(mockTask.getResult()).thenReturn(mockMoods);
-        when(moodDatabaseService.getMoodList()).thenReturn(mockTask);
+        when(moodDatabaseService.getMoodList("me")).thenReturn(mockTask);
 
-        moodDatabaseService.filterByTime(-7, filteredMoods -> {
+        moodDatabaseService.filterByTime("me",-7, filteredMoods -> {
             assertEquals(1, filteredMoods.size());
             assertEquals("filtered", filteredMoods.get(0).getTrigger());
         });
@@ -175,16 +179,16 @@ public class MoodDatabaseServiceUnitTest {
         Date lastMonth = calendar.getTime();
 
         List<Mood> mockMoods = Arrays.asList(
-                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "not filtered", "me", today, null),
-                Mood.createMood(MoodEmotionEnum.SHAME, MoodSocialSituationEnum.ALONE, "filtered", "me", lastMonth, null)
+                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "not filtered", true, "me", today, null),
+                Mood.createMood(MoodEmotionEnum.SHAME, MoodSocialSituationEnum.ALONE, "filtered", true,"me", lastMonth, null)
         );
 
         Task<List<Mood>> mockTask = mock(Task.class);
         when(mockTask.isSuccessful()).thenReturn(true);
         when(mockTask.getResult()).thenReturn(mockMoods);
-        when(moodDatabaseService.getMoodList()).thenReturn(mockTask);
+        when(moodDatabaseService.getMoodList("me")).thenReturn(mockTask);
 
-        moodDatabaseService.filterByTime(-30, filteredMoods -> {
+        moodDatabaseService.filterByTime("me",-30, filteredMoods -> {
             assertEquals(1, filteredMoods.size());
             assertEquals("filtered", filteredMoods.get(0).getTrigger());
         });
@@ -193,17 +197,17 @@ public class MoodDatabaseServiceUnitTest {
     @Test
     public void filterByTextShouldShowProperMoods() {
         List<Mood> mockMoods = Arrays.asList(
-                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "test1", "user1", new Date(), null),
-                Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.SEVERAL, "test1 test2", "user2", new Date(), null),
-                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1 test2 test3", "user3", new Date(), null)
+                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "test1", true,"user1", new Date(), null),
+                Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.SEVERAL, "test1 test2", true, "user2", new Date(), null),
+                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1 test2 test3", true,"user3", new Date(), null)
         );
 
         Task<List<Mood>> mockTask = mock(Task.class);
         when(mockTask.isSuccessful()).thenReturn(true);
         when(mockTask.getResult()).thenReturn(mockMoods);
-        when(moodDatabaseService.getMoodList()).thenReturn(mockTask);
+        when(moodDatabaseService.getMoodList("me")).thenReturn(mockTask);
 
-        moodDatabaseService.filterByText(new String[]{"test1", "test2"}, filteredMoods -> {
+        moodDatabaseService.filterByText("me", new String[]{"test1", "test2"}, filteredMoods -> {
             assertEquals(3, filteredMoods.size());
             assertEquals("test1 test2", filteredMoods.get(0).getTrigger());
             assertEquals("test1 test2 test3", filteredMoods.get(1).getTrigger());

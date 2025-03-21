@@ -8,6 +8,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.example.cmput301_team_project.db.UserDatabaseService;
+import com.example.cmput301_team_project.model.AppUser;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
@@ -54,7 +56,7 @@ public class UserDatabaseServiceUnitTest {
     public void testAddUser() {
         String username = "mockUsername";
 
-        AppUser mockUser = new AppUser(username, "mockPassword", "mockSalt");
+        AppUser mockUser = new AppUser(username, "mockName", "mockPassword", "mockSalt");
 
         when(mockUserCollection.document(username)).thenReturn(mockDocRef);
 

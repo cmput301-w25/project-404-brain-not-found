@@ -5,7 +5,7 @@ xmlns:tools="http://schemas.android.com/tools"
 android:id="@+id/frameLayout2"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-tools:context=".SignupFragment">
+tools:context=".ui.SignupFragment">
 
     <Button
         android:id="@+id/button_signin"
@@ -14,6 +14,7 @@ tools:context=".SignupFragment">
         android:layout_marginTop="120dp"
         android:backgroundTint="@color/buttons"
         android:text="Sign Up"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signup_password_layout" />
@@ -32,7 +33,7 @@ tools:context=".SignupFragment">
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/signup_username_layout"
         android:layout_width="350dp"
-        android:layout_height="95dp"
+        android:layout_height="0dp"
         android:layout_marginTop="110dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,13 +47,29 @@ tools:context=".SignupFragment">
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/signup_password_layout"
+        android:id="@+id/signup_name_layout"
         android:layout_width="350dp"
-        android:layout_height="95dp"
+        android:layout_height="0dp"
         android:layout_marginTop="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signup_username_layout">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/signup_name"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:hint="Display Name" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/signup_password_layout"
+        android:layout_width="350dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signup_name_layout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/signup_password"
