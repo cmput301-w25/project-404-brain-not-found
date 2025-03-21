@@ -37,6 +37,7 @@ import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.utils.ImageUtils;
+import com.github.angads25.toggle.widget.LabeledSwitch;
 import com.google.android.material.button.MaterialButton;
 
 import java.io.ByteArrayOutputStream;
@@ -119,6 +120,8 @@ public class MoodFormFragment extends DialogFragment {
         socialSituation.setOnItemSelectedListener(new HintDropdownItemSelectedListener());
         socialSituation.setAdapter(socialSituationAdapter);
 
+        LabeledSwitch isPublicSwitch = view.findViewById(R.id.form_public_switch);
+
         if (isEditMode) {
             Mood editedMood = (Mood) getArguments().getSerializable("mood");
             ImageView moodImagePreview = view.findViewById(R.id.mood_image_preview);
@@ -172,6 +175,7 @@ public class MoodFormFragment extends DialogFragment {
                             selectedEmotion, // New Emotion
                             MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
                             trigger.getText().toString(),
+                            isPublicSwitch.isOn(),
                             moodBeingEdited.getAuthor(),
                             moodBeingEdited.getDate(),
                             imageViewToBase64(view.findViewById(R.id.mood_image_preview))
@@ -186,6 +190,7 @@ public class MoodFormFragment extends DialogFragment {
                             selectedEmotion,
                             MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
                             inputtedTrigger,
+                            isPublicSwitch.isOn(),
                             SessionManager.getInstance().getCurrentUser(),
                             null,
                             imageViewToBase64(view.findViewById(R.id.mood_image_preview))

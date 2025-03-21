@@ -132,8 +132,11 @@ public class MoodDatabaseService extends BaseDatabaseService {
                         } catch (IllegalArgumentException e) {
                             // Keep the default NONE value
                         }
+
+                        Boolean isPublic = doc.getBoolean("isPublic");
+
                         // Creating mood objects based on the emotion
-                        Mood mood = Mood.createMood(emotion, socialSituation, trigger, author, date, imageBase64);
+                        Mood mood = Mood.createMood(emotion, socialSituation, trigger, Boolean.TRUE.equals(isPublic), author, date, imageBase64);
                         if (mood != null) {
                             mood.setId(doc.getId()); // Set the Firestore document ID
                             moodList.add(mood);

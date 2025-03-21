@@ -41,9 +41,9 @@ public class BaseActivityTest {
         CollectionReference moviesRef = db.collection("movies");
         CollectionReference usersRef = db.collection("users");
         Mood[] moods = {
-                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "fassdfa", "Urkel", null, null),
-                Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.CROWD, "fassdfa", "Vance", null, null),
-                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.SEVERAL, "fassdfa", "Henrietta", null, null),
+                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "fassdfa", true, "Urkel", null, null),
+                Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.CROWD, "fassdfa", true, "Vance", null, null),
+                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.SEVERAL, "fassdfa",true, "Henrietta", null, null),
         };
         for (Mood mood : moods) {
             moviesRef.document().set(mood);
