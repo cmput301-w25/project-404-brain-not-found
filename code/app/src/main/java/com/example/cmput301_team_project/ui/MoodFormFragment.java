@@ -32,7 +32,6 @@ import android.widget.TextView;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.SessionManager;
-import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;

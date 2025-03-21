@@ -57,4 +57,5 @@
     <string name="follow_request">requested to follow you</string>
     <string name="requested">Requested</string>
     <string name="no_follow_requests">You have no follow requests</string>
+    <string name ="add_comment">Add a comment</string>
 </resources>
