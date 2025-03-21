@@ -15,6 +15,8 @@ import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.model.Mood;
 
+import org.w3c.dom.Comment;
+
 import java.util.ArrayList;
 
 /**
@@ -64,6 +66,9 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
             MoodFormFragment.newInstance(null).show(getChildFragmentManager(), "Add Mood Event");
         });
 
+        moodListView.setOnItemClickListener((parent, view1, position, id) -> {
+            CommentListFragment.newInstance().show(requireActivity().getSupportFragmentManager(), "CommentListFragment");
+        });
         loadMoodData();
         return view;
     }
