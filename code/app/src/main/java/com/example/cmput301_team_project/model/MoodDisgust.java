@@ -13,12 +13,12 @@ import java.util.Date;
  * Defines some emotional-state-specific attributes, such as display colour and emoji
  */
 public class MoodDisgust extends Mood{
-    public MoodDisgust(MoodSocialSituationEnum socialSituation, String trigger, String author, String imageBase64, GeoPoint location) {
-        super(socialSituation, trigger, author, imageBase64, location);
+    public MoodDisgust(MoodSocialSituationEnum socialSituation, String trigger, String author, String imageBase64, GeoPoint location, String address) {
+        super(socialSituation, trigger, author, imageBase64, location, address);
     }
 
-    public MoodDisgust(MoodSocialSituationEnum socialSituation, String trigger, String author, Date date, String imageBase64, GeoPoint location) {
-        super(socialSituation, trigger, author, date, imageBase64, location);
+    public MoodDisgust(MoodSocialSituationEnum socialSituation, String trigger, String author, Date date, String imageBase64, GeoPoint location, String address) {
+        super(socialSituation, trigger, author, date, imageBase64, location, address);
     }
 
     @Override

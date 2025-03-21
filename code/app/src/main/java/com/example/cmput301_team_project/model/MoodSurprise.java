@@ -14,12 +14,12 @@ import java.util.Date;
  */
 public class MoodSurprise extends Mood {
 
-    public MoodSurprise(MoodSocialSituationEnum socialSituation, String trigger, String author, String imageBase64, GeoPoint location) {
-        super(socialSituation, trigger, author, imageBase64, location);
+    public MoodSurprise(MoodSocialSituationEnum socialSituation, String trigger, String author, String imageBase64, GeoPoint location, String address) {
+        super(socialSituation, trigger, author, imageBase64, location, address);
     }
 
-    public MoodSurprise(MoodSocialSituationEnum socialSituation, String trigger, String author, Date date, String imageBase64, GeoPoint location) {
-        super(socialSituation, trigger, author, date, imageBase64, location);
+    public MoodSurprise(MoodSocialSituationEnum socialSituation, String trigger, String author, Date date, String imageBase64, GeoPoint location, String address) {
+        super(socialSituation, trigger, author, date, imageBase64, location, address);
     }
 
     @Override

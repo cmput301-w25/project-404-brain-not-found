@@ -27,17 +27,21 @@ public abstract class Mood implements Serializable {
     private String imageBase64;
     private GeoPoint location;
 
-    protected Mood(MoodSocialSituationEnum socialSituation, String trigger, String author, String imageBase64, GeoPoint location) {
-        this(socialSituation, trigger, author, new Date(), imageBase64, location);
+    private static String address;
+
+
+    protected Mood(MoodSocialSituationEnum socialSituation, String trigger, String author, String imageBase64, GeoPoint location, String address) {
+        this(socialSituation, trigger, author, new Date(), imageBase64, location, address);
     }
 
-    protected Mood(MoodSocialSituationEnum socialSituation, String trigger, String author, Date date, String imageBase64, GeoPoint location) {
+    protected Mood(MoodSocialSituationEnum socialSituation, String trigger, String author, Date date, String imageBase64, GeoPoint location, String address) {
         this.socialSituation = socialSituation;
         this.trigger = trigger;
         this.date = date;
         this.imageBase64 = imageBase64;
         this.author = author;
         this.location = location;
+        this.address = address;
     }
 
     /**
@@ -51,21 +55,21 @@ public abstract class Mood implements Serializable {
     public static Mood createMood(MoodEmotionEnum emotion, MoodSocialSituationEnum socialSituation, String trigger, String author, @Nullable Date date, @Nullable String imageBase64, @Nullable GeoPoint location) {
         switch(emotion) {
             case ANGER:
-                return date == null ? new MoodAnger(socialSituation, trigger, author, imageBase64, location) : new MoodAnger(socialSituation, trigger, author, date, imageBase64, location);
+                return date == null ? new MoodAnger(socialSituation, trigger, author, imageBase64, location, address) : new MoodAnger(socialSituation, trigger, author, date, imageBase64, location, address);
             case CONFUSION:
-                return date == null ? new MoodConfusion(socialSituation, trigger, author, imageBase64, location) : new MoodConfusion(socialSituation, trigger, author, date, imageBase64, location);
+                return date == null ? new MoodConfusion(socialSituation, trigger, author, imageBase64, location, address) : new MoodConfusion(socialSituation, trigger, author, date, imageBase64, location, address);
             case DISGUST:
-                return date == null ? new MoodDisgust(socialSituation, trigger, author, imageBase64, location) : new MoodDisgust(socialSituation, trigger, author, date, imageBase64, location);
+                return date == null ? new MoodDisgust(socialSituation, trigger, author, imageBase64, location, address) : new MoodDisgust(socialSituation, trigger, author, date, imageBase64, location, address);
             case FEAR:
-                return date == null ? new MoodFear(socialSituation, trigger, author, imageBase64, location) : new MoodFear(socialSituation, trigger, author, date, imageBase64, location);
+                return date == null ? new MoodFear(socialSituation, trigger, author, imageBase64, location, address) : new MoodFear(socialSituation, trigger, author, date, imageBase64, location, address);
             case HAPPINESS:
-                return date == null ? new MoodHappiness(socialSituation, trigger, author, imageBase64, location) : new MoodHappiness(socialSituation, trigger, author, date, imageBase64, location);
+                return date == null ? new MoodHappiness(socialSituation, trigger, author, imageBase64, location, address) : new MoodHappiness(socialSituation, trigger, author, date, imageBase64, location, address);
             case SADNESS:
-                return date == null ? new MoodSadness(socialSituation, trigger, author, imageBase64, location) : new MoodSadness(socialSituation, trigger, author, date, imageBase64, location);
+                return date == null ? new MoodSadness(socialSituation, trigger, author, imageBase64, location, address) : new MoodSadness(socialSituation, trigger, author, date, imageBase64, location, address);
             case SHAME:
-                return date == null ? new MoodShame(socialSituation, trigger, author, imageBase64, location) : new MoodShame(socialSituation, trigger, author, date, imageBase64, location);
+                return date == null ? new MoodShame(socialSituation, trigger, author, imageBase64, location, address) : new MoodShame(socialSituation, trigger, author, date, imageBase64, location, address);
             case SURPRISE:
-                return date == null ? new MoodSurprise(socialSituation, trigger, author, imageBase64, location) : new MoodSurprise(socialSituation, trigger, author, date, imageBase64, location);
+                return date == null ? new MoodSurprise(socialSituation, trigger, author, imageBase64, location, address) : new MoodSurprise(socialSituation, trigger, author, date, imageBase64, location, address);
         }
         throw new IllegalArgumentException();
     }
@@ -137,4 +141,12 @@ public abstract class Mood implements Serializable {
     }
 
     public void setLocation(GeoPoint location){ this.location = location;}
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }

@@ -2,6 +2,7 @@ package com.example.cmput301_team_project.ui;
 
 import static android.content.ContentValues.TAG;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -85,6 +86,7 @@ public class MoodFormFragment extends DialogFragment {
 
     private boolean isEditMode = false; // Flag to check if we're editing
     private Mood moodBeingEdited = null; // Reference to the mood being edited
+    private TextView selectedAddress;
 
     private static final int AUTOCOMPLETE_REQUEST_CODE = 1; //to automatically show the locations or compelte it
 
@@ -136,6 +138,7 @@ public class MoodFormFragment extends DialogFragment {
         }
     }
 
+    @SuppressLint("MissingInflatedId")
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -170,6 +173,8 @@ public class MoodFormFragment extends DialogFragment {
 
         Button searchButton = view.findViewById(R.id.btn_autocomplete);
         searchButton.setOnClickListener(v -> startAutocomplete());
+
+        selectedAddress = view.findViewById(R.id.selected_address);
 
 
         if (isEditMode) {
@@ -313,7 +318,6 @@ public class MoodFormFragment extends DialogFragment {
 
         // Start the autocomplete intent
         Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-                .setCountries(Arrays.asList("US"))
                 .setTypesFilter(new ArrayList<String>() {{
                     add(TypeFilter.ADDRESS.toString().toLowerCase());
                 }})
@@ -344,6 +348,7 @@ public class MoodFormFragment extends DialogFragment {
         // Update UI with the selected place details
         TextView locationAddress = getView().findViewById(R.id.current_location);
         locationAddress.setText(place.getAddress());
+        selectedAddress.setVisibility(View.VISIBLE);
 
         // You can also get the latitude and longitude
         LatLng latLng = place.getLatLng();
