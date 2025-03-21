@@ -7,18 +7,24 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import com.example.cmput301_team_project.R;
+import com.example.cmput301_team_project.db.MoodDatabaseService;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MoodFollowingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MoodFollowingFragment extends Fragment {
+public class MoodFollowingFragment extends BaseMoodListFragment {
+    private final MoodDatabaseService moodDatabaseService;
+    private MoodListAdapter moodListAdapter;
 
     public MoodFollowingFragment() {
-        // Required empty public constructor
+        moodDatabaseService = MoodDatabaseService.getInstance();
     }
 
     /**
@@ -34,7 +40,16 @@ public class MoodFollowingFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_mood_following, container, false);
+        ListView moodListView = view.findViewById(R.id.mood_List);
+        moodListAdapter = new MoodListAdapter(getContext(), new ArrayList<>(), this, false);
+        moodListView.setAdapter(moodListAdapter);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_mood_following, container, false);
+        return view;
+    }
+
+    @Override
+    protected void loadMoodData() {
+
     }
 }

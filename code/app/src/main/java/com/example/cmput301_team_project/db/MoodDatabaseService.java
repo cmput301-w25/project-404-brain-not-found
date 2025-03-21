@@ -78,10 +78,9 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 });
     }
     /**this is the method to get all the documents in the moods collection*/
-    public Task<List<Mood>> getMoodList() {
-        //Log.d("username", SessionManager.getInstance().getCurrentUser());
+    public Task<List<Mood>> getMoodList(String username) {
         return moodsRef
-                .whereEqualTo("author", SessionManager.getInstance().getCurrentUser())
+                .whereEqualTo("author", username)
                 .orderBy("date", Query.Direction.DESCENDING)
                 .get().continueWith(task -> {
             List<Mood> moodList = new ArrayList<>();
@@ -133,14 +132,12 @@ public class MoodDatabaseService extends BaseDatabaseService {
                             // Keep the default NONE value
                         }
 
-                        Boolean isPublic = doc.getBoolean("isPublic");
+                        Boolean isPublic = doc.getBoolean("public");
 
                         // Creating mood objects based on the emotion
                         Mood mood = Mood.createMood(emotion, socialSituation, trigger, Boolean.TRUE.equals(isPublic), author, date, imageBase64);
-                        if (mood != null) {
-                            mood.setId(doc.getId()); // Set the Firestore document ID
-                            moodList.add(mood);
-                        }
+                        mood.setId(doc.getId()); // Set the Firestore document ID
+                        moodList.add(mood);
                     } catch (Exception e) {
                         // Log the exception but continue processing other documents
                         Log.e("MoodDatabaseService", "Error processing document: " + doc.getId(), e);

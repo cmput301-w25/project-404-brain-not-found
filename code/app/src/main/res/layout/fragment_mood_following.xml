@@ -6,11 +6,6 @@
     android:orientation="vertical"
     tools:context=".ui.MoodFollowingFragment">
 
-    <ListView
-        android:id="@+id/mood_following_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@color/default_background"
-        android:dividerHeight="10dp"/>
+    <include layout="@layout/mood_list_layout"/>
 
 </LinearLayout>
