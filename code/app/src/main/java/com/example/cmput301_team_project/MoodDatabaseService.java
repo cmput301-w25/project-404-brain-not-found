@@ -10,8 +10,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.Calendar;
 
@@ -142,9 +147,9 @@ public class MoodDatabaseService extends BaseDatabaseService {
 
 
     /**
-     *  This function gets the users posted moods and then filters by the requested {@param emotion}
-     *  It returns the filtered ArrayList via the {@param listener} to then use the List to display the
-     *  new filtered moods.
+     *  Gets the users posted moods and then filters by the requested {@param emotion}. It returns
+     *  the filtered ArrayList via the {@param listener} to then use it to display the new
+     *  filtered moods.
      */
     public void filterByEmotion(String emotion, OnMoodFetchedListener listener) {
         getMoodList().addOnCompleteListener(task -> {
@@ -161,9 +166,11 @@ public class MoodDatabaseService extends BaseDatabaseService {
             }
         });
     }
-    // get the current date / time
-    // subtract by the inputted amount of days
-    // filter moods by date that are made after the requested date
+
+    /**
+     * Gets the users posted moods and then filters by the requested {@param time}. It returns the
+     * filtered ArrayList via the {@param listener} to then use it to display the new filtered moods.
+     */
     public void filterByTime(int time, OnMoodFetchedListener listener) {
         getMoodList().addOnCompleteListener(task -> {
             if (task.isSuccessful() && task.getResult() != null) {
@@ -171,7 +178,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 // get instance of calendar to find requested filtered Date
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(currentDate);
-                calendar.add(Calendar.DAY_OF_MONTH, time);
+                calendar.add(Calendar.DAY_OF_MONTH, time); // time is a negative number here
                 Date requestedDate = calendar.getTime();
 
                 List<Mood> allMoods = task.getResult();
@@ -181,6 +188,61 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 listener.onMoodsFetched(new ArrayList<>(filteredMoods));
             } else {
                 Log.e("MoodDatabaseService", "Error filtering moods by time " + time, task.getException());
+                listener.onMoodsFetched(new ArrayList<>());
+            }
+        });
+    }
+
+    /**
+     * Gets the users posted moods and then filters by the requested {@param text}. It then sorts
+     * the filtered moods based on text matches and accuracy. It returns the filtered ArrayList via
+     * the {@param listener} to then use it to display the new filtered moods.
+     */
+    public void filterByText(String[] text, OnMoodFetchedListener listener) {
+        getMoodList().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult() != null) {
+                List<Mood> allMoods = task.getResult();
+                List<Mood> filteredMoods = new ArrayList<>();
+
+                Map<Mood, Integer> textMatchCount = new HashMap<>();
+                Set<String> searchText = new HashSet<>(Arrays.asList(text));
+
+                // loop thru all words searched and all user's mood triggers
+                for (Mood mood: allMoods) {
+                    int matches = 0;
+                    // make set of the triggers words for faster lookup (O(1)) instead of linear search (O(n))
+                    Set<String> moodWords = new HashSet<>(Arrays.asList(mood.getTrigger().toLowerCase().split("[,\\s]+")));
+
+                    for (String word : searchText) {
+                        if (moodWords.contains(word)) {
+                            matches++;
+                        }
+                    }
+                    if (matches > 0) {
+                        textMatchCount.put(mood, matches);
+                    }
+                }
+                // sort the filtered moods based on highest/most accurate match count
+                filteredMoods = textMatchCount.entrySet().stream()
+                        .sorted((e1, e2) -> {
+                            // compare number of matches in the array
+                            int compareMatches = Integer.compare(e2.getValue(), e1.getValue());
+
+                            if (compareMatches != 0) {
+                                return compareMatches;
+                            }
+                            // secondary sort, sorts to find more close/exact matches
+                            int totalWords1 = e1.getKey().getTrigger().split("[,\\s]+").length;
+                            int totalWords2 = e2.getKey().getTrigger().split("[,\\s]+").length;
+
+                            return Integer.compare(totalWords1, totalWords2);
+                        })
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.toList());
+
+                listener.onMoodsFetched(new ArrayList<>(filteredMoods));
+            } else {
+                Log.e("MoodDatabaseService", "Error filtering moods by text: " + Arrays.toString(text), task.getException());
                 listener.onMoodsFetched(new ArrayList<>());
             }
         });

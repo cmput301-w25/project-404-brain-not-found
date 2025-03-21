@@ -129,11 +129,14 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
 
     /**
      * calls {@link MoodDatabaseService} filterByText() to make the database query
-     * to filter based on moods that include {@param text}. It then uses updateFilters
-     * to update the listview with the new filtered list
+     * to filter based on moods that include {@param text}, via splitting into an array
+     * based on spaces and commas. It then uses updateFilters to update the listview with
+     * the new filtered list
      */
     public void filterByText(String text) {
         System.out.println("Filtering by text:" + text);
+        String[] textArray = text.split("[,\\s]+");
+        moodDatabaseService.filterByText(textArray, this::updateFilters);
     }
 
     /**
