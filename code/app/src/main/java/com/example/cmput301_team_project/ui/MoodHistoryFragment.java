@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +15,12 @@ import android.widget.Toast;
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
+import com.example.cmput301_team_project.model.Comment;
 import com.example.cmput301_team_project.model.Mood;
-
-import org.w3c.dom.Comment;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass for user mood history screen.
@@ -30,6 +32,7 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
     private final MoodDatabaseService moodDatabaseService;
     private MoodListAdapter moodListAdapter;
     private ArrayList<Mood> moodList;
+
 
 
     public MoodHistoryFragment() {
@@ -61,13 +64,19 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
         moodListAdapter = new MoodListAdapter(getContext(), moodList, this, true);
         moodListView.setAdapter(moodListAdapter);
 
+
+
+
         ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
         addMoodButton.setOnClickListener(v -> {
             MoodFormFragment.newInstance(null).show(getChildFragmentManager(), "Add Mood Event");
         });
 
         moodListView.setOnItemClickListener((parent, view1, position, id) -> {
-            CommentListFragment.newInstance().show(requireActivity().getSupportFragmentManager(), "CommentListFragment");
+            Mood selectedMood = (Mood) parent.getItemAtPosition(position);
+            String moodId = selectedMood.getId();
+            CommentListFragment.newInstance(moodId).show(requireActivity().getSupportFragmentManager(), "CommentListFragment");
+
         });
         loadMoodData();
         return view;

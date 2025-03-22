@@ -2,12 +2,14 @@ package com.example.cmput301_team_project.db;
 
 import android.util.Log;
 
+import com.example.cmput301_team_project.model.Comment;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -15,6 +17,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Singleton class to manage mood-related operations with the firestore database
@@ -140,6 +143,26 @@ public class MoodDatabaseService extends BaseDatabaseService {
     }
 
 
+    public Task<DocumentReference> addComment(String moodId, Comment comment){
+        return moodsRef.document(moodId).collection("comments")
+                .add(comment);
+    }
+
+    public Task<List<Comment>> getComments(String moodId){
+        Log.d("Firestore", "getComments() called for moodId: " + moodId);
+        return moodsRef.document(moodId)
+                .collection("comments")
+                .get()
+                .continueWith(task ->{
+                    if(task.isSuccessful()){
+                        return task.getResult().getDocuments()
+                                .stream()
+                                .map(document -> new Comment(document.getString("username"), document.getString("text")))
+                                .collect(Collectors.toList());
+                    }
+                    return new ArrayList<>();
+                });
+    }
     public void updateMood(Mood mood) {
         moodsRef.document(mood.getId()).set(mood);
     }
