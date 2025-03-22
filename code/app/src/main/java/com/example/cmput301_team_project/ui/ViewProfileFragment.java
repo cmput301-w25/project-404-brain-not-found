@@ -38,7 +38,7 @@ public class ViewProfileFragment extends DialogFragment {
         String username = (String) getArguments().getSerializable("username");
         TextView publicName = view.findViewById(R.id.publicName);
         TextView publicUsername = view.findViewById(R.id.publicUsername);
-        publicUsername.setText(username);
+        publicUsername.setText("@"+username);
         publicName.setText(name);
 
         TextView followerCount = view.findViewById(R.id.followerCount);
