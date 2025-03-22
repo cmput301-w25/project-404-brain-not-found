@@ -13,6 +13,7 @@ import com.example.cmput301_team_project.model.AppUser;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -29,6 +30,8 @@ import org.mockito.MockitoAnnotations;
 public class UserDatabaseServiceUnitTest {
     @Mock
     private FirebaseFirestore mockFirestore;
+    @Mock
+    private FirebaseAuth mockAuth;
     @Mock
     private CollectionReference mockUserCollection;
     @Mock

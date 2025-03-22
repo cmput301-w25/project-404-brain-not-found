@@ -15,7 +15,6 @@ public class FirebaseAuthenticationService {
 
     private FirebaseAuthenticationService() {
         mAuth = FirebaseAuth.getInstance();
-        mAuth.signOut();
     }
 
     public static FirebaseAuthenticationService getInstance() {
