@@ -41,7 +41,7 @@ public class MoodDatabaseServiceUnitTest {
         when(mockMoodCollection.document()).thenReturn(mockDocRef);
         when(mockMoodCollection.document(anyString())).thenReturn(mockDocRef);
 
-        MoodDatabaseService.setInstanceForTesting(mockFirestore, Executors.newSingleThreadExecutor());
+        MoodDatabaseService.setInstanceForTesting(mockFirestore, Runnable::run);
         moodDatabaseService = MoodDatabaseService.getInstance();
     }
 

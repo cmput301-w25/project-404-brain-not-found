@@ -104,6 +104,4 @@ public class LoginSignupActivityTest extends BaseActivityTest {
         onView(withId(R.id.button_login)).perform(click());
         onView(withId(R.id.login_password)).check(matches(hasErrorText("Incorrect password")));
     }
-
-
 }
