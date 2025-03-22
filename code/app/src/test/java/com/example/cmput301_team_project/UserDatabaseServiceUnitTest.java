@@ -59,7 +59,7 @@ public class UserDatabaseServiceUnitTest {
         when(mockUserCollection.document()).thenReturn(mockDocRef);
         when(mockUserCollection.document(anyString())).thenReturn(mockDocRef);
 
-        UserDatabaseService.setInstanceForTesting(mockFirestore, Executors.newSingleThreadExecutor());
+        UserDatabaseService.setInstanceForTesting(mockFirestore, Runnable::run);
         userDatabaseService = UserDatabaseService.getInstance();
 
         FirebaseAuthenticationService.setInstanceForTesting(mockAuth);
