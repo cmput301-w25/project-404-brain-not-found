@@ -38,7 +38,7 @@ public class BaseActivityTest {
     @Before
     public void seedDatabase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference moviesRef = db.collection("movies");
+        CollectionReference moviesRef = db.collection("moods");
         CollectionReference usersRef = db.collection("users");
         Mood[] moods = {
                 Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "fassdfa", true, "Urkel", null, null),
