@@ -13,9 +13,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,11 +22,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import android.util.Base64;
-
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 
 /**
  * Singleton class to manage user-related operations with the firestore database
@@ -62,15 +54,22 @@ public class UserDatabaseService extends BaseDatabaseService {
         instance = new UserDatabaseService(db);
     }
 
-    public void addUser(AppUser user) {
-        DocumentReference uref = usersRef.document(user.getUsername());
-        uref.set(user);
+    public Task<Void> addUser(AppUser user) {
+        return FirebaseAuthenticationService.getInstance().registerUser(user.getUsername(), user.getPassword())
+                .continueWithTask(task -> {
+                    if(task.isSuccessful()) {
+                        DocumentReference uref = usersRef.document(user.getUsername());
+                        uref.set(user);
 
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("usernameLower", user.getUsername().toLowerCase());
-        updates.put("nameLower", user.getName().toLowerCase());
-
-        uref.update(updates);
+                        Map<String, Object> updates = new HashMap<>();
+                        updates.put("usernameLower", user.getUsername().toLowerCase());
+                        updates.put("nameLower", user.getName().toLowerCase());
+                        updates.put("email", task.getResult());
+                        return uref.update(updates);
+                    }
+                    Tasks.forException(task.getException());
+                    return Tasks.forResult(Void.TYPE.newInstance());
+                });
     }
 
     public Task<String> getDisplayName(String username){
@@ -94,18 +93,18 @@ public class UserDatabaseService extends BaseDatabaseService {
      */
     public Task<Boolean> validateCredentials(String username, String inputPassword)
     {
-        DocumentReference uref = usersRef.document(username);
-
-        return uref.get().continueWith(task -> {
-            if(!task.isSuccessful()) {
-                return false;
-            }
-
-            String password = task.getResult().getString("password");
-            byte[] salt = Base64.decode(task.getResult().getString("salt"), Base64.DEFAULT);
-            String hashed = hashPassword(inputPassword, salt);
-            return hashed.equals(password);
-        });
+        return usersRef.document(username).get()
+                .continueWithTask(task -> {
+                    String email = task.getResult().getString("email");
+                    return FirebaseAuthenticationService.getInstance().loginUser(email, inputPassword);
+                })
+                .continueWith(task -> {
+                    if(task.isSuccessful())
+                    {
+                        return task.getResult().getUser() != null;
+                    }
+                    return false;
+                });
     }
 
     /**
@@ -117,9 +116,7 @@ public class UserDatabaseService extends BaseDatabaseService {
     public Task<Boolean> userExists(String username){
         DocumentReference docRef = usersRef.document(username);
 
-        return docRef.get().continueWith(task ->{
-            return task.isSuccessful() && task.getResult().exists();
-        });
+        return docRef.get().continueWith(task -> task.isSuccessful() && task.getResult().exists());
     }
 
     /**
@@ -399,37 +396,5 @@ public class UserDatabaseService extends BaseDatabaseService {
                     }
                     return new ArrayList<>();
                 });
-    }
-
-
-    /**
-     * Hashes a password using the PBKDF2 algorithm with HMAC-SHA1.
-     *
-     * @param password The password to hash.
-     * @param salt The salt used for hashing.
-     * @return A Base64-encoded string representing the hashed password.
-     * @throws NoSuchAlgorithmException If the algorithm is not available.
-     * @throws InvalidKeySpecException If the key specification is invalid.
-     */
-    public String hashPassword(String password, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        int iterations = 10000;
-        int keyLength = 256;
-        PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt, iterations, keyLength);
-        SecretKeyFactory skf = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-        byte[] hash = skf.generateSecret(spec).getEncoded();
-
-        return Base64.encodeToString(hash, Base64.NO_WRAP);
-
-    }
-
-    /**
-     * Generates a random salt for password hashing.
-     *
-     * @return A byte array representing the generated salt.
-     */
-    public byte[] generateSalt() {
-        byte[] salt = new byte[16];
-        new SecureRandom().nextBytes(salt);
-        return salt;
     }
 }

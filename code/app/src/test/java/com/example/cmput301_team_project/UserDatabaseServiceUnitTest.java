@@ -56,7 +56,7 @@ public class UserDatabaseServiceUnitTest {
     public void testAddUser() {
         String username = "mockUsername";
 
-        AppUser mockUser = new AppUser(username, "mockName", "mockPassword", "mockSalt");
+        AppUser mockUser = new AppUser(username, "mockName", "mockPassword");
 
         when(mockUserCollection.document(username)).thenReturn(mockDocRef);
 
