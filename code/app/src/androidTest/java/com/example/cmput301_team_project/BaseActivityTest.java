@@ -38,7 +38,7 @@ public class BaseActivityTest {
     @Before
     public void seedDatabase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference moviesRef = db.collection("movies");
+        CollectionReference moodsRef = db.collection("moods");
         CollectionReference usersRef = db.collection("users");
         Mood[] moods = {
                 Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "fassdfa", true, "Urkel", null, null),
@@ -46,11 +46,11 @@ public class BaseActivityTest {
                 Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.SEVERAL, "fassdfa",true, "Henrietta", null, null),
         };
         for (Mood mood : moods) {
-            moviesRef.document().set(mood);
+            moodsRef.document().set(mood);
         }
 
         AppUser[] users = {
-                new AppUser("Henrietta", "", "some_password", "salt")
+                new AppUser("Henrietta", "", "some_password")
         };
 
         for (AppUser user: users) {
