@@ -1,5 +1,6 @@
 package com.example.cmput301_team_project.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -11,6 +12,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.cmput301_team_project.R;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 
 /**
  * Handles user authentication flow by managing the login and signup fragments.
@@ -21,6 +23,12 @@ public class LoginSignupActivity extends BaseActivity implements LoginSignupFrag
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(FirebaseAuthenticationService.getInstance().getCurrentUser() != null) {
+            Intent myIntent = new Intent(this, MainActivity.class);
+            this.startActivity(myIntent);
+        }
+
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login_signup);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

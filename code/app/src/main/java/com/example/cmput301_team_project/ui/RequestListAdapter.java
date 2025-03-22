@@ -16,7 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.SessionManager;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.google.android.gms.tasks.Task;
 
@@ -40,7 +40,7 @@ public class RequestListAdapter extends ArrayAdapter<String> {
             view = convertView;
         }
         String follower = getItem(position);
-        String currentUser = SessionManager.getInstance().getCurrentUser();
+        String currentUser = FirebaseAuthenticationService.getInstance().getCurrentUser();
 
         TextView requestText = view.findViewById(R.id.request_text);
         String text = "@" + follower + " " + getContext().getString(R.string.follow_request);
@@ -62,7 +62,7 @@ public class RequestListAdapter extends ArrayAdapter<String> {
     public Task<Integer> refreshRequests() {
         clear();
 
-        return userDatabaseService.getRequests(SessionManager.getInstance().getCurrentUser())
+        return userDatabaseService.getRequests(FirebaseAuthenticationService.getInstance().getCurrentUser())
                 .continueWith(task -> {
                     if(task.isSuccessful()) {
                         addAll(task.getResult());

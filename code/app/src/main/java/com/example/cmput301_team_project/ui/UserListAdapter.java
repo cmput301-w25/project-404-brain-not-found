@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.SessionManager;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.FollowRelationshipEnum;
 import com.example.cmput301_team_project.enums.UserButtonActionEnum;
@@ -51,17 +51,17 @@ public class UserListAdapter extends ArrayAdapter<PublicUser> {
         name.setText(user.getName());
         setButtonView(button, user);
 
-        SessionManager sessionManager = SessionManager.getInstance();
+        String currentUser = FirebaseAuthenticationService.getInstance().getCurrentUser();
         button.setOnClickListener(v -> {
             switch (buttonAction) {
-                case FOLLOW -> userDatabaseService.requestFollow(sessionManager.getCurrentUser(), user.getUsername())
+                case FOLLOW -> userDatabaseService.requestFollow(currentUser, user.getUsername())
                         .addOnSuccessListener(vd -> {
                             user.setFollowRelationshipWithCurrUser(FollowRelationshipEnum.REQUESTED);
                             setButtonView(button, user);
                         });
-                case UNFOLLOW -> userDatabaseService.removeFollow(sessionManager.getCurrentUser(), user.getUsername())
+                case UNFOLLOW -> userDatabaseService.removeFollow(currentUser, user.getUsername())
                         .addOnSuccessListener(vd -> { remove(user); notifyDataSetChanged(); });
-                case REMOVE -> userDatabaseService.removeFollow(user.getUsername(), sessionManager.getCurrentUser())
+                case REMOVE -> userDatabaseService.removeFollow(user.getUsername(), currentUser)
                         .addOnSuccessListener(vd -> { remove(user); notifyDataSetChanged(); });
             }
         });

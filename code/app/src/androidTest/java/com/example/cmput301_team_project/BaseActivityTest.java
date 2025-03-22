@@ -50,7 +50,7 @@ public class BaseActivityTest {
         }
 
         AppUser[] users = {
-                new AppUser("Henrietta", "", "some_password", "salt")
+                new AppUser("Henrietta", "", "some_password")
         };
 
         for (AppUser user: users) {

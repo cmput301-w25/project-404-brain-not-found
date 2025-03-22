@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.SessionManager;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.UserButtonActionEnum;
 import com.example.cmput301_team_project.model.PublicUser;
@@ -57,7 +57,7 @@ public abstract class BaseUserListFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                String currentUser = SessionManager.getInstance().getCurrentUser();
+                String currentUser = FirebaseAuthenticationService.getInstance().getCurrentUser();
                 Task<List<PublicUser>> searchTask;
 
                 switch (getUserButtonAction()) {

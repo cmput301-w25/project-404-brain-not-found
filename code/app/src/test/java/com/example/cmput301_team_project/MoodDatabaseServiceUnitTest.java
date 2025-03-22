@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Date;
+import java.util.concurrent.Executors;
 
 /**
  * Class for testing {@link MoodDatabaseService}
@@ -40,7 +41,7 @@ public class MoodDatabaseServiceUnitTest {
         when(mockMoodCollection.document()).thenReturn(mockDocRef);
         when(mockMoodCollection.document(anyString())).thenReturn(mockDocRef);
 
-        MoodDatabaseService.setInstanceForTesting(mockFirestore);
+        MoodDatabaseService.setInstanceForTesting(mockFirestore, Executors.newSingleThreadExecutor());
         moodDatabaseService = MoodDatabaseService.getInstance();
     }
 

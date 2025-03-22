@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.SessionManager;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.model.Mood;
 
@@ -84,7 +84,7 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
      * Loads mood data from Firestore database
      */
     protected void loadMoodData() {
-        moodDatabaseService.getMoodList(SessionManager.getInstance().getCurrentUser())
+        moodDatabaseService.getMoodList(FirebaseAuthenticationService.getInstance().getCurrentUser())
                 .addOnSuccessListener(moods -> {
                     // Clear existing list and add new data
                     moodList.clear();

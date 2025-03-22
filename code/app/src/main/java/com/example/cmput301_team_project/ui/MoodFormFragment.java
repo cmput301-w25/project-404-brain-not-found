@@ -31,8 +31,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.SessionManager;
-import com.example.cmput301_team_project.db.MoodDatabaseService;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
@@ -193,7 +192,7 @@ public class MoodFormFragment extends DialogFragment {
                             MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
                             inputtedTrigger,
                             isPublicSwitch.isOn(),
-                            SessionManager.getInstance().getCurrentUser(),
+                            FirebaseAuthenticationService.getInstance().getCurrentUser(),
                             null,
                             imageViewToBase64(view.findViewById(R.id.mood_image_preview))
                     );

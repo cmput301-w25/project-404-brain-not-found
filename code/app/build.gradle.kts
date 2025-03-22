@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.constraintlayout)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.auth)
     implementation(libs.byte.buddy)
     implementation(libs.github.toggle)
     testImplementation(libs.junit)

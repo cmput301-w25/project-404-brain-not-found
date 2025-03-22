@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.SessionManager;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 
@@ -54,7 +54,7 @@ public class MoodFollowingFragment extends BaseMoodListFragment {
 
     @Override
     protected void loadMoodData() {
-        userDatabaseService.getFollowing(SessionManager.getInstance().getCurrentUser())
+        userDatabaseService.getFollowing(FirebaseAuthenticationService.getInstance().getCurrentUser())
                         .addOnSuccessListener(following -> moodDatabaseService.getFollowingMoods(following)
                                 .addOnSuccessListener(moods -> {
                                     moodListAdapter.clear();

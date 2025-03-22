@@ -1,5 +1,7 @@
 package com.example.cmput301_team_project.model;
 
+import com.google.firebase.firestore.Exclude;
+
 /**
  * Represents a user in the application with authentication credentials.
  * This class stores the username, password (hashed), and salt for password hashing.
@@ -8,32 +10,27 @@ public class AppUser {
     private String username;
     private String name;
     private String password;
-    private String salt;
 
     /**
      * Constructs an AppUser object with the specified username, password, and salt.
      *
      * @param username The username of the user.
      * @param password The hashed password of the user.
-     * @param salt The salt used for password hashing.
      */
-    public AppUser(String username, String name, String password, String salt){
+    public AppUser(String username, String name, String password){
         this.username = username;
         this.name = name;
         this.password = password;
-        this.salt = salt;
     }
     public String getUsername() {
         return username;
     }
 
+    @Exclude
     public String getPassword() {
         return password;
     }
 
-    public String getSalt() {
-        return salt;
-    }
 
     public String getName() {
         return name;
