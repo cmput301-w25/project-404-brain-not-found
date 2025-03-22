@@ -346,7 +346,7 @@ public class MoodFormFragment extends DialogFragment {
 
     private void handleSelectedPlace(Place place) {
         // Update UI with the selected place details
-        TextView locationAddress = getView().findViewById(R.id.current_location);
+        TextView locationAddress = getView().findViewById(R.id.selected_address);
         locationAddress.setText(place.getAddress());
         selectedAddress.setVisibility(View.VISIBLE);
 
