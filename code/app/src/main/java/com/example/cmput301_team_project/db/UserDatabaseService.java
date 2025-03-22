@@ -5,6 +5,7 @@ import com.example.cmput301_team_project.enums.FollowRelationshipEnum;
 import com.example.cmput301_team_project.model.AppUser;
 import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskExecutors;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.CollectionReference;
@@ -21,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -39,8 +42,8 @@ public class UserDatabaseService extends BaseDatabaseService {
         super();
     }
 
-    private UserDatabaseService(FirebaseFirestore db) {
-        super(db);
+    private UserDatabaseService(FirebaseFirestore db, Executor executor) {
+        super(db, executor);
     }
 
     public static UserDatabaseService getInstance() {
@@ -50,13 +53,13 @@ public class UserDatabaseService extends BaseDatabaseService {
         return instance;
     }
 
-    public static void setInstanceForTesting(FirebaseFirestore db) {
-        instance = new UserDatabaseService(db);
+    public static void setInstanceForTesting(FirebaseFirestore db, Executor executor) {
+        instance = new UserDatabaseService(db, executor);
     }
 
     public Task<Void> addUser(AppUser user) {
         return FirebaseAuthenticationService.getInstance().registerUser(user.getUsername(), user.getPassword())
-                .continueWithTask(task -> {
+                .continueWithTask(taskExecutor, task -> {
                     if(task.isSuccessful()) {
                         DocumentReference uref = usersRef.document(user.getUsername());
                         uref.set(user);

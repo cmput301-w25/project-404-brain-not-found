@@ -4,15 +4,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.model.AppUser;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -20,9 +24,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.util.concurrent.Executors;
 
 /**
  * Class for testing {@link UserDatabaseService}
@@ -42,6 +49,7 @@ public class UserDatabaseServiceUnitTest {
     private Task<DocumentSnapshot> mockTask;
 
     private UserDatabaseService userDatabaseService;
+    private FirebaseAuthenticationService firebaseAuthenticationService;
 
     @Before
     public void setup() {
@@ -51,17 +59,22 @@ public class UserDatabaseServiceUnitTest {
         when(mockUserCollection.document()).thenReturn(mockDocRef);
         when(mockUserCollection.document(anyString())).thenReturn(mockDocRef);
 
-        UserDatabaseService.setInstanceForTesting(mockFirestore);
+        UserDatabaseService.setInstanceForTesting(mockFirestore, Executors.newSingleThreadExecutor());
         userDatabaseService = UserDatabaseService.getInstance();
+
+        FirebaseAuthenticationService.setInstanceForTesting(mockAuth);
+        firebaseAuthenticationService = FirebaseAuthenticationService.getInstance();
     }
 
     @Test
     public void testAddUser() {
-        String username = "mockUsername";
+        AppUser mockUser = new AppUser("mockUsername", "mockName", "mockPassword");
 
-        AppUser mockUser = new AppUser(username, "mockName", "mockPassword");
+        Task<AuthResult> mockAuthResultTask = mock();
 
-        when(mockUserCollection.document(username)).thenReturn(mockDocRef);
+        when(mockUserCollection.document(mockUser.getUsername())).thenReturn(mockDocRef);
+        when(mockAuth.createUserWithEmailAndPassword(anyString(), anyString())).thenReturn(mockAuthResultTask);
+        when(mockAuthResultTask.continueWith(any())).thenReturn(Tasks.forResult("mockEmail"));
 
         userDatabaseService.addUser(mockUser);
         verify(mockDocRef).set(mockUser);
@@ -70,7 +83,6 @@ public class UserDatabaseServiceUnitTest {
     @Test
     public void testUserExists() {
         String username = "mockUsername";
-
         when(mockUserCollection.document(username)).thenReturn(mockDocRef);
         when(mockDocRef.get()).thenReturn(mockTask);
         when(mockTask.isSuccessful()).thenReturn(true);

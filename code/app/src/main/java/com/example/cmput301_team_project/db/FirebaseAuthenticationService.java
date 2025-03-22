@@ -17,11 +17,19 @@ public class FirebaseAuthenticationService {
         mAuth = FirebaseAuth.getInstance();
     }
 
+    private FirebaseAuthenticationService(FirebaseAuth mAuth) {
+        this.mAuth = mAuth;
+    }
+
     public static FirebaseAuthenticationService getInstance() {
         if(instance == null) {
             instance = new FirebaseAuthenticationService();
         }
         return instance;
+    }
+
+    public static void setInstanceForTesting(FirebaseAuth mAuth) {
+        instance = new FirebaseAuthenticationService(mAuth);
     }
 
     public Task<String> registerUser(String username, String password) {
