@@ -1,6 +1,8 @@
 package com.example.cmput301_team_project.ui;
 
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.activity.EdgeToEdge;
 import androidx.core.graphics.Insets;
@@ -10,7 +12,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.cmput301_team_project.BuildConfig;
 import com.example.cmput301_team_project.R;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
@@ -52,6 +57,8 @@ public class MainActivity extends BaseActivity {
             }
             return true;
         });
+
+        initializePlacesApi();
     }
 
     /**
@@ -64,5 +71,17 @@ public class MainActivity extends BaseActivity {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.frame_layout, fragment);
         fragmentTransaction.commit();
+    }
+
+    private void initializePlacesApi() {
+        String apiKey = BuildConfig.PLACES_API_KEY;
+
+        if (TextUtils.isEmpty(apiKey) || apiKey.equals("DEFAULT_API_KEY")) {
+            Log.e("Places test", "No api key");
+            finish();
+            return;
+        }
+
+        Places.initializeWithNewPlacesApiEnabled(getApplicationContext(), apiKey);
     }
 }

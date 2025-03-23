@@ -60,8 +60,8 @@ public class SignupFragment extends Fragment {
             usernameInput.setError(getString(R.string.empty_username_error));
             return;
         }
-        if (password.isEmpty()){
-            passwordInput.setError(getString(R.string.empty_password_error));
+        if (password.length() < 6){
+            passwordInput.setError(getString(R.string.too_short_password_error));
             return;
         }
 

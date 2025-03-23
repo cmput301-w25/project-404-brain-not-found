@@ -53,7 +53,7 @@ public class ViewProfileFragment extends DialogFragment {
         MoodDatabaseService mdb = MoodDatabaseService.getInstance();
         mdb.getMostRecentMood(username).addOnSuccessListener(emotion->{
             if (emotion != null){
-                Mood tempMood = Mood.createMood(MoodEmotionEnum.valueOf(emotion), null, null, false, null, null, null);
+                Mood tempMood = Mood.createMood(MoodEmotionEnum.valueOf(emotion), null, null, false, null, null, null, null);
                 emoji.setText(tempMood.getEmoji());
             }
         });

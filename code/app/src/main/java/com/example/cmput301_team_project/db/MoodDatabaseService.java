@@ -84,7 +84,8 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 Boolean.TRUE.equals(document.getBoolean("public")),
                 document.getString("author"),
                 document.getDate("date"),
-                document.getString("imageBase64"));
+                document.getString("imageBase64"),
+                document.getGeoPoint("location"));
         mood.setId(document.getId());
         return mood;
     }
