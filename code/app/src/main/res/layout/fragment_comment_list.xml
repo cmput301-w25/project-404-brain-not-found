@@ -14,15 +14,14 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/addCommentLayout"
-                android:layout_width="250dp"
+                android:layout_width="0dp"
                 android:layout_height="60dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp"
+                android:layout_weight="2"
                 app:boxCornerRadiusBottomEnd="20dp"
                 app:boxCornerRadiusBottomStart="20dp"
                 app:boxCornerRadiusTopEnd="20dp"
@@ -37,9 +36,10 @@
 
             <Button
                 android:id="@+id/addCommentButton"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="2dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/buttons"
                 android:text="Post" />
