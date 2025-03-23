@@ -18,6 +18,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.concurrent.Executor;
 
 /**
  * Singleton class to manage mood-related operations with the firestore database
@@ -33,8 +34,8 @@ public class MoodDatabaseService extends BaseDatabaseService {
         moodsRef = db.collection("moods");
     }
 
-    private MoodDatabaseService(FirebaseFirestore db) {
-        super(db);
+    private MoodDatabaseService(FirebaseFirestore db, Executor executor) {
+        super(db, executor);
 
         moodsRef = db.collection("moods");
     }
@@ -46,8 +47,8 @@ public class MoodDatabaseService extends BaseDatabaseService {
         return instance;
     }
 
-    public static void setInstanceForTesting(FirebaseFirestore db) {
-        instance = new MoodDatabaseService(db);
+    public static void setInstanceForTesting(FirebaseFirestore db, Executor executor) {
+        instance = new MoodDatabaseService(db, executor);
     }
 
     public void addMood(Mood mood) {

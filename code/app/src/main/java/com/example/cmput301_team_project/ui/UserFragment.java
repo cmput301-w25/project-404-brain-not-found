@@ -1,5 +1,6 @@
 package com.example.cmput301_team_project.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,10 +11,11 @@ import androidx.viewpager2.widget.ViewPager2;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.SessionManager;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
@@ -27,12 +29,10 @@ import com.google.android.material.tabs.TabLayoutMediator;
  * create an instance of this fragment.
  */
 public class UserFragment extends Fragment {
-    private SessionManager sessionManager;
     private final UserDatabaseService userDatabaseService;
     private final MoodDatabaseService moodDatabaseService;
 
     public UserFragment() {
-        sessionManager = SessionManager.getInstance();
         userDatabaseService = UserDatabaseService.getInstance();
         moodDatabaseService = MoodDatabaseService.getInstance();
     }
@@ -66,8 +66,8 @@ public class UserFragment extends Fragment {
         TextView displayName = view.findViewById(R.id.displayName);
         displayName.setVisibility(View.INVISIBLE);
         TextView username = view.findViewById(R.id.usernameDisplay);
-        String currUser = sessionManager.getCurrentUser();
-        username.setText("@"+currUser);
+        String currUser = FirebaseAuthenticationService.getInstance().getCurrentUser();
+        username.setText(currUser);
         userDatabaseService.getDisplayName(currUser).addOnSuccessListener(name->{
             displayName.setText(name);
             displayName.setVisibility(View.VISIBLE);
@@ -83,7 +83,13 @@ public class UserFragment extends Fragment {
             }
         });
 
-
+        ImageButton logoutButton = view.findViewById(R.id.logout_button);
+        logoutButton.setOnClickListener(v -> {
+            FirebaseAuthenticationService.getInstance().logoutUser();
+            Intent intent = new Intent(getContext(), LoginSignupActivity.class);
+            requireContext().startActivity(intent);
+            requireActivity().finish();
+        });
 
         UserPagerAdapter userPagerAdapter = new UserPagerAdapter(this);
         TabLayout tabLayout = view.findViewById(R.id.user_tab_layout);
