@@ -54,7 +54,6 @@ dependencies {
     implementation(libs.byte.buddy)
     implementation(libs.github.toggle)
     implementation(libs.places)
-    implementation(libs.palette)
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.inline)
