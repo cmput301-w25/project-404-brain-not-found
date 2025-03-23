@@ -7,7 +7,6 @@ import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 
-import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.

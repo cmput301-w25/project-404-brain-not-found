@@ -3,11 +3,9 @@ package com.example.cmput301_team_project.ui;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
@@ -18,12 +16,10 @@ import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.model.Comment;
-import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class CommentListFragment extends DialogFragment {

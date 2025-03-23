@@ -1,12 +1,10 @@
 package com.example.cmput301_team_project.ui;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,10 +12,7 @@ import androidx.annotation.Nullable;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
-import com.example.cmput301_team_project.db.UserDatabaseService;
-import com.example.cmput301_team_project.enums.UserButtonActionEnum;
 import com.example.cmput301_team_project.model.Comment;
-import com.example.cmput301_team_project.model.PublicUser;
 
 import java.util.List;
 
