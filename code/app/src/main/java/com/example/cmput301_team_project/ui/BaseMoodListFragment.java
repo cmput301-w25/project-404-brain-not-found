@@ -55,20 +55,26 @@ public abstract class BaseMoodListFragment extends Fragment implements OnMapRead
         moodListView.setAdapter(moodListAdapter);
 
         moodListView.setOnItemClickListener((parent, view1, position, id) -> {
-            Marker marker = markerMap.get(position);
-            if(marker != null) {
-                Mood mood = moodListAdapter.getItem(position);
-                int size;
-                if(position == highlightedMarker) {
-                    size = 100;
-                    highlightedMarker = -1;
+            if(highlightedMarker != -1) {
+                Marker oldMarker = markerMap.get(highlightedMarker);
+                if(oldMarker != null) {
+                    Mood oldMood = moodListAdapter.getItem(highlightedMarker);
+                    oldMarker.setIcon(getEmojiMarker(getString(oldMood.getEmoji()), getResources().getColor(oldMood.getColour(), requireContext().getTheme()), 100));
                 }
-                else {
-                    size = 150;
-                    highlightedMarker = position;
-                }
+            }
 
-                marker.setIcon(getEmojiMarker(getString(mood.getEmoji()), getResources().getColor(mood.getColour(), requireContext().getTheme()), size));
+            if(position != highlightedMarker) {
+                Marker marker = markerMap.get(position);
+                if (marker != null) {
+
+                    Mood mood = moodListAdapter.getItem(position);
+                    highlightedMarker = position;
+                    marker.setIcon(getEmojiMarker(getString(mood.getEmoji()), getResources().getColor(mood.getColour(), requireContext().getTheme()), 150));
+
+                }
+            }
+            else {
+                highlightedMarker = -1;
             }
         });
 
@@ -88,6 +94,7 @@ public abstract class BaseMoodListFragment extends Fragment implements OnMapRead
                 mapContainer.removeView(mapView);
 
                 markerMap.clear();
+                highlightedMarker = -1;
 
                 mapView.onPause();
                 mapView.onDestroy();
