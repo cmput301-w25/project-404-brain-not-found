@@ -1,12 +1,12 @@
 package com.example.cmput301_team_project.ui;
 
-import static android.content.ContentValues.TAG;
-
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -17,6 +17,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -24,7 +25,6 @@ import androidx.fragment.app.Fragment;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,7 +32,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
@@ -42,12 +41,9 @@ import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.utils.ImageUtils;
 import com.example.cmput301_team_project.utils.PlacesUtils;
 import com.github.angads25.toggle.widget.LabeledSwitch;
-import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.button.MaterialButton;
 
@@ -67,7 +63,8 @@ public class MoodFormFragment extends DialogFragment {
     private final int MAX_IMAGE_SIZE = 65536;
     private final int MAX_TRIGGER_LENGTH = 200;
 
-    private Place selectedPlace;
+    private LatLng selectedLocation;
+    private ActivityResultLauncher<String> locationPermissionActivity;
     private boolean isEditMode = false; // Flag to check if we're editing
     private Mood moodBeingEdited = null; // Reference to the mood being edited
 
@@ -295,6 +292,11 @@ public class MoodFormFragment extends DialogFragment {
     private void initializeLocationSearch(View view) {
         EditText locationField = view.findViewById(R.id.form_location);
 
+        MaterialButton currLocationButton = view.findViewById(R.id.form_current_location_button);
+        currLocationButton.setOnClickListener(v -> {
+            getLastLocation(locationField);
+        });
+
         ActivityResultLauncher<Intent> startAutocomplete = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -303,14 +305,23 @@ public class MoodFormFragment extends DialogFragment {
                         if (intent != null) {
                             Place place = Autocomplete.getPlaceFromIntent(intent);
 
-                            selectedPlace = place;
-                            locationField.setText(PlacesUtils.getFormattedAddress(place));
+                            selectedLocation = place.getLocation();
+                            locationField.setText(place.getFormattedAddress());
                         }
                     }
                 });
 
+        locationPermissionActivity = registerForActivityResult(
+                new ActivityResultContracts.RequestPermission(),
+                result -> {
+                    if (result) {
+                        getLastLocation(locationField);
+                    }
+                }
+        );
+
         locationField.setOnClickListener(v -> {
-            List<Place.Field> fields = Arrays.asList(Place.Field.ADDRESS_COMPONENTS,
+            List<Place.Field> fields = Arrays.asList(Place.Field.FORMATTED_ADDRESS,
                     Place.Field.LOCATION);
 
             Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
@@ -318,6 +329,20 @@ public class MoodFormFragment extends DialogFragment {
             startAutocomplete.launch(intent);
         });
 
+    }
+
+    private void getLastLocation(EditText locationText) {
+        if(!(ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED))
+        {
+            locationPermissionActivity.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            return;
+        }
+
+        PlacesUtils.getLastLocation(getContext())
+                .addOnSuccessListener(location -> {
+                    selectedLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    locationText.setText(PlacesUtils.getAddressFromLatLng(getContext(), selectedLocation));
+                });
     }
 
     /**

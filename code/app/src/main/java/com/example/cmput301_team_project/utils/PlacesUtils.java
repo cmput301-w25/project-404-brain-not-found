@@ -1,35 +1,49 @@
 package com.example.cmput301_team_project.utils;
 
-import com.google.android.libraries.places.api.model.AddressComponent;
-import com.google.android.libraries.places.api.model.Place;
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.util.Log;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import androidx.core.content.ContextCompat;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class PlacesUtils {
-    public static String getFormattedAddress(Place place) {
-        if(place.getAddressComponents() == null) {
-            return place.getDisplayName();
+    public static Task<Location> getLastLocation(Context context) {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+
+            return fusedLocationProviderClient.getLastLocation()
+                    .continueWith(Task::getResult);
         }
 
-        Set<String> addressTypes = new HashSet<>(Arrays.asList("street_number", "route", "locality", "administrative_area_level_1", "country"));
+        return Tasks.forException(new SecurityException());
+    }
 
-        StringBuilder addressBuilder = new StringBuilder();
-        String previousType = "";
-
-        for(AddressComponent component : place.getAddressComponents().asList()) {
-            String type = component.getTypes().get(0);
-
-            if(addressTypes.contains(type)) {
-                if(addressBuilder.length() > 0) {
-                    addressBuilder.append(Objects.equals(previousType, "street_number") ? " " : ", ");
-                }
-                addressBuilder.append(Objects.equals(type, "country") ? component.getName() : component.getShortName());
-                previousType = type;
+    public static String getAddressFromLatLng(Context context, LatLng latLng) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                return address.getAddressLine(0);
             }
+        } catch (IOException e) {
+            Log.e("Geocoder Error", "Geocoder failed: " + e.getMessage());
         }
-        return addressBuilder.toString();
+        return String.format(Locale.getDefault(), "%f, %f", latLng.latitude, latLng.longitude);
     }
 }
