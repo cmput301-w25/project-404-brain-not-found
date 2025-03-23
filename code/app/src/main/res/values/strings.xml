@@ -44,6 +44,7 @@
     <string name="trigger_too_many_chars">Trigger must be under %d characters</string>
     <string name="empty_username_error">Username cannot be empty</string>
     <string name="empty_password_error">Password cannot be empty</string>
+    <string name="too_short_password_error">Password should be at least 6 characters</string>
     <string name="username_exists_error">Username already taken</string>
     <string name="requests">Requests</string>
     <string name="find_people">People</string>
