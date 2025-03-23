@@ -49,19 +49,33 @@
             app:colorOff="@color/white"
             app:colorOn="#7f7f7f"
             app:colorBorder="#7f7f7f"/>
-
-        <EditText
-            android:id="@+id/form_location"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:minHeight="100dp"
-            android:layout_weight="1"
-            android:clickable="true"
-            android:focusable="true"
-            android:focusableInTouchMode="false"
-            android:inputType="none"
-            android:autofillHints=""
-            android:hint="@string/search_location"/>
+            android:layout_weight="1">
+
+            <EditText
+                android:id="@+id/form_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="100dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="false"
+                android:inputType="none"
+                android:autofillHints=""
+                android:hint="@string/search_location"/>
+
+            <ImageView
+                android:id="@+id/form_location_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_baseline_close_24"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                />
+
+        </RelativeLayout>
 
         <TextView
             android:layout_width="match_parent"

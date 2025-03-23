@@ -59,6 +59,6 @@
     <string name="no_follow_requests">You have no follow requests</string>
     <string name="i_am">I am</string>
     <string name="is">is</string>
-    <string name="search_location">Search location...</string>
+    <string name="search_location">Search location</string>
     <string name="use_my_current_location">Use my current location</string>
 </resources>

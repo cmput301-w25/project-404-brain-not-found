@@ -297,6 +297,12 @@ public class MoodFormFragment extends DialogFragment {
             getLastLocation(locationField);
         });
 
+        ImageView clearLocation = view.findViewById(R.id.form_location_clear);
+        clearLocation.setOnClickListener(v -> {
+            locationField.setText(null);
+            selectedLocation = null;
+        });
+
         ActivityResultLauncher<Intent> startAutocomplete = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
