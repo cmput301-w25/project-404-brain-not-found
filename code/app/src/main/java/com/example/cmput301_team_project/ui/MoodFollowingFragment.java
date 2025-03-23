@@ -1,20 +1,12 @@
 package com.example.cmput301_team_project.ui;
 
-import android.os.Bundle;
-
 import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 
-import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,7 +16,6 @@ import java.util.ArrayList;
 public class MoodFollowingFragment extends BaseMoodListFragment {
     private final MoodDatabaseService moodDatabaseService;
     private final UserDatabaseService userDatabaseService;
-    private MoodListAdapter moodListAdapter;
 
     public MoodFollowingFragment() {
         moodDatabaseService = MoodDatabaseService.getInstance();
@@ -42,17 +33,6 @@ public class MoodFollowingFragment extends BaseMoodListFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_mood_following, container, false);
-        ListView moodListView = view.findViewById(R.id.mood_List);
-        moodListAdapter = new MoodListAdapter(getContext(), new ArrayList<>(), this, false);
-        moodListView.setAdapter(moodListAdapter);
-        // Inflate the layout for this fragment
-        return view;
-    }
-
-    @Override
     protected void loadMoodData() {
         userDatabaseService.getFollowing(FirebaseAuthenticationService.getInstance().getCurrentUser())
                         .addOnSuccessListener(following -> moodDatabaseService.getFollowingMoods(following)
@@ -61,5 +41,15 @@ public class MoodFollowingFragment extends BaseMoodListFragment {
                                     moodListAdapter.addAll(moods);
                                     moodListAdapter.notifyDataSetChanged();
                                 }));
+    }
+
+    @Override
+    protected int getLayoutRes() {
+        return R.layout.fragment_mood_following;
+    }
+
+    @Override
+    protected boolean isMoodOwned() {
+        return false;
     }
 }

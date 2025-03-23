@@ -105,12 +105,12 @@
                 </LinearLayout>
             </FrameLayout>
 
-        <ViewStub
-            android:id="@+id/edit_delete_stub"
-            android:layout="@layout/edit_delete_menu_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|end" />
+            <ViewStub
+                android:id="@+id/edit_delete_stub"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|end"
+                android:layout="@layout/edit_delete_menu_layout" />
 
         </LinearLayout>
 

@@ -162,7 +162,10 @@ public class MoodFormFragment extends DialogFragment {
             }
 
             selectedLocation = editedMood.getLocation();
-            locationField.setText(PlacesUtils.getAddressFromLatLng(getContext(), new LatLng(selectedLocation.getLatitude(), selectedLocation.getLongitude())));
+            LatLng latLng = selectedLocation == null ? null : new LatLng(selectedLocation.getLatitude(), selectedLocation.getLongitude());
+            if(latLng != null) {
+                locationField.setText(PlacesUtils.getAddressFromLatLng(getContext(), latLng));
+            }
 
         }
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -356,7 +359,8 @@ public class MoodFormFragment extends DialogFragment {
         PlacesUtils.getLastLocation(getContext())
                 .addOnSuccessListener(location -> {
                     selectedLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
-                    locationText.setText(PlacesUtils.getAddressFromLatLng(getContext(), new LatLng(selectedLocation.getLatitude(), selectedLocation.getLongitude())));
+                    LatLng latLng = new LatLng(selectedLocation.getLatitude(), selectedLocation.getLongitude());
+                    locationText.setText(PlacesUtils.getAddressFromLatLng(getContext(), latLng));
                 });
     }
 
