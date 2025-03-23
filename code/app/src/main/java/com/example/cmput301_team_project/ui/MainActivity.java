@@ -15,7 +15,6 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.cmput301_team_project.BuildConfig;
 import com.example.cmput301_team_project.R;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
@@ -74,7 +73,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void initializePlacesApi() {
-        String apiKey = BuildConfig.PLACES_API_KEY;
+        String apiKey = BuildConfig.MAPS_API_KEY;
 
         if (TextUtils.isEmpty(apiKey) || apiKey.equals("DEFAULT_API_KEY")) {
             Log.e("Places test", "No api key");

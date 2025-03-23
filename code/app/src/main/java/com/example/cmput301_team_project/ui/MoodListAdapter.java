@@ -24,6 +24,7 @@ import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.utils.ImageUtils;
+import com.google.android.material.button.MaterialButton;
 
 
 /**
@@ -38,6 +39,11 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
     private Fragment parentFragment;
     private boolean isOwned;
 
+    interface CommentButtonListener {
+        void onCommentButtonClicked(int position);
+    }
+    private CommentButtonListener commentButtonListener;
+
     /**
      * Constructs a new MoodListAdapter.
      * @param context the current context.
@@ -50,6 +56,11 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         this.moodDatabaseService = MoodDatabaseService.getInstance(); // Get a singleton instance
         this.parentFragment = parentFragment;
         this.isOwned = isOwned;
+
+        if(!(parentFragment instanceof CommentButtonListener)) {
+            throw new IllegalArgumentException("parentFragment is not an instance of CommentButtonListener");
+        }
+        commentButtonListener = (CommentButtonListener) parentFragment;
     }
 
     @NonNull
@@ -84,6 +95,9 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         TextView moodTime = view.findViewById(R.id.timeAns);
         ImageView moodImage = view.findViewById(R.id.ImageBase64);
         androidx.cardview.widget.CardView cardView = view.findViewById(R.id.cardView);
+
+        MaterialButton commentButton = view.findViewById(R.id.comments_button);
+        commentButton.setOnClickListener(v -> commentButtonListener.onCommentButtonClicked(position));
 
         ImageView menuButton = null;
         if(isOwned) {
