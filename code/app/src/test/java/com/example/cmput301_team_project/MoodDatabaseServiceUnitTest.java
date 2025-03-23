@@ -47,15 +47,15 @@ public class MoodDatabaseServiceUnitTest {
 
     @Test
     public void testAddMood() {
-        Mood mood = Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test", true, "me", new Date(), null);
+        Mood mood = Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test", true, "me", new Date(), null, null);
 
         moodDatabaseService.addMood(mood);
         verify(mockMoodCollection).add(mood);
     }
 
     @Test
-    public void testDeleteMood() throws InterruptedException {
-        Mood mood = Mood.createMood(MoodEmotionEnum.DISGUST, MoodSocialSituationEnum.SEVERAL, "test", true, "me", new Date(), null);
+    public void testDeleteMood() {
+        Mood mood = Mood.createMood(MoodEmotionEnum.DISGUST, MoodSocialSituationEnum.SEVERAL, "test", true, "me", new Date(), null, null);
         mood.setId("mockId");
 
         moodDatabaseService.deleteMood(mood);
@@ -64,7 +64,7 @@ public class MoodDatabaseServiceUnitTest {
 
     @Test
     public void testUpdateMood() {
-        Mood mood = Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.ALONE, "test", true, "me", new Date(), null);
+        Mood mood = Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.ALONE, "test", true, "me", new Date(), null, null);
         mood.setId("mockId");
 
         moodDatabaseService.updateMood(mood);
