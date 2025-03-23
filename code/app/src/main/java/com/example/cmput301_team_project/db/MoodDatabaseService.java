@@ -58,7 +58,13 @@ public class MoodDatabaseService extends BaseDatabaseService {
     /**Find the mood event in database with doc ID and delete it
      * @param mood The mood event in history to be deleted.*/
     public void deleteMood(Mood mood){
+        DocumentReference moodDocRef = moodsRef.document(mood.getId());
+        moodDocRef.collection("comments").get().addOnSuccessListener(querySnapshot -> {
+            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                document.getReference().delete();
+            }});
         moodsRef.document(mood.getId()).delete();
+
     }
 
     public Task<String> getMostRecentMood(String username){
