@@ -17,7 +17,6 @@ import java.util.ArrayList;
 
 public abstract class BaseMoodListFragment extends Fragment {
     protected abstract void loadMoodData();
-    protected abstract int getLayoutRes();
     protected abstract boolean isMoodOwned();
 
     protected MoodListAdapter moodListAdapter;
@@ -31,7 +30,7 @@ public abstract class BaseMoodListFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(getLayoutRes(), container, false);
+        View view = inflater.inflate(R.layout.base_mood_list, container, false);
 
         ListView moodListView = view.findViewById(R.id.mood_List);
         moodListAdapter = new MoodListAdapter(getContext(), new ArrayList<>(), this, isMoodOwned());

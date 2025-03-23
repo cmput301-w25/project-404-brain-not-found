@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -46,7 +47,15 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
 
     @Override
     protected void setupUI(View view) {
-        ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
+        ImageButton addMoodButton;
+        ViewStub addMoodStub = view.findViewById(R.id.add_mood_stub);
+        if(addMoodStub == null) {
+            addMoodButton = view.findViewById(R.id.add_mood_button);
+        }
+        else {
+            addMoodButton = (ImageButton) addMoodStub.inflate();
+        }
+
         addMoodButton.setOnClickListener(v -> {
             MoodFormFragment.newInstance(null).show(getChildFragmentManager(), "Add Mood Event");
         });
@@ -83,11 +92,6 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
                     Toast.makeText(getContext(), "Failed to load mood data: " + e.getMessage(),
                             Toast.LENGTH_SHORT).show();
                 });
-    }
-
-    @Override
-    protected int getLayoutRes() {
-        return R.layout.fragment_mood_history;
     }
 
     @Override

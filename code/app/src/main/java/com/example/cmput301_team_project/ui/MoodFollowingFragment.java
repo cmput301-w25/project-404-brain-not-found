@@ -2,7 +2,6 @@ package com.example.cmput301_team_project.ui;
 
 import androidx.fragment.app.Fragment;
 
-import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
@@ -41,11 +40,6 @@ public class MoodFollowingFragment extends BaseMoodListFragment {
                                     moodListAdapter.addAll(moods);
                                     moodListAdapter.notifyDataSetChanged();
                                 }));
-    }
-
-    @Override
-    protected int getLayoutRes() {
-        return R.layout.fragment_mood_following;
     }
 
     @Override
