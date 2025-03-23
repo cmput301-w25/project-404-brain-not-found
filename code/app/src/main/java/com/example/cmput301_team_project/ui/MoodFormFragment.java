@@ -46,6 +46,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -63,7 +64,7 @@ public class MoodFormFragment extends DialogFragment {
     private final int MAX_IMAGE_SIZE = 65536;
     private final int MAX_TRIGGER_LENGTH = 200;
 
-    private LatLng selectedLocation;
+    private GeoPoint selectedLocation;
     private ActivityResultLauncher<String> locationPermissionActivity;
     private boolean isEditMode = false; // Flag to check if we're editing
     private Mood moodBeingEdited = null; // Reference to the mood being edited
@@ -192,7 +193,8 @@ public class MoodFormFragment extends DialogFragment {
                             isPublicSwitch.isOn(),
                             moodBeingEdited.getAuthor(),
                             moodBeingEdited.getDate(),
-                            imageViewToBase64(view.findViewById(R.id.mood_image_preview))
+                            imageViewToBase64(view.findViewById(R.id.mood_image_preview)),
+                            selectedLocation
                     );
 
                     newMood.setId(moodBeingEdited.getId()); // Preserve Firestore document ID
@@ -207,7 +209,8 @@ public class MoodFormFragment extends DialogFragment {
                             isPublicSwitch.isOn(),
                             FirebaseAuthenticationService.getInstance().getCurrentUser(),
                             null,
-                            imageViewToBase64(view.findViewById(R.id.mood_image_preview))
+                            imageViewToBase64(view.findViewById(R.id.mood_image_preview)),
+                            selectedLocation
                     );
                     listener.addMood(newMood);
                 }
@@ -311,7 +314,8 @@ public class MoodFormFragment extends DialogFragment {
                         if (intent != null) {
                             Place place = Autocomplete.getPlaceFromIntent(intent);
 
-                            selectedLocation = place.getLocation();
+                            LatLng latLng = place.getLocation();
+                            selectedLocation = latLng == null ? null : new GeoPoint(latLng.latitude, latLng.longitude);
                             locationField.setText(place.getFormattedAddress());
                         }
                     }
@@ -346,8 +350,8 @@ public class MoodFormFragment extends DialogFragment {
 
         PlacesUtils.getLastLocation(getContext())
                 .addOnSuccessListener(location -> {
-                    selectedLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                    locationText.setText(PlacesUtils.getAddressFromLatLng(getContext(), selectedLocation));
+                    selectedLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
+                    locationText.setText(PlacesUtils.getAddressFromLatLng(getContext(), new LatLng(selectedLocation.getLatitude(), selectedLocation.getLongitude())));
                 });
     }
 
