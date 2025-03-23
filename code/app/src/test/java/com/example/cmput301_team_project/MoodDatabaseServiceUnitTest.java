@@ -55,7 +55,6 @@ public class MoodDatabaseServiceUnitTest {
 
     @Test
     public void testDeleteMood() throws InterruptedException {
-        Thread.sleep(1000);
         Mood mood = Mood.createMood(MoodEmotionEnum.DISGUST, MoodSocialSituationEnum.SEVERAL, "test", true, "me", new Date(), null);
         mood.setId("mockId");
 
