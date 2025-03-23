@@ -54,11 +54,12 @@ public class MoodDatabaseServiceUnitTest {
     }
 
     @Test
-    public void testDeleteMood() {
+    public void testDeleteMood() throws InterruptedException {
         Mood mood = Mood.createMood(MoodEmotionEnum.DISGUST, MoodSocialSituationEnum.SEVERAL, "test", true, "me", new Date(), null, null);
         mood.setId("mockId");
 
         moodDatabaseService.deleteMood(mood);
+        Thread.sleep(1000);
         verify(mockDocRef).delete();
     }
 
