@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.SessionManager;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.model.Comment;
 import com.google.android.gms.tasks.Task;
@@ -24,8 +24,9 @@ import java.util.List;
 
 public class CommentListFragment extends DialogFragment {
     MoodDatabaseService moodDatabaseService = MoodDatabaseService.getInstance();
-    SessionManager sessionManager = SessionManager.getInstance();
     private CommentListAdapter commentAdapter;
+
+    FirebaseAuthenticationService firebaseAuthenticationService = FirebaseAuthenticationService.getInstance();
 
     public CommentListFragment(){
     }
@@ -64,7 +65,7 @@ public class CommentListFragment extends DialogFragment {
             Button commentButton = dialog.findViewById(R.id.addCommentButton);
             commentButton.setOnClickListener(v -> {
                 String commentText = commentTextBox.getText().toString();
-                Comment newComment = new Comment(sessionManager.getCurrentUser(), commentText);
+                Comment newComment = new Comment(firebaseAuthenticationService.getCurrentUser(), commentText);
                 moodDatabaseService.addComment(moodId, newComment).addOnSuccessListener(d -> {
                     commentAdapter.add(newComment);
                     commentAdapter.notifyDataSetChanged();
