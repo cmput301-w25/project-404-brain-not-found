@@ -138,6 +138,7 @@ public class MoodFormFragment extends DialogFragment {
         if (isEditMode) {
             Mood editedMood = (Mood) getArguments().getSerializable("mood");
             ImageView moodImagePreview = view.findViewById(R.id.mood_image_preview);
+            EditText locationField = view.findViewById(R.id.form_location);
 
             //display old mood's emotion
             MoodEmotionEnum oldEmotion = editedMood.getEmotion();
@@ -159,6 +160,10 @@ public class MoodFormFragment extends DialogFragment {
                 ImageButton removePreviewButton = view.findViewById(R.id.remove_preview);
                 removePreviewButton.setVisibility(View.VISIBLE);
             }
+
+            selectedLocation = editedMood.getLocation();
+            locationField.setText(PlacesUtils.getAddressFromLatLng(getContext(), new LatLng(selectedLocation.getLatitude(), selectedLocation.getLongitude())));
+
         }
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             AlertDialog dialog = builder
