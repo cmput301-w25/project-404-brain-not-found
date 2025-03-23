@@ -1,5 +1,7 @@
 package com.example.cmput301_team_project.ui;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -22,6 +24,7 @@ import androidx.fragment.app.Fragment;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +32,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
@@ -36,7 +40,15 @@ import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.utils.ImageUtils;
+import com.example.cmput301_team_project.utils.PlacesUtils;
 import com.github.angads25.toggle.widget.LabeledSwitch;
+import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.button.MaterialButton;
 
 import java.io.ByteArrayOutputStream;
@@ -44,6 +56,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * A {@link DialogFragment} subclass that implements form for adding and editing moods
@@ -54,6 +67,7 @@ public class MoodFormFragment extends DialogFragment {
     private final int MAX_IMAGE_SIZE = 65536;
     private final int MAX_TRIGGER_LENGTH = 200;
 
+    private Place selectedPlace;
     private boolean isEditMode = false; // Flag to check if we're editing
     private Mood moodBeingEdited = null; // Reference to the mood being edited
 
@@ -106,6 +120,8 @@ public class MoodFormFragment extends DialogFragment {
         View view = getLayoutInflater().inflate(R.layout.fragment_mood_form, null);
 
         initializePhotoPicker(view);
+        initializeLocationSearch(view);
+
         Spinner emotion = view.findViewById(R.id.form_emotion);
         Spinner socialSituation = view.findViewById(R.id.form_situation);
         EditText trigger = view.findViewById(R.id.form_trigger);
@@ -274,6 +290,34 @@ public class MoodFormFragment extends DialogFragment {
             removePreview.setVisibility(View.GONE);
             preview.setImageDrawable(null);
         });
+    }
+
+    private void initializeLocationSearch(View view) {
+        EditText locationField = view.findViewById(R.id.form_location);
+
+        ActivityResultLauncher<Intent> startAutocomplete = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent intent = result.getData();
+                        if (intent != null) {
+                            Place place = Autocomplete.getPlaceFromIntent(intent);
+
+                            selectedPlace = place;
+                            locationField.setText(PlacesUtils.getFormattedAddress(place));
+                        }
+                    }
+                });
+
+        locationField.setOnClickListener(v -> {
+            List<Place.Field> fields = Arrays.asList(Place.Field.ADDRESS_COMPONENTS,
+                    Place.Field.LOCATION);
+
+            Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                    .build(requireContext());
+            startAutocomplete.launch(intent);
+        });
+
     }
 
     /**
