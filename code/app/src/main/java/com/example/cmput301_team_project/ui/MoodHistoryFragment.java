@@ -17,7 +17,12 @@ import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.model.Mood;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A simple {@link Fragment} subclass for user mood history screen.
@@ -27,10 +32,10 @@ import java.util.ArrayList;
  */
 public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFormFragment.MoodFormDialogListener,
                                                              MoodFilterFragment.MoodFilterDialogListener {
-    private final MoodDatabaseService moodDatabaseService;
+    public final MoodDatabaseService moodDatabaseService;
     private MoodListAdapter moodListAdapter;
-    private ArrayList<Mood> moodList;
-
+    public ArrayList<Mood> moodList;
+    public ArrayList<Mood> filteredMoodList = new ArrayList<>();
 
     public MoodHistoryFragment() {
         moodDatabaseService = MoodDatabaseService.getInstance();
@@ -58,7 +63,8 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_mood_history, container, false);
         ListView moodListView = view.findViewById(R.id.mood_List);
-        moodListAdapter = new MoodListAdapter(getContext(), moodList, this, true);
+        filteredMoodList = new ArrayList<>(moodList);
+        moodListAdapter = new MoodListAdapter(getContext(), filteredMoodList, this, true);
         moodListView.setAdapter(moodListAdapter);
 
         ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
@@ -96,7 +102,9 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
                     moodList.clear();
                     moodList.addAll(moods);
 
+                    filteredMoodList = new ArrayList<>(moodList);
                     // Notify adapter that data has changed
+                    updateFilters(filteredMoodList);
                     moodListAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
@@ -107,33 +115,47 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
     }
 
     /**
-     * calls {@link MoodDatabaseService} filterByEmotion() to make the database query
-     * to filter based on {@param emotion}. It then uses updateFilters to update
-     * the listview with the new filtered list
+     * uses the users moodList to create a new filteredList based on the users {@param emotion}
+     * It then uses updateFilters to update the listview with the new filtered list
      */
     public void filterByEmotion(String emotion) {
-        moodDatabaseService.filterByEmotion(SessionManager.getInstance().getCurrentUser(), emotion, this::updateFilters);// calls updateFilters after
+        List<Mood> filteredMoodslist = moodList.stream()
+                .filter(mood -> mood.getEmotion().toString().equalsIgnoreCase(emotion))
+                .collect(Collectors.toList());
+        ArrayList<Mood> filteredMoods = new ArrayList<>(filteredMoodslist);
+        updateFilters(filteredMoods);
+
     }
 
     /**
-     * calls {@link MoodDatabaseService} filterByTime() to make the database query
-     * to filter based on {@param time}. It then uses updateFilters to update
-     * the listview with the new filtered list
+     * uses the users moodList to create a new filteredList based on the users {@param time}
+     * It then uses updateFilters to update the listview with the new filtered list
      */
     public void filterByTime(int time) {
-        moodDatabaseService.filterByTime(SessionManager.getInstance().getCurrentUser(), time, this::updateFilters);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DAY_OF_MONTH, time);
+        Date filterDate = calendar.getTime();
+
+        List<Mood> filteredMoodslist = moodList.stream()
+                .filter(mood -> mood.getDate().after(filterDate))
+                .collect(Collectors.toList());
+        ArrayList<Mood> filteredMoods = new ArrayList<>(filteredMoodslist);
+        updateFilters(filteredMoods);
+
     }
 
     /**
-     * calls {@link MoodDatabaseService} filterByText() to make the database query
-     * to filter based on moods that include {@param text}, via splitting into an array
-     * based on spaces and commas. It then uses updateFilters to update the listview with
-     * the new filtered list
+     * uses the users moodList to create a new filteredList based on the users {@param text}
+     * It then uses updateFilters to update the listview with the new filtered list
      */
     public void filterByText(String text) {
-        System.out.println("Filtering by text:" + text);
-        String[] textArray = text.split("[,\\s]+");
-        moodDatabaseService.filterByText(SessionManager.getInstance().getCurrentUser(), textArray, this::updateFilters);
+        List<Mood> filteredMoodslist = moodList.stream()
+                .filter(mood -> mood.getTrigger().contains(text))
+                .collect(Collectors.toList());
+        ArrayList<Mood> filteredMoods = new ArrayList<>(filteredMoodslist);
+        updateFilters(filteredMoods);
+
     }
 
     /**
@@ -141,7 +163,8 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
      */
     public void resetFilters() {
         moodListAdapter.clear();
-        loadMoodData();
+        filteredMoodList = new ArrayList<>(moodList);
+        updateFilters(new ArrayList<>(filteredMoodList));
     }
 
     /**
