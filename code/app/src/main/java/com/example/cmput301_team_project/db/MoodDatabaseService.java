@@ -2,16 +2,20 @@ package com.example.cmput301_team_project.db;
 
 import android.util.Log;
 
+import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+
+import org.w3c.dom.Document;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +34,7 @@ import java.util.stream.Collectors;
  */
 public class MoodDatabaseService extends BaseDatabaseService {
     private static MoodDatabaseService instance = null;
-    private final CollectionReference moodsRef;
+    public CollectionReference moodsRef;
 
     private MoodDatabaseService() {
         super();
@@ -88,7 +92,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 });
     }
 
-    private Mood moodFromDoc(DocumentSnapshot document) {
+    public Mood moodFromDoc(DocumentSnapshot document) {
         Mood mood = Mood.createMood(MoodEmotionEnum.valueOf(document.getString("emotion")),
                 MoodSocialSituationEnum.valueOf(document.getString("socialSituation")),
                 document.getString("trigger"),
@@ -162,19 +166,33 @@ public class MoodDatabaseService extends BaseDatabaseService {
      *  filtered moods.
      */
     public void filterByEmotion(String username, String emotion, OnMoodFetchedListener listener) {
-        getMoodList(username).addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                List<Mood> allMoods = task.getResult(); // get all users moods
-                List<Mood> filteredMoods = allMoods.stream() // filter based on emotion
-                        .filter(mood -> mood.getEmotion().toString().equalsIgnoreCase(emotion))
-                        .collect(Collectors.toList());
 
-                listener.onMoodsFetched(new ArrayList<>(filteredMoods)); // return to the original call with new list
-            } else {
-                Log.e("MoodDatabaseService", "error filtering moods by emotion: ", task.getException());
-                listener.onMoodsFetched(new ArrayList<>()); // empty list returned on failure
-            }
-        });
+        if (username == null || username.isEmpty()) {
+            Log.e("filterByEmotion", "Username is null or empty. Cannot filter.");
+            return;
+        }
+
+        TaskCompletionSource<List<Mood>> taskCompletionSource = new TaskCompletionSource<>();
+
+        moodsRef.whereEqualTo("author", username)
+                .whereEqualTo("emotion", emotion)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Mood> filteredMoods = new ArrayList<>();
+                        System.out.println("Query Successful");
+                        for (DocumentSnapshot doc : task.getResult()) {
+                            Mood mood = moodFromDoc(doc);
+                            filteredMoods.add(mood);
+                        }
+                        taskCompletionSource.setResult(filteredMoods);
+                        listener.onMoodsFetched(new ArrayList<>(filteredMoods));
+                    } else {
+                        Log.e("MoodDatabaseService", "Error filtering by mood: " + emotion, task.getException());
+                        listener.onMoodsFetched(new ArrayList<>());
+                    }
+                });
     }
 
     /**
@@ -182,25 +200,40 @@ public class MoodDatabaseService extends BaseDatabaseService {
      * filtered ArrayList via the {@param listener} to then use it to display the new filtered moods.
      */
     public void filterByTime(String username, int time, OnMoodFetchedListener listener) {
-        getMoodList(username).addOnCompleteListener(task -> {
-            if (task.isSuccessful() && task.getResult() != null) {
-                Date currentDate = new Date();
-                // get instance of calendar to find requested filtered Date
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(currentDate);
-                calendar.add(Calendar.DAY_OF_MONTH, time); // time is a negative number here
-                Date requestedDate = calendar.getTime();
 
-                List<Mood> allMoods = task.getResult();
-                List<Mood> filteredMoods = allMoods.stream()
-                        .filter(mood -> mood.getDate().compareTo(requestedDate) >= 0) // not sure about this
-                        .collect(Collectors.toList());
-                listener.onMoodsFetched(new ArrayList<>(filteredMoods));
-            } else {
-                Log.e("MoodDatabaseService", "Error filtering moods by time " + time, task.getException());
-                listener.onMoodsFetched(new ArrayList<>());
-            }
-        });
+        if (username == null || username.isEmpty()) {
+            Log.e("filterByEmotion", "Username is null or empty. Cannot filter.");
+            return;
+        }
+
+        TaskCompletionSource<List<Mood>> taskCompletionSource = new TaskCompletionSource<>();
+
+        Date currentDate = new Date();
+        // get instance of calendar to find requested filtered Date
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DAY_OF_MONTH, time); // time is a negative number here
+        Date requestedDate = calendar.getTime();
+
+        moodsRef.whereEqualTo("author", username)
+                .whereGreaterThan("date", requestedDate )
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        List<Mood> filteredMoods = new ArrayList<>();
+                        System.out.println("Query Successful");
+                        for (DocumentSnapshot doc : task.getResult()) {
+                            Mood mood = moodFromDoc(doc);
+                            filteredMoods.add(mood);
+                        }
+                        taskCompletionSource.setResult(filteredMoods);
+                        listener.onMoodsFetched(new ArrayList<>(filteredMoods));
+                    } else {
+                        Log.e("MoodDatabaseService", "Error filtering by Date " + time, task.getException());
+                        listener.onMoodsFetched(new ArrayList<>());
+                    }
+                });
     }
 
     /**

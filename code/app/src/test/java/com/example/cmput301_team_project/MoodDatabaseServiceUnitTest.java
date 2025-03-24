@@ -5,11 +5,15 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -26,6 +30,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -48,6 +53,16 @@ public class MoodDatabaseServiceUnitTest {
     private CollectionReference mockMoodCollection;
     @Mock
     private DocumentReference mockDocRef;
+    @Mock
+    private Query mockQuery;
+    @Mock
+    private Task<QuerySnapshot> mockTask;
+    @Mock
+    private QuerySnapshot mockQuerySnapshot;
+    @Mock
+    private DocumentSnapshot mockDocumentSnapshot;
+    @Mock
+    private MoodDatabaseService.OnMoodFetchedListener mockListener;
 
     private MoodDatabaseService moodDatabaseService;
 
@@ -62,7 +77,7 @@ public class MoodDatabaseServiceUnitTest {
         // mock to return valid queries (for filtering tests)
         Query mockQuery = mock(Query.class);
         when(mockMoodCollection.whereEqualTo(anyString(), any())).thenReturn(mockQuery);
-        when(mockQuery.orderBy(anyString(), any())).thenReturn(mockQuery);
+        when(mockQuery.orderBy(anyString(), any(Query.Direction.class))).thenReturn(mockQuery);
 
         Task<QuerySnapshot> mockFirestoreTask = mock(Task.class);
         when(mockQuery.get()).thenReturn(mockFirestoreTask);
@@ -77,15 +92,63 @@ public class MoodDatabaseServiceUnitTest {
         );
         mockDocuments.add(mockDocument);
 
-        when(mockQuerySnapshot.getDocuments()).thenReturn(mockDocuments);
-        when(mockFirestoreTask.getResult()).thenReturn(mockQuerySnapshot);
 
         Task<List<Mood>> mockMoodListTask = mock(Task.class);
         when(mockMoodListTask.isSuccessful()).thenReturn(true);
 
+        // set up moods for testing
+        Calendar calendar = Calendar.getInstance();
+        Date today = new Date();
+        calendar.setTime(today);
+        calendar.add(Calendar.DAY_OF_MONTH, -6);
+        Date lastWeek = calendar.getTime();
+        calendar.add(Calendar.DAY_OF_MONTH, -23);
+        Date lastMonth = calendar.getTime();
+        calendar.add(Calendar.DAY_OF_MONTH, -365);
+        Date lastYear = calendar.getTime();
+
+        Mood moodAngerToday = Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1", true, "test", today, null);
+        Mood moodAngerMonth = Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1 test2 test3", true, "test", lastMonth, null);
+
+        DocumentSnapshot mockDoc1 = mock(DocumentSnapshot.class);
+        DocumentSnapshot mockDoc3 = mock(DocumentSnapshot.class);
+
+        // mock data for the moods
+        // moodAngerToday
+        when(mockDoc1.getString("emotion")).thenReturn("ANGER");
+        when(mockDoc1.getString("socialSituation")).thenReturn("ALONE");
+        when(mockDoc1.getString("trigger")).thenReturn("test1");
+        when(mockDoc1.getBoolean("public")).thenReturn(true);
+        when(mockDoc1.getString("author")).thenReturn("test");
+        when(mockDoc1.getDate("date")).thenReturn(today);
+        when(mockDoc1.getString("imageBase64")).thenReturn(null);
+        when(mockDoc1.getId()).thenReturn("docId1");
+        // moodSadWeek
+
+        // moodAngerMonth
+        when(mockDoc3.getString("emotion")).thenReturn("ANGER");
+        when(mockDoc3.getString("socialSituation")).thenReturn("ALONE");
+        when(mockDoc3.getString("trigger")).thenReturn("test1 test2 test3");
+        when(mockDoc3.getBoolean("public")).thenReturn(true);
+        when(mockDoc3.getString("author")).thenReturn("test");
+        when(mockDoc3.getDate("date")).thenReturn(lastMonth);
+        when(mockDoc3.getString("imageBase64")).thenReturn(null);
+        when(mockDoc3.getId()).thenReturn("docId3");
+        // moodHappyYear
+
+
+        mockDocuments.add(mockDoc1);
+        mockDocuments.add(mockDoc3);
+
+        when(mockQuerySnapshot.getDocuments()).thenReturn(mockDocuments);
+        when(mockFirestoreTask.getResult()).thenReturn(mockQuerySnapshot);
+
         MoodDatabaseService.setInstanceForTesting(mockFirestore);
         moodDatabaseService = spy(MoodDatabaseService.getInstance());
+
         doReturn(mockMoodListTask).when(moodDatabaseService).getMoodList(anyString());
+        doReturn(moodAngerToday).when(moodDatabaseService).moodFromDoc(mockDoc1);
+        doReturn(moodAngerMonth).when(moodDatabaseService).moodFromDoc(mockDoc3);
     }
 
     @Test
@@ -116,119 +179,41 @@ public class MoodDatabaseServiceUnitTest {
 
     @Test
     public void filterByEmotionShouldShowProperMoods() {
-        List<Mood> mockMoods = Arrays.asList(
-                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1", true, "me", new Date(), null),
-                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "test1",true, "me", new Date(), null),
-                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1",true, "me", new Date(), null)
-        );
+        String username = "test";
+        String emotion = "ANGER";
 
-        Task<List<Mood>> mockTask = mock(Task.class);
-        when(mockTask.isSuccessful()).thenReturn(true);
-        when(mockTask.getResult()).thenReturn(mockMoods);
-        when(moodDatabaseService.getMoodList("me")).thenReturn(mockTask);
+        moodDatabaseService.filterByEmotion(username, emotion, mockListener);
 
-        ArgumentCaptor<OnCompleteListener<List<Mood>>> listenerCaptor = ArgumentCaptor.forClass(OnCompleteListener.class);
-        when(mockTask.addOnCompleteListener(listenerCaptor.capture())).thenReturn(mockTask);
-
-        final List<Mood>[] capturedMoods = new List[1];
-        CountDownLatch latch = new CountDownLatch(1);
-
-        moodDatabaseService.filterByEmotion("me", "ANGER", filteredMoods ->{
-            capturedMoods[0] = filteredMoods;
-            latch.countDown();
-        });
-
-        listenerCaptor.getValue().onComplete(mockTask);
-
-        try {
-            boolean callbackCompleted = latch.await(1, TimeUnit.SECONDS);
-            assertTrue("Callback was not executed within timeout", callbackCompleted);
-
-            assertEquals(2, capturedMoods[0].size());
-            assertEquals(MoodEmotionEnum.ANGER, capturedMoods[0].get(0).getEmotion());
-            assertEquals(MoodEmotionEnum.ANGER, capturedMoods[0].get(1).getEmotion());
-        } catch (InterruptedException e) {
-            fail("Test was interrupted: " + e.getMessage());
-        }
+        verify(mockListener).onMoodsFetched(argThat(list -> {
+            return list.size() == 2 && list.get(0).getEmotion() == MoodEmotionEnum.ANGER && list.get(1).getEmotion() == MoodEmotionEnum.ANGER;
+        }));
     }
 
     //test for if an emotion is filtered, but no mood matches
     @Test
     public void filterByEmotionShouldShowShowEmptyOnNoMatch() {
-        List<Mood> mockMoods = Arrays.asList(
-                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1", true, "me", new Date(), null),
-                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "test1",true, "me", new Date(), null),
-                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1",true, "me", new Date(), null)
-        );
+        String username = "test";
+        String emotion = "SHAME";
 
-        Task<List<Mood>> mockTask = mock(Task.class);
-        when(mockTask.isSuccessful()).thenReturn(true);
-        when(mockTask.getResult()).thenReturn(mockMoods);
-        when(moodDatabaseService.getMoodList("me")).thenReturn(mockTask);
+        moodDatabaseService.filterByEmotion(username, emotion, mockListener);
 
-        ArgumentCaptor<OnCompleteListener<List<Mood>>> listenerCaptor = ArgumentCaptor.forClass(OnCompleteListener.class);
-        when(mockTask.addOnCompleteListener(listenerCaptor.capture())).thenReturn(mockTask);
-
-        final List<Mood>[] capturedMoods = new List[1];
-        CountDownLatch latch = new CountDownLatch(1);
-
-        moodDatabaseService.filterByEmotion("me", "SHAME", filteredMoods ->{
-            capturedMoods[0] = filteredMoods;
-            latch.countDown();
-        });
-
-        listenerCaptor.getValue().onComplete(mockTask);
-
-        try {
-            boolean callbackCompleted = latch.await(1, TimeUnit.SECONDS);
-            assertTrue("Callback was not executed within timeout", callbackCompleted);
-
-            assertEquals(0, capturedMoods[0].size());
-        } catch (InterruptedException e) {
-            fail("Test was interrupted: " + e.getMessage());
-        }
+        verify(mockListener).onMoodsFetched(argThat(list -> {
+            return list.isEmpty();
+        }));
     }
 
     @Test
     public void filterByDayShouldShowProperMoods() {
-        Calendar calendar = Calendar.getInstance();
-        Date today = new Date();
-        calendar.setTime(today);
-        calendar.add(Calendar.DAY_OF_MONTH, -1);
-        Date yesterday = calendar.getTime();
+        MoodDatabaseService.OnMoodFetchedListener mockListener = mock(MoodDatabaseService.OnMoodFetchedListener.class);
 
-        List<Mood> mockMoods = Arrays.asList(
-                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "filtered", true, "me", today, null),
-                Mood.createMood(MoodEmotionEnum.SHAME, MoodSocialSituationEnum.ALONE, "not filtered", true, "me", yesterday, null)
-        );
+        moodDatabaseService.filterByTime("me", -1, mockListener);
 
-        Task<List<Mood>> mockTask = mock(Task.class);
-        when(mockTask.isSuccessful()).thenReturn(true);
-        when(mockTask.getResult()).thenReturn(mockMoods);
-        when(moodDatabaseService.getMoodList("me")).thenReturn(mockTask);
+        verify(mockListener).onMoodsFetched(argThat(filteredMoods -> {
 
-        ArgumentCaptor<OnCompleteListener<List<Mood>>> listenerCaptor = ArgumentCaptor.forClass(OnCompleteListener.class);
-        when(mockTask.addOnCompleteListener(listenerCaptor.capture())).thenReturn(mockTask);
-
-        final List<Mood>[] capturedMoods = new List[1];
-        CountDownLatch latch = new CountDownLatch(1);
-
-        moodDatabaseService.filterByTime("me",-1, filteredMoods -> {
-            capturedMoods[0] = filteredMoods;
-            latch.countDown();
-        });
-
-        listenerCaptor.getValue().onComplete(mockTask);
-
-        try {
-            boolean callbackCompleted = latch.await(1, TimeUnit.SECONDS);
-            assertTrue("Callback was not executed within timeout", callbackCompleted);
-
-            assertEquals(1, capturedMoods[0].size());
-            assertEquals(MoodEmotionEnum.HAPPINESS, capturedMoods[0].get(0).getEmotion());
-        } catch (InterruptedException e) {
-            fail("Test was interrupted: " + e.getMessage());
-        }
+            return filteredMoods.size() == 2
+                    && filteredMoods.get(0).getEmotion() == MoodEmotionEnum.ANGER
+                    && filteredMoods.get(0).getTrigger().equals("test1");
+        }));
     }
 
     @Test

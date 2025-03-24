@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,7 +112,7 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
      * the listview with the new filtered list
      */
     public void filterByEmotion(String emotion) {
-        moodDatabaseService.filterByEmotion(SessionManager.getInstance().getCurrentUser(), emotion, this::updateFilters); // calls updateFilters after
+        moodDatabaseService.filterByEmotion(SessionManager.getInstance().getCurrentUser(), emotion, this::updateFilters);// calls updateFilters after
     }
 
     /**
@@ -148,6 +149,7 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
      *  on what the inputted filter was
      */
     public void updateFilters(ArrayList<Mood> filteredMoods) {
+        Log.d("updateFilters", "Received " + filteredMoods.size() + " moods.");
         moodListAdapter.clear();
         moodListAdapter.addAll(filteredMoods);
         moodListAdapter.notifyDataSetChanged();

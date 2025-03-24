@@ -71,7 +71,7 @@ public class MoodFilterFragment extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = getLayoutInflater().inflate(R.layout.fragment_mood_filter, null);
 
-        Spinner emotionFilter = view.findViewById(R.id.filter_by_mood);
+        Spinner emotionFilter = view.findViewById(R.id.filter_by_mood_spinner);
         RadioButton lastDayFilter = view.findViewById(R.id.filter_by_day);
         RadioButton lastWeekFilter = view.findViewById(R.id.filter_by_week);
         RadioButton lastMonthFilter = view.findViewById(R.id.filter_by_month);
