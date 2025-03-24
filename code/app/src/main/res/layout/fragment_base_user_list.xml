@@ -19,14 +19,17 @@
         app:strokeWidth="1dp">
 
         <SearchView
+            android:theme="@style/ThemeOverlay.SearchView"
             android:id="@+id/user_search"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:iconifiedByDefault="false"
-            android:queryHint="Search..."
-            android:queryBackground="@android:color/transparent"
             android:closeIcon="@drawable/ic_baseline_close_24"
-            android:searchIcon="@drawable/ic_baseline_search_24"/>
+            android:foregroundTint="#00000000"
+            android:iconifiedByDefault="false"
+            android:queryBackground="@android:color/transparent"
+            android:queryHint="Search..."
+            android:searchIcon="@drawable/ic_baseline_search_24"
+            android:visibility="visible" />
     </com.google.android.material.card.MaterialCardView>
 
     <ListView
