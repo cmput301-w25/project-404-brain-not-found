@@ -9,6 +9,7 @@
     android:layout_marginTop="10dp"
     android:paddingLeft="10dp"
     android:paddingTop="20dp"
+    android:descendantFocusability="blocksDescendants"
     app:cardBackgroundColor="@color/default_background"
     app:cardCornerRadius="16dp"
     app:cardElevation="6dp"
@@ -130,5 +131,15 @@
             android:layout_marginStart="30dp"
             android:layout_marginTop="8dp"
             android:scaleType="centerCrop" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/comments_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@android:color/transparent"
+            app:icon="@drawable/ic_baseline_chat_24"
+            app:iconTint="@color/black"
+            app:iconSize="32dp"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>
