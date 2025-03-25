@@ -3,9 +3,11 @@ package com.example.cmput301_team_project.ui;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -18,6 +20,11 @@ import androidx.fragment.app.Fragment;
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.model.MoodFilterState;
+import com.example.cmput301_team_project.utils.LocationPermissionManager;
+import com.example.cmput301_team_project.utils.PlacesUtils;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +35,10 @@ public class MoodFilterFragment extends DialogFragment {
     private final int FILTER_BY_DAY = -1;
     private final int FILTER_BY_WEEK = -7;
     private final int FILTER_BY_MONTH = -30;
+    private LocationPermissionManager locationPermissionManager;
+    private Integer time;
+    private MoodEmotionEnum emotion;
+    private String text;
 
     public MoodFilterFragment() {
 
@@ -75,6 +86,16 @@ public class MoodFilterFragment extends DialogFragment {
         RadioButton lastWeekFilter = view.findViewById(R.id.filter_by_week);
         RadioButton lastMonthFilter = view.findViewById(R.id.filter_by_month);
         EditText triggerFilter = view.findViewById(R.id.filter_by_text);
+        MaterialSwitch locationFilter = view.findViewById(R.id.location_filter);
+
+        locationPermissionManager = new LocationPermissionManager(this, () -> locationFilter.setChecked(true));
+
+        locationFilter.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if(isChecked && !locationPermissionManager.isPermissionGranted()) {
+                locationFilter.setChecked(false);
+                locationPermissionManager.requestPermission();
+            }
+        });
 
         HintDropdownAdapter emotionAdapter = new HintDropdownAdapter(getContext(), new ArrayList<>(Arrays.asList(MoodEmotionEnum.values())));
 
@@ -116,9 +137,9 @@ public class MoodFilterFragment extends DialogFragment {
         dialog.setOnShowListener(dialog1 -> {
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
-                Integer time = null;
-                MoodEmotionEnum emotion = null;
-                String text = null;
+                time = null;
+                emotion = null;
+                text = null;
 
                 if (emotionFilter.getSelectedItemPosition() != 0) {
                     emotion = MoodEmotionEnum.values()[emotionFilter.getSelectedItemPosition()];
@@ -139,8 +160,18 @@ public class MoodFilterFragment extends DialogFragment {
                     text = triggerFilterInput;
                 }
 
-                listener.updateFilter(new MoodFilterState(time, emotion, text));
-                dialog.dismiss();
+                if(locationFilter.isChecked()) {
+                    PlacesUtils.getLastLocation(getContext())
+                            .addOnSuccessListener(location -> {
+                                listener.updateFilter(new MoodFilterState(time, emotion, text, new GeoPoint(location.getLatitude(), location.getLongitude())));
+                                dialog.dismiss();
+                            });
+                }
+                else {
+                    listener.updateFilter(new MoodFilterState(time, emotion, text, null));
+                    dialog.dismiss();
+                }
+
             });
             Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
             neutralButton.setOnClickListener(v -> {
