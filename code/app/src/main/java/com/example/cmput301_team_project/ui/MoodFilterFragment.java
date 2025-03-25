@@ -16,8 +16,8 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
+import com.example.cmput301_team_project.model.MoodFilterState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,22 +29,21 @@ public class MoodFilterFragment extends DialogFragment {
     private final int FILTER_BY_WEEK = -7;
     private final int FILTER_BY_MONTH = -30;
 
-    public MoodDatabaseService moodDatabaseService;
-
     public MoodFilterFragment() {
-        this.moodDatabaseService = MoodDatabaseService.getInstance();
+
     }
 
     interface MoodFilterDialogListener {
-        void filterByEmotion(String emotion);
-        void filterByTime(int time);
-        void filterByText(String text);
-        void resetFilters();
+        void updateFilter(MoodFilterState moodFilterState);
     }
     private MoodFilterDialogListener listener;
 
-    public static MoodFilterFragment newInstance() {
-        return new MoodFilterFragment();
+    public static MoodFilterFragment newInstance(MoodFilterState moodFilterState) {
+        Bundle args = new Bundle();
+        MoodFilterFragment fragment = new MoodFilterFragment();
+        args.putSerializable("moodFilterState", moodFilterState);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -82,6 +81,29 @@ public class MoodFilterFragment extends DialogFragment {
         emotionFilter.setOnItemSelectedListener(new HintDropdownItemSelectedListener());
         emotionFilter.setAdapter(emotionAdapter);
 
+        MoodFilterState moodFilterState = (MoodFilterState) getArguments().getSerializable("moodFilterState");
+
+        if(moodFilterState != null) {
+            if (moodFilterState.emotion() != null) {
+                emotionFilter.setSelection(emotionAdapter.getPosition(moodFilterState.emotion().getDropdownDisplayName(requireContext())));
+            }
+            if(moodFilterState.time() != null) {
+                Integer time = moodFilterState.time();
+                if(time == FILTER_BY_DAY) {
+                    lastDayFilter.setChecked(true);
+                }
+                else if(time == FILTER_BY_WEEK) {
+                    lastWeekFilter.setChecked(true);
+                }
+                else if(time == FILTER_BY_MONTH){
+                    lastMonthFilter.setChecked(true);
+                }
+            }
+            if(moodFilterState.text() != null) {
+                triggerFilter.setText(moodFilterState.text());
+            }
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         AlertDialog dialog = builder
                 .setView(view)
@@ -94,30 +116,35 @@ public class MoodFilterFragment extends DialogFragment {
         dialog.setOnShowListener(dialog1 -> {
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
             positiveButton.setOnClickListener(v -> {
+                Integer time = null;
+                MoodEmotionEnum emotion = null;
+                String text = null;
+
                 if (emotionFilter.getSelectedItemPosition() != 0) {
-                    listener.filterByEmotion(emotionFilter.getSelectedItem().toString().toUpperCase()); // method to be used in classes where filtering is needed
+                    emotion = MoodEmotionEnum.values()[emotionFilter.getSelectedItemPosition()];
                 }
-//              TODO: add filters for time, trigger text, and find way to make them work together if possible
+
                 if (lastDayFilter.isChecked()) {
-                    System.out.println("filter : show moods from past 24 hrs");
-                    listener.filterByTime(FILTER_BY_DAY);
+                    time = FILTER_BY_DAY;
                 }
                 else if (lastWeekFilter.isChecked()) {
-                    listener.filterByTime(FILTER_BY_WEEK);
+                    time = FILTER_BY_WEEK;
                 }
                 else if (lastMonthFilter.isChecked()) {
-                    listener.filterByTime(FILTER_BY_MONTH);
+                    time = FILTER_BY_MONTH;
                 }
 
                 String triggerFilterInput = triggerFilter.getText().toString();
                 if (!triggerFilterInput.isEmpty()) {
-                    listener.filterByText(triggerFilterInput);
+                    text = triggerFilterInput;
                 }
+
+                listener.updateFilter(new MoodFilterState(time, emotion, text));
                 dialog.dismiss();
             });
             Button neutralButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
             neutralButton.setOnClickListener(v -> {
-                listener.resetFilters();
+                listener.updateFilter(MoodFilterState.getEmptyFilterState());
                 dialog.dismiss();
             });
         });

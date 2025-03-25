@@ -4,25 +4,15 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.SessionManager;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.model.Mood;
-
-import java.sql.Array;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A simple {@link Fragment} subclass for user mood history screen.
@@ -30,18 +20,11 @@ import java.util.stream.Collectors;
  * Use the {@link MoodHistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFormFragment.MoodFormDialogListener,
-                                                             MoodFilterFragment.MoodFilterDialogListener {
-    public final MoodDatabaseService moodDatabaseService;
-    public MoodListAdapter moodListAdapter;
-    public ArrayList<Mood> moodList;
-
-    // used for filtering, takes copies of the moodList to lower db reads and writes
-    public ArrayList<Mood> filteredMoodList = new ArrayList<>();
+public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFormFragment.MoodFormDialogListener {
+    private final MoodDatabaseService moodDatabaseService;
 
     public MoodHistoryFragment() {
         moodDatabaseService = MoodDatabaseService.getInstance();
-        moodList = new ArrayList<>();
 
     }
 
@@ -61,25 +44,19 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_mood_history, container, false);
-        ListView moodListView = view.findViewById(R.id.mood_List);
-        filteredMoodList = new ArrayList<>(moodList);
-        moodListAdapter = new MoodListAdapter(getContext(), filteredMoodList, this, true);
-        moodListView.setAdapter(moodListAdapter);
+    protected void setupUI(View view) {
+        ImageButton addMoodButton;
+        ViewStub addMoodStub = view.findViewById(R.id.add_mood_stub);
+        if(addMoodStub == null) {
+            addMoodButton = view.findViewById(R.id.add_mood_button);
+        }
+        else {
+            addMoodButton = (ImageButton) addMoodStub.inflate();
+        }
 
-        ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
         addMoodButton.setOnClickListener(v -> {
             MoodFormFragment.newInstance(null).show(getChildFragmentManager(), "Add Mood Event");
         });
-
-        ImageButton filterMoodButton = view.findViewById(R.id.filter_button);
-        filterMoodButton.setOnClickListener( v -> {
-            MoodFilterFragment.newInstance().show(getChildFragmentManager(), "Filter Moods");
-        });
-        loadMoodData();
-        return view;
     }
 
     @Override
@@ -97,16 +74,15 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
     /**
      * Loads mood data from Firestore database
      */
+    @Override
     protected void loadMoodData() {
-        moodDatabaseService.getMoodList(SessionManager.getInstance().getCurrentUser())
+        moodDatabaseService.getMoodList(FirebaseAuthenticationService.getInstance().getCurrentUser(), moodFilterState)
                 .addOnSuccessListener(moods -> {
                     // Clear existing list and add new data
-                    moodList.clear();
-                    moodList.addAll(moods);
+                    moodListAdapter.clear();
+                    moodListAdapter.addAll(moods);
 
-                    filteredMoodList = new ArrayList<>(moodList);
                     // Notify adapter that data has changed
-                    updateFilters(filteredMoodList);
                     moodListAdapter.notifyDataSetChanged();
                 })
                 .addOnFailureListener(e -> {
@@ -116,66 +92,9 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
                 });
     }
 
-    /**
-     * uses the users moodList to create a new filteredList based on the users {@param emotion}
-     * It then uses updateFilters to update the listview with the new filtered list
-     */
-    public void filterByEmotion(String emotion) {
-        List<Mood> filteredMoodslist = moodList.stream()
-                .filter(mood -> mood.getEmotion().toString().equalsIgnoreCase(emotion))
-                .collect(Collectors.toList());
-        ArrayList<Mood> filteredMoods = new ArrayList<>(filteredMoodslist);
-        updateFilters(filteredMoods);
-
+    @Override
+    protected boolean isMoodOwned() {
+        return true;
     }
 
-    /**
-     * uses the users moodList to create a new filteredList based on the users {@param time}
-     * It then uses updateFilters to update the listview with the new filtered list
-     */
-    public void filterByTime(int time) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.DAY_OF_MONTH, time);
-        Date filterDate = calendar.getTime();
-
-        List<Mood> filteredMoodslist = moodList.stream()
-                .filter(mood -> mood.getDate().after(filterDate))
-                .collect(Collectors.toList());
-        ArrayList<Mood> filteredMoods = new ArrayList<>(filteredMoodslist);
-        updateFilters(filteredMoods);
-
-    }
-
-    /**
-     * uses the users moodList to create a new filteredList based on the users {@param text}
-     * It then uses updateFilters to update the listview with the new filtered list
-     */
-    public void filterByText(String text) {
-        List<Mood> filteredMoodslist = moodList.stream()
-                .filter(mood -> mood.getTrigger().contains(text))
-                .collect(Collectors.toList());
-        ArrayList<Mood> filteredMoods = new ArrayList<>(filteredMoodslist);
-        updateFilters(filteredMoods);
-
-    }
-
-    /**
-     * Clears the ListView and replaces with all of the users inputted moods
-     */
-    public void resetFilters() {
-        moodListAdapter.clear();
-        filteredMoodList = new ArrayList<>(moodList);
-        updateFilters(new ArrayList<>(filteredMoodList));
-    }
-
-    /**
-     *  Clears the ListView and replaces with the {@param filteredMoods} based
-     *  on what the inputted filter was
-     */
-    public void updateFilters(ArrayList<Mood> filteredMoods) {
-        moodListAdapter.clear();
-        moodListAdapter.addAll(filteredMoods);
-        moodListAdapter.notifyDataSetChanged();
-    }
 }

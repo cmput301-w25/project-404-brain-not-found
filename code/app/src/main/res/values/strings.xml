@@ -44,6 +44,7 @@
     <string name="trigger_too_many_chars">Trigger must be under %d characters</string>
     <string name="empty_username_error">Username cannot be empty</string>
     <string name="empty_password_error">Password cannot be empty</string>
+    <string name="too_short_password_error">Password should be at least 6 characters</string>
     <string name="username_exists_error">Username already taken</string>
     <string name="filter_moods_by_time_title">Filter by time:</string>
     <string name="filter_moods_by_day">Past Day</string>
@@ -62,6 +63,9 @@
     <string name="follow_request">requested to follow you</string>
     <string name="requested">Requested</string>
     <string name="no_follow_requests">You have no follow requests</string>
+    <string name ="add_comment">Add a comment</string>
     <string name="i_am">I am</string>
     <string name="is">is</string>
+    <string name="search_location">Search location</string>
+    <string name="use_my_current_location">Use my current location</string>
 </resources>

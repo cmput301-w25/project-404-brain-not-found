@@ -1,32 +1,22 @@
 package com.example.cmput301_team_project;
 
-import android.util.Base64;
 import android.util.Log;
 
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.AppUser;
 import com.example.cmput301_team_project.model.Mood;
-import com.example.cmput301_team_project.ui.MainActivity;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Objects;
 
 
@@ -43,29 +33,24 @@ public class BaseActivityTest {
 
         int portNumber = 8080;
         FirebaseFirestore.getInstance().useEmulator(androidLocalhost, portNumber);
-
     }
 
     @Before
-    public void seedDatabase() throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public void seedDatabase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference moodsRef = db.collection("moods");
         CollectionReference usersRef = db.collection("users");
-        UserDatabaseService userDatabaseService = UserDatabaseService.getInstance();
         Mood[] moods = {
-                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "fassdfa", true, "Urkel", null, null),
-                Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.CROWD, "fassdfa", true, "Vance", null, null),
-                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.SEVERAL, "fassdfa",true, "Henrietta", null, null),
+                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "fassdfa", true, "Urkel", null, null, null),
+                Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.CROWD, "fassdfa", true, "Vance", null, null, null),
+                Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.SEVERAL, "fassdfa",true, "Henrietta", null, null, null),
         };
         for (Mood mood : moods) {
             moodsRef.document().set(mood);
         }
 
-        String password = "some_password";
-        byte[] salt = userDatabaseService.generateSalt();
-        String hashed = userDatabaseService.hashPassword(password, salt);
         AppUser[] users = {
-                new AppUser("Henrietta", "", hashed , Base64.encodeToString(salt, Base64.NO_WRAP))
+                new AppUser("Henrietta", "", "some_password")
         };
 
         for (AppUser user: users) {
