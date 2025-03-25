@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="4dp"
-            android:text="Emotion"
+            android:text="@string/emotion"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@android:color/black" />
 
@@ -29,13 +29,13 @@
             android:background="@drawable/gradient_background"
             android:popupBackground="@drawable/gradient_background"
             android:spinnerMode="dropdown"
-            android:layout_marginBottom="16dp"/> <!-- Add margin -->
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="4dp"
-            android:text="Social Situation"
+            android:text="@string/social_situation"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@android:color/black" />
 
@@ -46,13 +46,13 @@
             android:background="@drawable/gradient_background"
             android:popupBackground="@drawable/gradient_background"
             android:spinnerMode="dropdown"
-            android:layout_marginBottom="16dp"/> <!-- Add margin -->
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="4dp"
-            android:text="Trigger"
+            android:text="@string/trigger"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@android:color/black" />
 
@@ -68,7 +68,8 @@
             android:inputType="textMultiLine"
             android:minHeight="100dp"
             android:padding="8dp"
-            android:textColorHint="@android:color/darker_gray" /> <!-- Add margin & padding -->
+            android:textColor="@color/black"
+            android:textColorHint="@android:color/darker_gray" />
 
         <com.github.angads25.toggle.widget.LabeledSwitch
             android:id="@+id/form_public_switch"
@@ -87,7 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingBottom="4dp"
-            android:text="Location"
+            android:text="@string/location"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@android:color/black" />
 
@@ -102,6 +103,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="56dp"
                 android:clickable="true"
+                android:textColor="@color/black"
                 android:focusable="true"
                 android:focusableInTouchMode="false"
                 android:inputType="none"
@@ -118,7 +120,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:padding="8dp"
-                android:contentDescription="Clear Location"/> <!-- Add contentDescription -->
+                android:contentDescription="@string/clear_location"/>
 
         </RelativeLayout>
 
@@ -127,6 +129,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="or"
+            android:textColor="@color/black"
             android:textColorHint="@color/black" />
 
         <com.google.android.material.button.MaterialButton

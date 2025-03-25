@@ -10,4 +10,12 @@
         <item name="android:editTextColor">@color/black</item>
         <item name="android:textColorHint">@color/black</item>
     </style>
+    <style name="MySwitchStyle" parent="Widget.MaterialComponents.CompoundButton.Switch">
+    <item name="thumbTint">@color/white</item>
+    <item name="trackTint">@color/buttons</item>
+    <item name="colorOnSurface">@color/black</item>
+        <item name="colorSecondary">@color/buttons</item>
+        <item name="colorOnSecondary">@color/white</item>
+    </style>
+
 </resources>

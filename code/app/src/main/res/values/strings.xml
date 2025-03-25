@@ -78,4 +78,8 @@
     <string name="map_view">Map View</string>
     <string name="comments">Comments</string>
     <string name="logout">logout</string>
+    <string name="emotion">Emotion</string>
+    <string name="social_situation">Social Situation</string>
+    <string name="location">Location</string>
+    <string name="clear_location">Clear Location</string>
 </resources>

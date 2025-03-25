@@ -11,6 +11,8 @@
     <color name="shame">#FBC3E4</color>
     <color name="surprise">#B6EBE3</color>
     <color name="background">#E2E9FF</color>
+    <color name="switch_active_color">#5E72E4</color>
+    <color name="switch_thumb_color">#FFFFFF</color>
     <color name="default_background">#FFFFFFFF</color>
     <color name="text_colour2">#EA212121</color>
     <color name="accept_button">#B0FAB0</color>

@@ -33,21 +33,23 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/mood_map_button"
-            android:layout_width="48dp"
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/mood_map_toggle_button"
+            android:layout_width="160dp"
             android:layout_height="48dp"
-            android:background="@drawable/circular_button_background"
-            android:contentDescription="@string/map_view"
-            android:elevation="4dp"
-            android:padding="8dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_baseline_place_24"
+            android:checked="false"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp"
+            android:text="Map View"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:textColor="@color/black"
+            style="@style/MySwitchStyle"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/text_primary" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
     <TextView
         android:id="@+id/mood_list_title"
