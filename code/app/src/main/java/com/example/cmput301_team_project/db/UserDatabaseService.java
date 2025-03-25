@@ -3,6 +3,7 @@ package com.example.cmput301_team_project.db;
 
 
 import android.util.Log;
+import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 
@@ -10,6 +11,7 @@ import com.example.cmput301_team_project.enums.FollowRelationshipEnum;
 import com.example.cmput301_team_project.model.AppUser;
 import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.CollectionReference;
@@ -446,21 +448,27 @@ public class UserDatabaseService extends BaseDatabaseService {
         return usersRef.document(username).get().continueWith(task -> {
             if (task.isSuccessful()){
                 DocumentSnapshot doc = task.getResult();
-                return doc.getLong("mentionsCount");
+                return doc.getLong("mentionCount");
             }
             return 0L;
         });
 
     }
+public Task<Boolean> checkViewedMentions() {
+    TaskCompletionSource<Boolean> taskCompletionSource = new TaskCompletionSource<>();
+    String username = FirebaseAuthenticationService.getInstance().getCurrentUser();getMentionCount(username).addOnSuccessListener(count -> {
+        getCurrMentionCount(username).addOnSuccessListener(currCount -> {
+            boolean mentionsViewed = Objects.equals(count, currCount);
+            taskCompletionSource.setResult(mentionsViewed);
+        }).addOnFailureListener(taskCompletionSource::setException);
+    }).addOnFailureListener(taskCompletionSource::setException);
 
-    public void checkViewedMentions(){
-        String username = FirebaseAuthenticationService.getInstance().getCurrentUser();
-        getMentionCount(username).addOnSuccessListener(count ->{
-            getCurrMentionCount(username).addOnSuccessListener(currCount ->{
-                if (!Objects.equals(count, currCount)){
-                    Log.d("Updated", "mentions not viewed");
-                }
-            });
-        });
-    }
+    return taskCompletionSource.getTask();
+}
+
+public void correctMentionCount(String username){
+        getMentionCount(username).addOnSuccessListener(count ->
+                usersRef.document(username).update("mentionCount", count));
+}
+
 }

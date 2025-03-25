@@ -1,5 +1,6 @@
 package com.example.cmput301_team_project.ui;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -14,6 +15,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.cmput301_team_project.BuildConfig;
 import com.example.cmput301_team_project.R;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
+import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -23,6 +26,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  * It manages navigation between different fragments using a bottom navigation bar.
  */
 public class MainActivity extends BaseActivity {
+
+    UserDatabaseService userDatabaseService = UserDatabaseService.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,16 +40,28 @@ public class MainActivity extends BaseActivity {
             return insets;
         });
 
+
         BottomNavigationView navigation = findViewById(R.id.navigation_main);
         navigation.setOnApplyWindowInsetsListener((v, insets) -> {
             v.setPadding(0, 0, 0, 0);
             return insets;
+        });
+
+        userDatabaseService.checkViewedMentions().addOnSuccessListener(viewed ->{
+            if (!viewed){
+                navigation.findViewById(R.id.mentioned_icon).setBackgroundColor(Color.RED);
+            }
         });
         navigation.setSelectedItemId(R.id.mood_following_icon);
 
         replaceFragment(MoodFollowingFragment.newInstance());
 
         navigation.setOnItemSelectedListener(item -> {
+            userDatabaseService.checkViewedMentions().addOnSuccessListener(viewed ->{
+                if (!viewed){
+                    navigation.findViewById(R.id.mentioned_icon).setBackgroundColor(Color.RED);
+                }
+            });
             if(item.getItemId() == R.id.mood_history_icon) {
                 replaceFragment(MoodHistoryFragment.newInstance());
             }
@@ -56,6 +73,8 @@ public class MainActivity extends BaseActivity {
             }
             else if(item.getItemId() == R.id.mentioned_icon){
                 replaceFragment(MentionedMoodsFragment.newInstance());
+                userDatabaseService.correctMentionCount(FirebaseAuthenticationService.getInstance().getCurrentUser());
+                navigation.findViewById(R.id.mentioned_icon).setBackgroundColor(Color.WHITE);
             }
             return true;
         });

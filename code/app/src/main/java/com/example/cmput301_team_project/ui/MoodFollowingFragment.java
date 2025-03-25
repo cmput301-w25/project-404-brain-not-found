@@ -16,6 +16,7 @@ public class MoodFollowingFragment extends BaseMoodListFragment {
     private final MoodDatabaseService moodDatabaseService;
     private final UserDatabaseService userDatabaseService;
 
+
     public MoodFollowingFragment() {
         moodDatabaseService = MoodDatabaseService.getInstance();
         userDatabaseService = UserDatabaseService.getInstance();
@@ -40,7 +41,6 @@ public class MoodFollowingFragment extends BaseMoodListFragment {
                                     moodListAdapter.addAll(moods);
                                     moodListAdapter.notifyDataSetChanged();
                                 }));
-        userDatabaseService.checkViewedMentions();
     }
 
     @Override

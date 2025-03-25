@@ -2,12 +2,19 @@ package com.example.cmput301_team_project.ui;
 
 
 
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.view.MenuItem;
+import android.widget.ImageView;
+
+import androidx.core.graphics.drawable.DrawableCompat;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
@@ -24,7 +31,6 @@ public class MentionedMoodsFragment extends BaseMoodListFragment{
     public static MentionedMoodsFragment newInstance() {
         return new MentionedMoodsFragment();
     }
-
 
 
     @Override
