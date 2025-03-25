@@ -1,10 +1,17 @@
 package com.example.cmput301_team_project.model;
 
-import java.util.Date;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FieldValue;
+
 
 public class Comment {
     public String username;
     public String text;
+    public Timestamp date;
+    public Comment(String username, String text){
+       this.username = username;
+       this.text = text;
+    }
 
     public String getUsername() {
         return username;
@@ -14,8 +21,7 @@ public class Comment {
         return text;
     }
 
-    public Comment(String username, String text){
-       this.username = username;
-       this.text = text;
+    public void setTimestamp(Timestamp date) {
+        this.date = date;
     }
 }

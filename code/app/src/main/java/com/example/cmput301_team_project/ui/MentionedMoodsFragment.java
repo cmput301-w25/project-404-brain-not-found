@@ -1,6 +1,6 @@
 package com.example.cmput301_team_project.ui;
 
-import android.widget.Toast;
+
 
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
@@ -21,20 +21,14 @@ public class MentionedMoodsFragment extends BaseMoodListFragment{
 
     @Override
     protected void loadMoodData() {
-        moodDatabaseService.getMoodList(FirebaseAuthenticationService.getInstance().getCurrentUser())
-                .addOnSuccessListener(moods -> {
-                    // Clear existing list and add new data
-                    moodListAdapter.clear();
-                    moodListAdapter.addAll(moods);
+        userDatabaseService.getMentions(FirebaseAuthenticationService.getInstance().getCurrentUser())
+                .addOnSuccessListener(mentions -> moodDatabaseService.getMentionedMoods(mentions)
+                        .addOnSuccessListener(moods -> {
+                            moodListAdapter.clear();
+                            moodListAdapter.addAll(moods);
+                            moodListAdapter.notifyDataSetChanged();
+                        }));
 
-                    // Notify adapter that data has changed
-                    moodListAdapter.notifyDataSetChanged();
-                })
-                .addOnFailureListener(e -> {
-                    // Handle loading errors
-                    Toast.makeText(getContext(), "Failed to load mood data: " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show();
-                });
     }
 
     @Override

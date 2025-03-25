@@ -8,9 +8,11 @@ import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -98,7 +100,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 document.getGeoPoint("location"));
         mood.setId(document.getId());
         return mood;
-    }
+  }
 
     /**this is the method to get all the documents in the moods collection*/
     public Task<List<Mood>> getMoodList(String username) {
@@ -153,14 +155,15 @@ public class MoodDatabaseService extends BaseDatabaseService {
 
 
     public Task<DocumentReference> addComment(String moodId, Comment comment){
+        comment.setTimestamp(Timestamp.now());
         return moodsRef.document(moodId).collection("comments")
                 .add(comment);
     }
 
     public Task<List<Comment>> getComments(String moodId){
-        Log.d("Firestore", "getComments() called for moodId: " + moodId);
         return moodsRef.document(moodId)
                 .collection("comments")
+                .orderBy("date", Query.Direction.DESCENDING)
                 .get()
                 .continueWith(task ->{
                     if(task.isSuccessful()){
@@ -172,6 +175,28 @@ public class MoodDatabaseService extends BaseDatabaseService {
                     return new ArrayList<>();
                 });
     }
+
+    public Task<List<Mood>> getMentionedMoods(List<String> moodIds) {
+        List<Task<DocumentSnapshot>> fetchTasks = new ArrayList<>();
+        for(String moodId : moodIds) {
+            fetchTasks.add(moodsRef.document(moodId).get());
+        }
+
+        return Tasks.whenAllSuccess(fetchTasks)
+                .continueWith(result -> {
+                    if(result.isSuccessful()) {
+                        List<Mood> moodList = new ArrayList<>();
+                        for(Object res : result.getResult()) {
+                            if(res instanceof DocumentSnapshot documentSnapshot) {
+                               moodList.add(moodFromDoc(documentSnapshot));
+                            }
+                        }
+                        return moodList;
+                    }
+                    return new ArrayList<>();
+                });
+    }
+
     public void updateMood(Mood mood) {
         moodsRef.document(mood.getId()).set(mood);
     }

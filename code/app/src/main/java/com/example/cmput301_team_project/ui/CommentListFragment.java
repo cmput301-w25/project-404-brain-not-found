@@ -3,6 +3,7 @@ package com.example.cmput301_team_project.ui;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,15 +16,18 @@ import androidx.fragment.app.DialogFragment;
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
+import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.model.Comment;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CommentListFragment extends DialogFragment {
     MoodDatabaseService moodDatabaseService = MoodDatabaseService.getInstance();
+    UserDatabaseService userDatabaseService = UserDatabaseService.getInstance();
     private CommentListAdapter commentAdapter;
 
     FirebaseAuthenticationService firebaseAuthenticationService = FirebaseAuthenticationService.getInstance();
@@ -40,11 +44,12 @@ public class CommentListFragment extends DialogFragment {
     }
 
 
-    public void parseComment(String comment){
+    public void parseComment(String comment, String moodId){
         String[] commentArray = comment.split(" ");
         for (String i:commentArray){
             if (i.charAt(0) == '@'){
-                ;
+                String mentionedUser = i.substring(1);
+                userDatabaseService.addMention(moodId, mentionedUser);
             }
         }
     }
@@ -76,10 +81,13 @@ public class CommentListFragment extends DialogFragment {
             commentButton.setOnClickListener(v -> {
                 String commentText = commentTextBox.getText().toString();
                 Comment newComment = new Comment(firebaseAuthenticationService.getCurrentUser(), commentText);
-
+                parseComment(commentText, moodId);
                 moodDatabaseService.addComment(moodId, newComment).addOnSuccessListener(d -> {
-                    commentAdapter.add(newComment);
-                    commentAdapter.notifyDataSetChanged();
+                    moodDatabaseService.getComments(moodId).addOnSuccessListener(comments -> {
+                        commentAdapter.clear(); //
+                        commentAdapter.addAll(comments);
+                        commentAdapter.notifyDataSetChanged();
+                    });
                 });
 
                 commentTextBox.setText(null);

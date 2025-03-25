@@ -1,17 +1,19 @@
 package com.example.cmput301_team_project.db;
 
 
+
 import com.example.cmput301_team_project.enums.FollowRelationshipEnum;
 import com.example.cmput301_team_project.model.AppUser;
 import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskExecutors;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -23,7 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -395,6 +396,31 @@ public class UserDatabaseService extends BaseDatabaseService {
                                 .getDocuments()
                                 .stream()
                                 .map(DocumentSnapshot::getId)
+                                .collect(Collectors.toList());
+                    }
+                    return new ArrayList<>();
+                });
+    }
+    public Task<DocumentReference> addMention(String moodId, String mentionedUser){
+        Map<String, Object> mentionData = new HashMap<>();
+        mentionData.put("moodId", moodId);
+        mentionData.put("date", FieldValue.serverTimestamp());
+
+        return usersRef.document(mentionedUser).collection("mentions")
+                .add(mentionData);
+    }
+
+    public Task<List<String>> getMentions(String username) {
+        return usersRef.document(username)
+                .collection("mentions")
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful()) {
+                        return task.getResult()
+                                .getDocuments()
+                                .stream()
+                                .map(DocumentSnapshot -> DocumentSnapshot.getString("moodId"))
                                 .collect(Collectors.toList());
                     }
                     return new ArrayList<>();
