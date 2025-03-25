@@ -11,6 +11,8 @@ public class AppUser {
     private String name;
     private String password;
 
+    private Integer mentionsCount;
+
     /**
      * Constructs an AppUser object with the specified username, password, and salt.
      *
@@ -21,6 +23,7 @@ public class AppUser {
         this.username = username;
         this.name = name;
         this.password = password;
+        this.mentionsCount = 0;
     }
     public String getUsername() {
         return username;
@@ -35,4 +38,6 @@ public class AppUser {
     public String getName() {
         return name;
     }
+
+    public Integer getMentionsCount(){return mentionsCount; }
 }

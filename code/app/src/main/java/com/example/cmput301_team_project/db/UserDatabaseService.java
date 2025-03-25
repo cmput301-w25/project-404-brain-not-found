@@ -2,6 +2,8 @@ package com.example.cmput301_team_project.db;
 
 
 
+import androidx.annotation.NonNull;
+
 import com.example.cmput301_team_project.enums.FollowRelationshipEnum;
 import com.example.cmput301_team_project.model.AppUser;
 import com.example.cmput301_team_project.model.PublicUser;
@@ -15,6 +17,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -425,5 +428,26 @@ public class UserDatabaseService extends BaseDatabaseService {
                     }
                     return new ArrayList<>();
                 });
+    }
+
+    public Task<Long> getMentionCount(String username){
+        CollectionReference userRef = usersRef.document(username).collection("mentions");
+        return userRef.count().get(AggregateSource.SERVER).continueWith(task -> {
+            if (!task.isSuccessful()){
+                throw task.getException();
+            }
+            return task.getResult().getCount();
+        });
+    }
+
+    public Task<Long> getCurrMentionCount(String username){
+        return usersRef.document(username).get().continueWith(task -> {
+            if (task.isSuccessful()){
+                DocumentSnapshot doc = task.getResult();
+                return doc.getLong("mentionsCount");
+            }
+            return 0L;
+        });
+
     }
 }
