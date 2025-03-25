@@ -6,6 +6,7 @@ import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.AppUser;
 import com.example.cmput301_team_project.model.Mood;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -31,8 +32,10 @@ public class BaseActivityTest {
         // Specific address for emulated device to access our localHost
         String androidLocalhost = "10.0.2.2";
 
-        int portNumber = 8080;
-        FirebaseFirestore.getInstance().useEmulator(androidLocalhost, portNumber);
+        int firestorePortNumber = 8080;
+        int authPortNumber = 9099;
+        FirebaseFirestore.getInstance().useEmulator(androidLocalhost, firestorePortNumber);
+        FirebaseAuth.getInstance().useEmulator(androidLocalhost, authPortNumber);
     }
 
     @Before
@@ -55,6 +58,7 @@ public class BaseActivityTest {
 
         for (AppUser user: users) {
             usersRef.document(user.getUsername()).set(user);
+            usersRef.document(user.getUsername()).update("email", "test@example.com");
         }
     }
 
