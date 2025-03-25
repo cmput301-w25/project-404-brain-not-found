@@ -147,5 +147,6 @@ public abstract class BaseMoodListFragment extends Fragment implements OnMapRead
     }
 
     // Override this method in a subclass to do some subclass-specific UI initialization
-    protected void setupUI(View view) { }
+    protected void setupUI(View view) {
+    }
 }

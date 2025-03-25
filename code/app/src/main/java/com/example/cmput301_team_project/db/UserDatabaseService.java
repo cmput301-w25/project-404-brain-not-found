@@ -2,6 +2,8 @@ package com.example.cmput301_team_project.db;
 
 
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.example.cmput301_team_project.enums.FollowRelationshipEnum;
@@ -449,5 +451,16 @@ public class UserDatabaseService extends BaseDatabaseService {
             return 0L;
         });
 
+    }
+
+    public void checkViewedMentions(){
+        String username = FirebaseAuthenticationService.getInstance().getCurrentUser();
+        getMentionCount(username).addOnSuccessListener(count ->{
+            getCurrMentionCount(username).addOnSuccessListener(currCount ->{
+                if (!Objects.equals(count, currCount)){
+                    Log.d("Updated", "mentions not viewed");
+                }
+            });
+        });
     }
 }

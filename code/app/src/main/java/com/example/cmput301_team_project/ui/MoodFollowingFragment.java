@@ -40,6 +40,7 @@ public class MoodFollowingFragment extends BaseMoodListFragment {
                                     moodListAdapter.addAll(moods);
                                     moodListAdapter.notifyDataSetChanged();
                                 }));
+        userDatabaseService.checkViewedMentions();
     }
 
     @Override

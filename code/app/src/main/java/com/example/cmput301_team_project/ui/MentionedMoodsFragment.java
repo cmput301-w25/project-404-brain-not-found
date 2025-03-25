@@ -2,9 +2,15 @@ package com.example.cmput301_team_project.ui;
 
 
 
+import android.util.Log;
+
+import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.Objects;
 
 public class MentionedMoodsFragment extends BaseMoodListFragment{
     private final MoodDatabaseService moodDatabaseService;
@@ -18,6 +24,8 @@ public class MentionedMoodsFragment extends BaseMoodListFragment{
     public static MentionedMoodsFragment newInstance() {
         return new MentionedMoodsFragment();
     }
+
+
 
     @Override
     protected void loadMoodData() {
