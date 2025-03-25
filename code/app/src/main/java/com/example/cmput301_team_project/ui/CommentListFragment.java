@@ -40,6 +40,15 @@ public class CommentListFragment extends DialogFragment {
     }
 
 
+    public void parseComment(String comment){
+        String[] commentArray = comment.split(" ");
+        for (String i:commentArray){
+            if (i.charAt(0) == '@'){
+                ;
+            }
+        }
+    }
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -63,9 +72,11 @@ public class CommentListFragment extends DialogFragment {
         EditText commentTextBox = commentTextLayout.getEditText();
         dialog.setOnShowListener(dialog1 -> {
             Button commentButton = dialog.findViewById(R.id.addCommentButton);
+
             commentButton.setOnClickListener(v -> {
                 String commentText = commentTextBox.getText().toString();
                 Comment newComment = new Comment(firebaseAuthenticationService.getCurrentUser(), commentText);
+
                 moodDatabaseService.addComment(moodId, newComment).addOnSuccessListener(d -> {
                     commentAdapter.add(newComment);
                     commentAdapter.notifyDataSetChanged();

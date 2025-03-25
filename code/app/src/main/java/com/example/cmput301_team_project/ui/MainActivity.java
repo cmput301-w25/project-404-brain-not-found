@@ -54,6 +54,9 @@ public class MainActivity extends BaseActivity {
             else if(item.getItemId() == R.id.mood_following_icon) {
                 replaceFragment(MoodFollowingFragment.newInstance());
             }
+            else if(item.getItemId() == R.id.mentioned_icon){
+                replaceFragment(MentionedMoodsFragment.newInstance());
+            }
             return true;
         });
 

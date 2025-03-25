@@ -64,6 +64,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
             for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                 document.getReference().delete();
             }});
+
         moodsRef.document(mood.getId()).delete();
 
     }
