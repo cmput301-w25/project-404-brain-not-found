@@ -82,4 +82,5 @@
     <string name="social_situation">Social Situation</string>
     <string name="location">Location</string>
     <string name="clear_location">Clear Location</string>
+    <string name="followers_mood">Follower\'s Mood</string>
 </resources>
