@@ -1,42 +1,36 @@
 package com.example.cmput301_team_project;
 
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import android.content.Context;
-
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
-import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
-import com.example.cmput301_team_project.ui.MoodHistoryFragment;
-import com.example.cmput301_team_project.ui.MoodListAdapter;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.cmput301_team_project.model.MoodFilterState;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -47,145 +41,161 @@ import java.util.List;
 @RunWith(MockitoJUnitRunner.class)
 public class MoodFilterUnitTest {
     @Mock
-    private MoodDatabaseService mockDatabaseService;
+    private FirebaseFirestore mockFirestore;
     @Mock
-    private SessionManager mockSessionManager;
+    private CollectionReference mockMoodCollection;
     @Mock
-    private MoodListAdapter mockMoodListAdapter;
+    private Query mockQuery;
+    @Mock
+    private QuerySnapshot mockQuerySnapshot;
+    @Mock
+    private DocumentSnapshot mockDocumentSnapshot;
 
-    private MoodHistoryFragment moodHistoryFragment;
+    private MoodDatabaseService moodDatabaseService;
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
 
-        try (MockedStatic<SessionManager> mockedSessionManager = mockStatic(SessionManager.class);
-             MockedStatic<MoodDatabaseService> mockedDatabaseService = mockStatic(MoodDatabaseService.class)) {
+        when(mockFirestore.collection("moods")).thenReturn(mockMoodCollection);
 
-            mockedSessionManager.when(SessionManager::getInstance).thenReturn(mockSessionManager);
+        when(mockMoodCollection.whereEqualTo("author", "testUser")).thenReturn(mockQuery);
+        when(mockQuery.orderBy("date", Query.Direction.DESCENDING)).thenReturn(mockQuery);
 
-            mockedDatabaseService.when(MoodDatabaseService::getInstance).thenReturn(mockDatabaseService);
-
-            moodHistoryFragment = spy(new MoodHistoryFragment());
-            moodHistoryFragment.moodListAdapter = mockMoodListAdapter;
-
-        }
-    }
-
-    private List<Mood> createSampleMoods() {
-        Calendar calendar = Calendar.getInstance();
-        Date today = new Date();
-        calendar.setTime(today);
-        calendar.add(Calendar.DAY_OF_MONTH, -2);
-        Date twoDaysAgo = calendar.getTime();
-        calendar.add(Calendar.DAY_OF_MONTH, -6);
-        Date weekAgo = calendar.getTime();
-        calendar.add(Calendar.DAY_OF_MONTH, -365);
-        Date yearAgo = calendar.getTime();
-
-        List<Mood> sampleMoods = new ArrayList<>();
-        sampleMoods.add(Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1", true, "testUser", today, null));
-        sampleMoods.add(Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.ALONE, "test2", true, "testUser", twoDaysAgo, null));
-        sampleMoods.add(Mood.createMood(MoodEmotionEnum.HAPPINESS, MoodSocialSituationEnum.ALONE, "test3", true, "testUser", weekAgo, null));
-        sampleMoods.add(Mood.createMood(MoodEmotionEnum.CONFUSION, MoodSocialSituationEnum.ALONE, "test4", true, "testUser", yearAgo, null));
-
-        return sampleMoods;
+        MoodDatabaseService.setInstanceForTesting(mockFirestore, Runnable::run);
+        moodDatabaseService = MoodDatabaseService.getInstance();
     }
 
     @Test
     public void filterByEmotionShouldShowValidMoods() {
+        MoodFilterState moodFilterState = new MoodFilterState(null, MoodEmotionEnum.ANGER, null, null);
 
-        List<Mood> sampleMoods = createSampleMoods();
-        moodHistoryFragment.moodList = new ArrayList<>(sampleMoods);
+        Query resultQuery = mock();
+        when(mockQuery.whereEqualTo("emotion", moodFilterState.emotion().toString())).thenReturn(resultQuery);
+        when(resultQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot));
+        when(mockQuerySnapshot.getDocuments()).thenReturn(Collections.singletonList(mockDocumentSnapshot));
+        when(mockDocumentSnapshot.getString("emotion")).thenReturn(moodFilterState.emotion().toString());
+        when(mockDocumentSnapshot.getString("socialSituation")).thenReturn("NONE");
 
-        moodHistoryFragment.filterByEmotion("ANGER");
+        Task<List<Mood>> result = moodDatabaseService.getMoodList("testUser", moodFilterState);
 
-        ArgumentCaptor<ArrayList<Mood>> filteredMoodsCaptor = ArgumentCaptor.forClass(ArrayList.class);
-        verify(moodHistoryFragment).updateFilters(filteredMoodsCaptor.capture());
+        verify(mockQuery).whereEqualTo("emotion", moodFilterState.emotion().toString());
+        verify(resultQuery).get();
 
-        List<Mood> filteredMoods = filteredMoodsCaptor.getValue();
-        assertEquals(1, filteredMoods.size());
-        assertEquals(filteredMoods.get(0).getEmotion(), MoodEmotionEnum.ANGER);
+        assertTrue(result.isSuccessful());
+        List<Mood> mood = result.getResult();
+        assertNotNull(mood);
+        assertFalse(mood.isEmpty());
+        assertSame(mood.get(0).getEmotion(), MoodEmotionEnum.ANGER);
     }
 
     @Test
     public void filterByEmotionShouldShowEmptyOnNoMatch() {
-        List<Mood> sampleMoods = createSampleMoods();
-        moodHistoryFragment.moodList = new ArrayList<>(sampleMoods);
+        MoodFilterState moodFilterState = new MoodFilterState(null, MoodEmotionEnum.ANGER, null, null);
 
-        moodHistoryFragment.filterByEmotion("SHAME");
+        Query resultQuery = mock();
+        when(mockQuery.whereEqualTo("emotion", moodFilterState.emotion().toString())).thenReturn(resultQuery);
+        when(resultQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot));
+        when(mockQuerySnapshot.getDocuments()).thenReturn(Collections.emptyList());
 
-        ArgumentCaptor<ArrayList<Mood>> filteredMoodsCaptor = ArgumentCaptor.forClass(ArrayList.class);
-        verify(moodHistoryFragment).updateFilters(filteredMoodsCaptor.capture());
+        Task<List<Mood>> result = moodDatabaseService.getMoodList("testUser", moodFilterState);
 
-        List<Mood> filteredMoods = filteredMoodsCaptor.getValue();
-        assertEquals(0, filteredMoods.size());
+        verify(mockQuery).whereEqualTo("emotion", moodFilterState.emotion().toString());
+        verify(resultQuery).get();
 
+        assertTrue(result.isSuccessful());
+        List<Mood> mood = result.getResult();
+        assertNotNull(mood);
+        assertTrue(mood.isEmpty());
     }
 
     @Test
     public void filterByDayShouldShowValidMoods() {
-        // Prepare
-        List<Mood> sampleMoods = createSampleMoods();
-        moodHistoryFragment.moodList = new ArrayList<>(sampleMoods);
+        MoodFilterState moodFilterState = new MoodFilterState(-1, null, null, null);
 
-        moodHistoryFragment.filterByTime(-1);
+        Query resultQuery = mock();
+        when(mockQuery.whereGreaterThan(eq("date"), any())).thenReturn(resultQuery);
+        when(resultQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot));
+        when(mockQuerySnapshot.getDocuments()).thenReturn(Collections.singletonList(mockDocumentSnapshot));
+        when(mockDocumentSnapshot.getString("emotion")).thenReturn("ANGER");
+        when(mockDocumentSnapshot.getString("socialSituation")).thenReturn("NONE");
+        when(mockDocumentSnapshot.getDate("date")).thenReturn(new Date());
 
-        ArgumentCaptor<ArrayList<Mood>> filteredMoodsCaptor = ArgumentCaptor.forClass(ArrayList.class);
-        verify(moodHistoryFragment).updateFilters(filteredMoodsCaptor.capture());
+        Task<List<Mood>> result = moodDatabaseService.getMoodList("testUser", moodFilterState);
 
-        List<Mood> filteredMoods = filteredMoodsCaptor.getValue();
-        assertEquals(1, filteredMoods.size());
-        assertEquals(MoodEmotionEnum.ANGER, filteredMoods.get(0).getEmotion());
+        verify(mockQuery).whereGreaterThan(eq("date"), any());
+        verify(resultQuery).get();
+
+        assertTrue(result.isSuccessful());
+        List<Mood> mood = result.getResult();
+        assertNotNull(mood);
+        assertFalse(mood.isEmpty());
     }
 
     @Test
     public void filterByWeekShouldShowValidMoods() {
-        // Prepare
-        List<Mood> sampleMoods = createSampleMoods();
-        moodHistoryFragment.moodList = new ArrayList<>(sampleMoods);
+        MoodFilterState moodFilterState = new MoodFilterState(-7, null, null, null);
 
-        moodHistoryFragment.filterByTime(-7);
+        Query resultQuery = mock();
+        when(mockQuery.whereGreaterThan(eq("date"), any())).thenReturn(resultQuery);
+        when(resultQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot));
+        when(mockQuerySnapshot.getDocuments()).thenReturn(Collections.singletonList(mockDocumentSnapshot));
+        when(mockDocumentSnapshot.getString("emotion")).thenReturn("ANGER");
+        when(mockDocumentSnapshot.getString("socialSituation")).thenReturn("NONE");
+        when(mockDocumentSnapshot.getDate("date")).thenReturn(new Date());
 
-        ArgumentCaptor<ArrayList<Mood>> filteredMoodsCaptor = ArgumentCaptor.forClass(ArrayList.class);
-        verify(moodHistoryFragment).updateFilters(filteredMoodsCaptor.capture());
+        Task<List<Mood>> result = moodDatabaseService.getMoodList("testUser", moodFilterState);
 
-        List<Mood> filteredMoods = filteredMoodsCaptor.getValue();
-        assertEquals(2, filteredMoods.size());
-        assertEquals(MoodEmotionEnum.ANGER, filteredMoods.get(0).getEmotion());
-        assertEquals(MoodEmotionEnum.SADNESS, filteredMoods.get(1).getEmotion());
+        verify(mockQuery).whereGreaterThan(eq("date"), any());
+        verify(resultQuery).get();
+
+        assertTrue(result.isSuccessful());
+        List<Mood> mood = result.getResult();
+        assertNotNull(mood);
+        assertFalse(mood.isEmpty());
     }
 
     @Test
     public void filterByMonthShouldShowValidMoods() {
-        // Prepare
-        List<Mood> sampleMoods = createSampleMoods();
-        moodHistoryFragment.moodList = new ArrayList<>(sampleMoods);
+        MoodFilterState moodFilterState = new MoodFilterState(-30, null, null, null);
 
-        moodHistoryFragment.filterByTime(-30);
+        Query resultQuery = mock();
+        when(mockQuery.whereGreaterThan(eq("date"), any())).thenReturn(resultQuery);
+        when(resultQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot));
+        when(mockQuerySnapshot.getDocuments()).thenReturn(Collections.singletonList(mockDocumentSnapshot));
+        when(mockDocumentSnapshot.getString("emotion")).thenReturn("ANGER");
+        when(mockDocumentSnapshot.getString("socialSituation")).thenReturn("NONE");
+        when(mockDocumentSnapshot.getDate("date")).thenReturn(new Date());
 
-        ArgumentCaptor<ArrayList<Mood>> filteredMoodsCaptor = ArgumentCaptor.forClass(ArrayList.class);
-        verify(moodHistoryFragment).updateFilters(filteredMoodsCaptor.capture());
+        Task<List<Mood>> result = moodDatabaseService.getMoodList("testUser", moodFilterState);
 
-        List<Mood> filteredMoods = filteredMoodsCaptor.getValue();
-        assertEquals(3, filteredMoods.size());
-        assertEquals(MoodEmotionEnum.ANGER, filteredMoods.get(0).getEmotion());
-        assertEquals(MoodEmotionEnum.SADNESS, filteredMoods.get(1).getEmotion());
-        assertEquals(MoodEmotionEnum.HAPPINESS, filteredMoods.get(2).getEmotion());
+        verify(mockQuery).whereGreaterThan(eq("date"), any());
+        verify(resultQuery).get();
+
+        assertTrue(result.isSuccessful());
+        List<Mood> mood = result.getResult();
+        assertNotNull(mood);
+        assertFalse(mood.isEmpty());
     }
 
     @Test
     public void filterByTextShouldShowValidMoods() {
-        List<Mood> sampleMoods = createSampleMoods();
-        moodHistoryFragment.moodList = new ArrayList<>(sampleMoods);
+        // ensure case-insensitive comparison
+        MoodFilterState moodFilterState = new MoodFilterState(null, null, "testText", null);
 
-        moodHistoryFragment.filterByText("test1");
+        when(mockQuery.get()).thenReturn(Tasks.forResult(mockQuerySnapshot));
+        when(mockQuerySnapshot.getDocuments()).thenReturn(Collections.singletonList(mockDocumentSnapshot));
+        when(mockDocumentSnapshot.getString("emotion")).thenReturn("ANGER");
+        when(mockDocumentSnapshot.getString("socialSituation")).thenReturn("NONE");
+        when(mockDocumentSnapshot.getString("trigger")).thenReturn("hello testtext123");
 
-        ArgumentCaptor<ArrayList<Mood>> filteredMoodsCaptor = ArgumentCaptor.forClass(ArrayList.class);
-        verify(moodHistoryFragment).updateFilters(filteredMoodsCaptor.capture());
+        Task<List<Mood>> result = moodDatabaseService.getMoodList("testUser", moodFilterState);
 
-        List<Mood> filteredMoods = filteredMoodsCaptor.getValue();
-        assertEquals(1, filteredMoods.size());
-        assertEquals("test1", filteredMoods.get(0).getTrigger());
+        verify(mockQuery).get();
+
+        assertTrue(result.isSuccessful());
+        List<Mood> mood = result.getResult();
+        assertNotNull(mood);
+        assertFalse(mood.isEmpty());
     }
 }

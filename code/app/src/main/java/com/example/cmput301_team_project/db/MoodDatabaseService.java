@@ -125,7 +125,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
 
         query = applyFilteringQueries(query, moodFilterState);
 
-        return query.get().continueWith(task -> {
+        return query.get().continueWith(taskExecutor, task -> {
             List<Mood> moodList = new ArrayList<>();
 
             if (task.isSuccessful() && task.getResult() != null) {
