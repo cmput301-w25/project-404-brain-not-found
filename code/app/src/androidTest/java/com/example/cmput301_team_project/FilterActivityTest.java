@@ -69,10 +69,10 @@ public class FilterActivityTest extends BaseActivityTest {
         Date lastYear = calendar.getTime();
 
                 Mood[] moods = {
-                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1", true, "Henrietta", today, null),
-                Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.CROWD, "test2", true, "Henrietta", lastWeek, null),
-                Mood.createMood(MoodEmotionEnum.SHAME, MoodSocialSituationEnum.SEVERAL, "test3",true, "Henrietta", lastMonth, null),
-                Mood.createMood(MoodEmotionEnum.DISGUST, MoodSocialSituationEnum.SEVERAL, "test3",true, "Henrietta", lastYear, null),
+                Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test1", true, "Henrietta", today, null, null),
+                Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.CROWD, "test2", true, "Henrietta", lastWeek, null, null),
+                Mood.createMood(MoodEmotionEnum.SHAME, MoodSocialSituationEnum.SEVERAL, "test3",true, "Henrietta", lastMonth, null, null),
+                Mood.createMood(MoodEmotionEnum.DISGUST, MoodSocialSituationEnum.SEVERAL, "test3",true, "Henrietta", lastYear, null, null),
 
         };
         for (Mood mood : moods) {
