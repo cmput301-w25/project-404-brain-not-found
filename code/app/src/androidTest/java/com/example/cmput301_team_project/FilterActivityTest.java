@@ -137,6 +137,7 @@ public class FilterActivityTest extends BaseActivityTest {
      */
     @Test
     public void testResetFilters() {
+        Espresso.onIdle();
         // set the 'Shame' selection from the spinner (remove some posts from the view)
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.filter_by_mood_spinner)).perform(click());
@@ -160,6 +161,7 @@ public class FilterActivityTest extends BaseActivityTest {
 
     @Test
     public void filterByDayShowsValidMoods() {
+        Espresso.onIdle();
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.filter_by_day)).perform(click());
         onView(withText("SET FILTER")).inRoot(isDialog()).perform(click());
@@ -178,6 +180,7 @@ public class FilterActivityTest extends BaseActivityTest {
 
     @Test
     public void filterByWeekShowsValidMoods() {
+        Espresso.onIdle();
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.filter_by_week)).perform(click());
         onView(withText("SET FILTER")).inRoot(isDialog()).perform(click());
@@ -194,6 +197,7 @@ public class FilterActivityTest extends BaseActivityTest {
 
     @Test
     public void filterByMonthShowsValidMoods() {
+        Espresso.onIdle();
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.filter_by_month)).perform(click());
         onView(withText("SET FILTER")).inRoot(isDialog()).perform(click());
@@ -210,6 +214,7 @@ public class FilterActivityTest extends BaseActivityTest {
 
     @Test
     public void filterByTextShowsValidMoods() {
+        Espresso.onIdle();
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.filter_by_text)).perform(typeText("test1"));
         onView(withText("SET FILTER")).inRoot(isDialog()).perform(click());
@@ -223,4 +228,26 @@ public class FilterActivityTest extends BaseActivityTest {
         onView(withText("fassdfa")).check(doesNotExist());
     }
 
+    @Test
+    public void cancelFiltersDoesntUpdateList() {
+        Espresso.onIdle();
+        onView(withId(R.id.filter_button)).perform(click());
+
+
+        onView(withId(R.id.filter_by_mood_spinner)).perform(click());
+        onData(allOf(is(instanceOf(String.class)), is("Shame")))
+                .inRoot(RootMatchers.isPlatformPopup())
+                .perform(click());
+        onView(withText("SET FILTER")).inRoot(isDialog()).perform(click());
+
+        onView(withId(R.id.filter_button)).perform(click());
+        onView(withText("CANCEL")).inRoot(isDialog()).perform(click());
+
+        // check that the Shame mood is still only one appearing
+        onView(withText("Ashamed")).check(matches(isDisplayed()));
+        // make sure not filtered moods arent appearing
+        onView(withText("Angry")).check(doesNotExist());
+        onView(withText("Sad")).check(doesNotExist());
+
+    }
 }

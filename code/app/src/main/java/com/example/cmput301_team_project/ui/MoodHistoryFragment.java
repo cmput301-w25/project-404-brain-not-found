@@ -33,8 +33,10 @@ import java.util.stream.Collectors;
 public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFormFragment.MoodFormDialogListener,
                                                              MoodFilterFragment.MoodFilterDialogListener {
     public final MoodDatabaseService moodDatabaseService;
-    private MoodListAdapter moodListAdapter;
+    public MoodListAdapter moodListAdapter;
     public ArrayList<Mood> moodList;
+
+    // used for filtering, takes copies of the moodList to lower db reads and writes
     public ArrayList<Mood> filteredMoodList = new ArrayList<>();
 
     public MoodHistoryFragment() {
@@ -172,7 +174,6 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
      *  on what the inputted filter was
      */
     public void updateFilters(ArrayList<Mood> filteredMoods) {
-        Log.d("updateFilters", "Received " + filteredMoods.size() + " moods.");
         moodListAdapter.clear();
         moodListAdapter.addAll(filteredMoods);
         moodListAdapter.notifyDataSetChanged();
