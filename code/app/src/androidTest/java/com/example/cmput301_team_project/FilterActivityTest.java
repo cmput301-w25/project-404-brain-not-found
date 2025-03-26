@@ -58,7 +58,7 @@ public class FilterActivityTest extends BaseActivityTest {
 
     @Before
     public void AddExtraMoodsAndViewHistory() throws InterruptedException {
-        scenario.getScenario().moveToState(Lifecycle.State.RESUMED);
+        scenario.getScenario().recreate();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference moodsRef = db.collection("moods");
