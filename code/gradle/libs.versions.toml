@@ -14,8 +14,6 @@ constraintlayout = "2.2.0"
 mockitoCore = "5.7.0"
 mockitoInline = "5.2.0"
 places = "4.2.0"
-powermockApiMockito2Version = "2.0.9"
-powermockModuleJunit4Version = "2.0.9"
 secretsGradlePlugin = "2.0.1"
 
 
@@ -35,8 +33,6 @@ constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayo
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 places = { module = "com.google.android.libraries.places:places", version.ref = "places" }
-powermock-powermock-api-mockito2 = { module = "org.powermock:powermock-api-mockito2", version.ref = "powermockApiMockito2Version" }
-powermock-powermock-module-junit4 = { module = "org.powermock:powermock-module-junit4", version.ref = "powermockModuleJunit4Version" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 
 

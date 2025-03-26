@@ -1,7 +1,6 @@
 package com.example.cmput301_team_project.db;
 
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskExecutors;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -9,25 +8,17 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.UUID;
-import java.util.concurrent.Executor;
 
 public class FirebaseAuthenticationService {
     private static FirebaseAuthenticationService instance = null;
     private final FirebaseAuth mAuth;
-    private final Executor taskExecutor;
-    // sometimes we need to test something from MainActivity, without signing in, so the purpose of this attribute is to have the username of that user
-    private final String userForTesting;
 
     private FirebaseAuthenticationService() {
         mAuth = FirebaseAuth.getInstance();
-        taskExecutor = TaskExecutors.MAIN_THREAD;
-        userForTesting = null;
     }
 
-    private FirebaseAuthenticationService(FirebaseAuth mAuth, Executor executor, String userForTesting) {
+    private FirebaseAuthenticationService(FirebaseAuth mAuth) {
         this.mAuth = mAuth;
-        this.taskExecutor = executor;
-        this.userForTesting = userForTesting;
     }
 
     public static FirebaseAuthenticationService getInstance() {
@@ -37,15 +28,15 @@ public class FirebaseAuthenticationService {
         return instance;
     }
 
-    public static void setInstanceForTesting(FirebaseAuth mAuth, Executor executor, String userForTesting) {
-        instance = new FirebaseAuthenticationService(mAuth, executor, userForTesting);
+    public static void setInstanceForTesting(FirebaseAuth mAuth) {
+        instance = new FirebaseAuthenticationService(mAuth);
     }
 
     public Task<String> registerUser(String username, String password) {
         String email = UUID.randomUUID() + "@example.com";
 
         return mAuth.createUserWithEmailAndPassword(email, password)
-                .continueWith(taskExecutor, task -> {
+                .continueWith(task -> {
                     if(task.isSuccessful()) {
                         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(username)
@@ -72,10 +63,6 @@ public class FirebaseAuthenticationService {
     }
 
     public String getCurrentUser() {
-        if(userForTesting != null) {
-            return userForTesting;
-        }
-
         if(mAuth.getCurrentUser() == null) {
             return null;
         }
