@@ -13,8 +13,10 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.ui.LoginSignupActivity;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +31,12 @@ public class LoginSignupActivityTest extends BaseActivityTest {
     @Rule
     public ActivityScenarioRule<LoginSignupActivity> scenario = new
             ActivityScenarioRule<>(LoginSignupActivity.class);
+
+    @Before
+    public void signOut() throws InterruptedException {
+        Thread.sleep(1000);
+        FirebaseAuthenticationService.getInstance().logoutUser();
+    }
 
     @Test
     public void logInPasswordErrorShown() throws InterruptedException {

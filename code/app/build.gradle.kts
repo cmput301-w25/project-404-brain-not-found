@@ -57,8 +57,6 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.inline)
-    testImplementation(libs.powermock.powermock.module.junit4)
-    testImplementation(libs.powermock.powermock.api.mockito2)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
 }

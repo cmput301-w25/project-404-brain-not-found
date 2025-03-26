@@ -2,6 +2,7 @@ package com.example.cmput301_team_project;
 
 import android.util.Log;
 
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
@@ -27,9 +28,10 @@ import java.util.Objects;
  * Performs firebase emulator setup, seeding, and teardown.
  */
 public class BaseActivityTest {
+    // override this user if testing with a user already logged is needed
 
     @BeforeClass
-    public static void setup(){
+    public static void setup() throws InterruptedException {
         // Specific address for emulated device to access our localHost
         String androidLocalhost = "10.0.2.2";
 
@@ -37,10 +39,14 @@ public class BaseActivityTest {
         int authPortNumber = 9099;
         FirebaseFirestore.getInstance().useEmulator(androidLocalhost, firestorePortNumber);
         FirebaseAuth.getInstance().useEmulator(androidLocalhost, authPortNumber);
+
+        UserDatabaseService.setInstanceForTesting(FirebaseFirestore.getInstance(), Runnable::run);
+        FirebaseAuthenticationService.setInstanceForTesting(FirebaseAuth.getInstance(), Runnable::run, null);
     }
 
     @Before
     public void seedDatabase() throws InterruptedException {
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference moodsRef = db.collection("moods");
         Mood[] moods = {
@@ -51,7 +57,6 @@ public class BaseActivityTest {
         for (Mood mood : moods) {
             moodsRef.document().set(mood);
         }
-
         AppUser[] users = {
                 new AppUser("Henrietta", "", "some_password")
         };
@@ -61,9 +66,10 @@ public class BaseActivityTest {
             Thread.sleep(200);
             FirebaseAuth.getInstance().signOut();
         }
+
     }
 
-    private void clearData(String urlStr) {
+    private static void clearData(String urlStr) {
         URL url = null;
         try {
             url = new URL(urlStr);
@@ -88,7 +94,6 @@ public class BaseActivityTest {
 
     @After
     public void tearDown() {
-        FirebaseAuth.getInstance().signOut();
         String projectId = "cmput301-project-d122a";
 
         clearData("http://10.0.2.2:8080/emulator/v1/projects/" + projectId + "/databases/(default)/documents");

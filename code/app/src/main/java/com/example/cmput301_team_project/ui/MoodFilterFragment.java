@@ -123,6 +123,9 @@ public class MoodFilterFragment extends DialogFragment {
             if(moodFilterState.text() != null) {
                 triggerFilter.setText(moodFilterState.text());
             }
+            if(moodFilterState.location() != null) {
+                locationFilter.setChecked(true);
+            }
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());

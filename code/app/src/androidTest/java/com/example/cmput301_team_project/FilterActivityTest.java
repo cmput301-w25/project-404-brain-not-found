@@ -20,16 +20,16 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.instanceOf;
 
 import androidx.test.espresso.Espresso;
-import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
-import com.example.cmput301_team_project.ui.LoginSignupActivity;
+import com.example.cmput301_team_project.ui.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -47,8 +47,13 @@ import java.util.Date;
 @LargeTest
 public class FilterActivityTest extends BaseActivityTest {
     @Rule
-    public ActivityScenarioRule<LoginSignupActivity> scenario = new
-            ActivityScenarioRule<>(LoginSignupActivity.class);
+    public ActivityScenarioRule<MainActivity> scenario = new
+            ActivityScenarioRule<>(MainActivity.class);
+
+    @BeforeClass
+    public static void loginUser() {
+        FirebaseAuthenticationService.setInstanceForTesting(FirebaseAuth.getInstance(), Runnable::run, "Henrietta");
+    }
 
     @Before
     public void AddExtraMoodsAndViewHistory() throws InterruptedException {
@@ -77,21 +82,13 @@ public class FilterActivityTest extends BaseActivityTest {
                 Mood.createMood(MoodEmotionEnum.DISGUST, MoodSocialSituationEnum.SEVERAL, "test3",true, "Henrietta", lastYear, null, null),
 
         };
+
         for (Mood mood : moods) {
             moodsRef.document().set(mood);
         }
 
-        Thread.sleep(1000);
-
-        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
-            //login user
-            onView(withId(R.id.login_button)).perform(click());
-            onView(withId(R.id.login_username)).perform(typeText("Henrietta")).perform(ViewActions.closeSoftKeyboard());
-            onView(withId(R.id.login_password)).perform(typeText("some_password")).perform(ViewActions.closeSoftKeyboard());
-            onView(withId(R.id.button_login)).perform(click());
-        }
         Thread.sleep(500);
-        // go to mood history
+
         onView(withId(R.id.mood_history_icon)).perform(click());
     }
 
@@ -205,6 +202,7 @@ public class FilterActivityTest extends BaseActivityTest {
         onView(withText("Angry")).perform(scrollTo()).check(matches(isDisplayed()));
         onData(anything()).atPosition(0).perform(swipeUp());
         onView(withText("Sad")).perform(scrollTo()).check(matches(isDisplayed()));
+        onData(anything()).atPosition(1).perform(swipeUp());
         onView(withText("Ashamed")).perform(scrollTo()).check(matches(isDisplayed()));
 
         onView(withText("Disgusted")).check(doesNotExist());

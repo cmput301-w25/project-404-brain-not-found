@@ -24,12 +24,9 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
-import java.util.concurrent.Executors;
 
 /**
  * Class for testing {@link UserDatabaseService}
@@ -62,7 +59,7 @@ public class UserDatabaseServiceUnitTest {
         UserDatabaseService.setInstanceForTesting(mockFirestore, Runnable::run);
         userDatabaseService = UserDatabaseService.getInstance();
 
-        FirebaseAuthenticationService.setInstanceForTesting(mockAuth);
+        FirebaseAuthenticationService.setInstanceForTesting(mockAuth, Runnable::run, null);
         firebaseAuthenticationService = FirebaseAuthenticationService.getInstance();
     }
 
