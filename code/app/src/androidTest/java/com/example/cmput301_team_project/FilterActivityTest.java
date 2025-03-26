@@ -19,6 +19,8 @@ import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.instanceOf;
 
+import android.content.Intent;
+
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -30,6 +32,7 @@ import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.ui.LoginSignupActivity;
+import com.example.cmput301_team_project.ui.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -87,6 +90,14 @@ public class FilterActivityTest extends BaseActivityTest {
             moodsRef.document().set(mood);
         }
 
+        Thread.sleep(2000);
+
+        scenario.getScenario().onActivity(activity -> {
+            Intent intent = new Intent(activity, MainActivity.class);
+            activity.startActivity(intent);
+        });
+
+        // Give time for MainActivity to load before test interactions
         Thread.sleep(2000);
 
         onView(withId(R.id.mood_history_icon)).perform(click());
