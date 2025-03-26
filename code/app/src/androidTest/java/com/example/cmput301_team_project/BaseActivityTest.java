@@ -37,8 +37,10 @@ public class BaseActivityTest {
 
         int firestorePortNumber = 8080;
         int authPortNumber = 9099;
-        FirebaseFirestore.getInstance().useEmulator(androidLocalhost, firestorePortNumber);
-        FirebaseAuth.getInstance().useEmulator(androidLocalhost, authPortNumber);
+        if(!FirebaseFirestore.getInstance().getFirestoreSettings().getHost().equals(androidLocalhost)) {
+            FirebaseFirestore.getInstance().useEmulator(androidLocalhost, firestorePortNumber);
+            FirebaseAuth.getInstance().useEmulator(androidLocalhost, authPortNumber);
+        }
 
         UserDatabaseService.setInstanceForTesting(FirebaseFirestore.getInstance(), Runnable::run);
         FirebaseAuthenticationService.setInstanceForTesting(FirebaseAuth.getInstance(), Runnable::run, null);
