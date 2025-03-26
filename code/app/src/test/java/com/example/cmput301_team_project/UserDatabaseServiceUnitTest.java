@@ -59,7 +59,7 @@ public class UserDatabaseServiceUnitTest {
         UserDatabaseService.setInstanceForTesting(mockFirestore, Runnable::run);
         userDatabaseService = UserDatabaseService.getInstance();
 
-        FirebaseAuthenticationService.setInstanceForTesting(mockAuth, Runnable::run, null);
+        FirebaseAuthenticationService.setInstanceForTesting(mockAuth);
         firebaseAuthenticationService = FirebaseAuthenticationService.getInstance();
     }
 
@@ -71,7 +71,7 @@ public class UserDatabaseServiceUnitTest {
 
         when(mockUserCollection.document(mockUser.getUsername())).thenReturn(mockDocRef);
         when(mockAuth.createUserWithEmailAndPassword(anyString(), anyString())).thenReturn(mockAuthResultTask);
-        when(mockAuthResultTask.continueWith(any(), any())).thenReturn(Tasks.forResult("mockEmail"));
+        when(mockAuthResultTask.continueWith(any())).thenReturn(Tasks.forResult("mockEmail"));
 
         userDatabaseService.addUser(mockUser);
         verify(mockDocRef).set(mockUser);
