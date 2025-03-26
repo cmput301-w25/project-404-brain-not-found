@@ -87,7 +87,7 @@ public class FilterActivityTest extends BaseActivityTest {
             moodsRef.document().set(mood);
         }
 
-        Thread.sleep(500);
+        Thread.sleep(2000);
 
         onView(withId(R.id.mood_history_icon)).perform(click());
     }
