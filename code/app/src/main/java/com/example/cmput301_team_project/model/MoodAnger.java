@@ -1,7 +1,5 @@
 package com.example.cmput301_team_project.model;
 
-import static com.example.cmput301_team_project.R.color.anger;
-
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.R;
@@ -31,7 +29,7 @@ public class MoodAnger extends Mood {
     @Exclude
     @Override
     public int getColour() {
-        return anger;
+        return R.color.anger;
     }
 
     @Override

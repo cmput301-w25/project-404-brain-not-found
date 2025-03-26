@@ -1,9 +1,7 @@
 <resources>
-    <string name="decorative_element">Decorative element</string>
     <string name="app_name">CMPUT301-Team-Project</string>
-    <string name="back_button">Back button</string>
     <string name="app_title">Moodster</string>
-    <string name="trigger">Trigger </string>
+    <string name="trigger">Trigger</string>
     <string name="anger">Anger</string>
     <string name="confusion">Confusion</string>
     <string name="disgust">Disgust</string>
@@ -65,22 +63,4 @@
     <string name="is">is</string>
     <string name="search_location">Search location</string>
     <string name="use_my_current_location">Use my current location</string>
-    <string name="privacy_policy">© Privacy Policy</string>
-    <string name="sign_up">Sign up</string>
-    <string name="login">Login</string>
-    <string name="Slogan">Track your emotions. Improve your wellbeing.</string>
-    <string name="app_logo">App logo</string>
-    <string name="create_your_account">Create your account</string>
-    <string name="username">Username</string>
-    <string name="display_name">Display name</string>
-    <string name="password">Password</string>
-    <string name="your_moods">Your moods</string>
-    <string name="map_view">Map View</string>
-    <string name="comments">Comments</string>
-    <string name="logout">logout</string>
-    <string name="emotion">Emotion</string>
-    <string name="social_situation">Social Situation</string>
-    <string name="location">Location</string>
-    <string name="clear_location">Clear Location</string>
-    <string name="followers_mood">Follower\'s Mood</string>
 </resources>
