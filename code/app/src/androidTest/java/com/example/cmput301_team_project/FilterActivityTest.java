@@ -19,9 +19,9 @@ import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.instanceOf;
 
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.RootMatchers;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
@@ -36,7 +36,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -46,10 +45,6 @@ import java.util.Date;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class FilterActivityTest extends BaseActivityTest {
-    @Rule
-    public ActivityScenarioRule<MainActivity> scenario = new
-            ActivityScenarioRule<>(MainActivity.class);
-
     @BeforeClass
     public static void loginUser() {
         FirebaseAuthenticationService.setInstanceForTesting(FirebaseAuth.getInstance(), Runnable::run, "Henrietta");
@@ -86,6 +81,8 @@ public class FilterActivityTest extends BaseActivityTest {
         for (Mood mood : moods) {
             moodsRef.document().set(mood);
         }
+
+        ActivityScenario.launch(MainActivity.class);
 
         Thread.sleep(500);
 
