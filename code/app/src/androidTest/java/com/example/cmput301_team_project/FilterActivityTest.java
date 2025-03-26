@@ -3,22 +3,24 @@ package com.example.cmput301_team_project;
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.action.ViewActions.swipeUp;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isDialog;
-import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withSpinnerText;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.instanceOf;
 
 import androidx.test.espresso.Espresso;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -28,6 +30,7 @@ import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.ui.LoginSignupActivity;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -52,7 +55,6 @@ public class FilterActivityTest extends BaseActivityTest {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference moodsRef = db.collection("moods");
-        CollectionReference usersRef = db.collection("users");
         // user has 4 moods each with own respective emotion, trigger, and Date
         Calendar calendar = Calendar.getInstance();
         Date today = new Date();
@@ -79,25 +81,18 @@ public class FilterActivityTest extends BaseActivityTest {
             moodsRef.document().set(mood);
         }
 
+        Thread.sleep(1000);
 
-        //sleep to let the db write the new moods
-        try{
-            System.out.println("sleeping...");
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            System.out.println("sleep didnt work");
-            e.printStackTrace();
+        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+            //login user
+            onView(withId(R.id.login_button)).perform(click());
+            onView(withId(R.id.login_username)).perform(typeText("Henrietta")).perform(ViewActions.closeSoftKeyboard());
+            onView(withId(R.id.login_password)).perform(typeText("some_password")).perform(ViewActions.closeSoftKeyboard());
+            onView(withId(R.id.button_login)).perform(click());
         }
-
-        //login user
-        onView(withId(R.id.login_button)).perform(click());
-        onView(withId(R.id.login_username)).perform(typeText("Henrietta"));
-        onView(withId(R.id.login_password)).perform(typeText("some_password"));
-        onView(withId(R.id.button_login)).perform(click());
         Thread.sleep(500);
         // go to mood history
         onView(withId(R.id.mood_history_icon)).perform(click());
-
     }
 
 
@@ -153,9 +148,10 @@ public class FilterActivityTest extends BaseActivityTest {
 
         Espresso.onIdle();
         // check that all moods are appearing
-        onView(withText("Happy")).perform(scrollTo()).check(matches(isDisplayed()));
-        onView(withText("Angry")).perform(scrollTo()).check(matches(isDisplayed()));
-        onView(withText("Sad")).perform(scrollTo()).check(matches(isDisplayed()));
+        onView(withText("Happy")).check(matches(isDisplayed()));
+        onView(withText("Angry")).check(matches(isDisplayed()));
+        onData(anything()).atPosition(0).perform(swipeUp());
+        onView(withText("Sad")).check(matches(isDisplayed()));
 
     }
 
@@ -189,6 +185,7 @@ public class FilterActivityTest extends BaseActivityTest {
 
         onView(withText("Happy")).perform(scrollTo()).check(matches(isDisplayed()));
         onView(withText("Angry")).perform(scrollTo()).check(matches(isDisplayed()));
+        onData(anything()).atPosition(0).perform(swipeUp());
         onView(withText("Sad")).perform(scrollTo()).check(matches(isDisplayed()));
 
         onView(withText("Ashamed")).check(doesNotExist());
@@ -206,6 +203,7 @@ public class FilterActivityTest extends BaseActivityTest {
 
         onView(withText("Happy")).perform(scrollTo()).check(matches(isDisplayed()));
         onView(withText("Angry")).perform(scrollTo()).check(matches(isDisplayed()));
+        onData(anything()).atPosition(0).perform(swipeUp());
         onView(withText("Sad")).perform(scrollTo()).check(matches(isDisplayed()));
         onView(withText("Ashamed")).perform(scrollTo()).check(matches(isDisplayed()));
 
@@ -216,7 +214,7 @@ public class FilterActivityTest extends BaseActivityTest {
     public void filterByTextShowsValidMoods() {
         Espresso.onIdle();
         onView(withId(R.id.filter_button)).perform(click());
-        onView(withId(R.id.filter_by_text)).perform(typeText("test1"));
+        onView(withId(R.id.filter_by_text)).perform(typeText("test1")).perform(closeSoftKeyboard());
         onView(withText("SET FILTER")).inRoot(isDialog()).perform(click());
 
         Espresso.onIdle();

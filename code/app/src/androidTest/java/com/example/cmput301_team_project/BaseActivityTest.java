@@ -2,6 +2,7 @@ package com.example.cmput301_team_project;
 
 import android.util.Log;
 
+import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.AppUser;
@@ -39,10 +40,9 @@ public class BaseActivityTest {
     }
 
     @Before
-    public void seedDatabase() {
+    public void seedDatabase() throws InterruptedException {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference moodsRef = db.collection("moods");
-        CollectionReference usersRef = db.collection("users");
         Mood[] moods = {
                 Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "fassdfa", true, "Urkel", null, null, null),
                 Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.CROWD, "fassdfa", true, "Vance", null, null, null),
@@ -57,22 +57,20 @@ public class BaseActivityTest {
         };
 
         for (AppUser user: users) {
-            usersRef.document(user.getUsername()).set(user);
-            usersRef.document(user.getUsername()).update("email", "test@example.com");
+            UserDatabaseService.getInstance().addUser(user);
+            Thread.sleep(200);
+            FirebaseAuth.getInstance().signOut();
         }
     }
 
-
-
-    @After
-    public void tearDown() {
-        String projectId = "cmput301-project-d122a";
+    private void clearData(String urlStr) {
         URL url = null;
         try {
-            url = new URL("http://10.0.2.2:8080/emulator/v1/projects/" + projectId + "/databases/(default)/documents");
+            url = new URL(urlStr);
         } catch (MalformedURLException exception) {
             Log.e("URL Error", Objects.requireNonNull(exception.getMessage()));
         }
+
         HttpURLConnection urlConnection = null;
         try {
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -86,6 +84,14 @@ public class BaseActivityTest {
                 urlConnection.disconnect();
             }
         }
+    }
 
+    @After
+    public void tearDown() {
+        FirebaseAuth.getInstance().signOut();
+        String projectId = "cmput301-project-d122a";
+
+        clearData("http://10.0.2.2:8080/emulator/v1/projects/" + projectId + "/databases/(default)/documents");
+        clearData("http://10.0.2.2:9099/emulator/v1/projects/" + projectId + "/accounts");
     }
 }
