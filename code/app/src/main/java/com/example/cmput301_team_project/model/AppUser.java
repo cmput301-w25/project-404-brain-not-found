@@ -22,16 +22,32 @@ public class AppUser {
         this.name = name;
         this.password = password;
     }
+
+    /**
+     * Gets the username of the AppUser.
+     *
+     * @return A String representing the user's username.
+     */
     public String getUsername() {
         return username;
     }
 
+    /**
+     * Gets the user's hashed password.
+     *
+     * @return a String (hashed) representing the user's password.
+     */
     @Exclude
     public String getPassword() {
         return password;
     }
 
 
+    /**
+     * Gets the user's display name.
+     *
+     * @return A String representing the user's display name.
+     */
     public String getName() {
         return name;
     }
