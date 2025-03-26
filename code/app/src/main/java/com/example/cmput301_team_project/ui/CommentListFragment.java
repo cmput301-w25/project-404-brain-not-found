@@ -2,6 +2,7 @@ package com.example.cmput301_team_project.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,6 +11,7 @@ import android.widget.ListView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.cmput301_team_project.R;
@@ -49,7 +51,9 @@ public class CommentListFragment extends DialogFragment {
                 .setView(view)
                 .setNegativeButton("Done", null)
                 .create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.background)));
         String moodId = (String) getArguments().getSerializable("id");
+
 
         ListView commentList = view.findViewById(R.id.commentList);
         commentAdapter = new CommentListAdapter(requireContext(), new ArrayList<>());
@@ -61,6 +65,13 @@ public class CommentListFragment extends DialogFragment {
 
         TextInputLayout commentTextLayout = view.findViewById(R.id.addCommentLayout);
         EditText commentTextBox = commentTextLayout.getEditText();
+        dialog.show();
+
+        // Set negative button color
+        Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        if (negativeButton != null) {
+            negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
+        }
         dialog.setOnShowListener(dialog1 -> {
             Button commentButton = dialog.findViewById(R.id.addCommentButton);
             commentButton.setOnClickListener(v -> {
@@ -76,6 +87,7 @@ public class CommentListFragment extends DialogFragment {
             });
         });
         return dialog;
+
     }
 
 }

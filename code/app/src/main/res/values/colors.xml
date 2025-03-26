@@ -2,17 +2,23 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="anger">#C84C4C</color>
-    <color name="confusion">#D39054</color>
-    <color name="disgust">#60C55D</color>
-    <color name="fear">#713A99</color>
-    <color name="happiness">#E2D272</color>
-    <color name="sadness">#3D6FB8</color>
-    <color name="shame">#C770BB</color>
-    <color name="surprise">#76BAAE</color>
+    <color name="anger">#FFC5C5</color>
+    <color name="confusion">#FFD3A5</color>
+    <color name="disgust">#B5E6B5</color>
+    <color name="fear">#DCC9FB</color>
+    <color name="happiness">#FFFAB4</color>
+    <color name="sadness">#A7C7E7</color>
+    <color name="shame">#FBC3E4</color>
+    <color name="surprise">#B6EBE3</color>
+    <color name="background">#E2E9FF</color>
+    <color name="switch_active_color">#5E72E4</color>
+    <color name="switch_thumb_color">#FFFFFF</color>
     <color name="default_background">#FFFFFFFF</color>
-    <color name="buttons">#0A5475</color>
     <color name="text_colour2">#EA212121</color>
-    <color name="accept_button">#FF2196F3</color>
-    <color name="decline_button">#FFD14249</color>
+    <color name="accept_button">#B0FAB0</color>
+    <color name="decline_button">#FBC8CF</color>
+    <color name="buttons">#5E72E4</color>
+    <color name="light">#8392E0</color>
+    <color name="text_primary">#32325D</color>
+    <color name="text_secondary">#525F7F</color>
 </resources>
