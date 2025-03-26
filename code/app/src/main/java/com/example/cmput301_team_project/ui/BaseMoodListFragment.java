@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.model.Mood;
+import com.example.cmput301_team_project.model.MoodFilterState;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -28,11 +29,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public abstract class BaseMoodListFragment extends Fragment implements OnMapReadyCallback, MoodListAdapter.CommentButtonListener {
+public abstract class BaseMoodListFragment extends Fragment implements OnMapReadyCallback, MoodListAdapter.CommentButtonListener, MoodFilterFragment.MoodFilterDialogListener {
     protected abstract void loadMoodData();
     protected abstract boolean isMoodOwned();
 
     protected MoodListAdapter moodListAdapter;
+    protected MoodFilterState moodFilterState;
 
     private final HashMap<Integer, Marker> markerMap = new HashMap<>();
     private int highlightedMarker = -1;
@@ -53,6 +55,13 @@ public abstract class BaseMoodListFragment extends Fragment implements OnMapRead
         moodListView = view.findViewById(R.id.mood_List);
         moodListAdapter = new MoodListAdapter(getContext(), new ArrayList<>(), this, isMoodOwned());
         moodListView.setAdapter(moodListAdapter);
+
+        moodFilterState = MoodFilterState.getEmptyFilterState();
+
+        ImageButton filterMoodButton = view.findViewById(R.id.filter_button);
+        filterMoodButton.setOnClickListener( v -> {
+            MoodFilterFragment.newInstance(moodFilterState).show(getChildFragmentManager(), "Filter Moods");
+        });
 
         moodListView.setOnItemClickListener((parent, view1, position, id) -> {
             if(highlightedMarker != -1) {
@@ -120,6 +129,7 @@ public abstract class BaseMoodListFragment extends Fragment implements OnMapRead
     public void onMapReady(GoogleMap map) {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
+        boolean centerCamera = false;
         for(int i = 0; i < moodListAdapter.getCount(); i++) {
             Mood mood = moodListAdapter.getItem(i);
             if(mood != null && mood.getLocation() != null) {
@@ -129,6 +139,7 @@ public abstract class BaseMoodListFragment extends Fragment implements OnMapRead
                 marker.setTag(i);
                 markerMap.put(i, marker);
                 builder.include(location);
+                centerCamera = true;
             }
         }
 
@@ -142,8 +153,16 @@ public abstract class BaseMoodListFragment extends Fragment implements OnMapRead
             return false;
         });
 
-        int padding = (int) (getResources().getDisplayMetrics().widthPixels * 0.1);
-        map.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), padding));
+        if(centerCamera) {
+            int padding = (int) (getResources().getDisplayMetrics().widthPixels * 0.1);
+            map.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), padding));
+        }
+    }
+
+    @Override
+    public void updateFilter(MoodFilterState moodFilterState) {
+        this.moodFilterState = moodFilterState;
+        loadMoodData();
     }
 
     // Override this method in a subclass to do some subclass-specific UI initialization

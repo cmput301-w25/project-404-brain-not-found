@@ -1,12 +1,10 @@
 package com.example.cmput301_team_project.ui;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -17,7 +15,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
@@ -39,6 +36,7 @@ import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.utils.ImageUtils;
+import com.example.cmput301_team_project.utils.LocationPermissionManager;
 import com.example.cmput301_team_project.utils.PlacesUtils;
 import com.github.angads25.toggle.widget.LabeledSwitch;
 import com.google.android.gms.maps.model.LatLng;
@@ -65,7 +63,7 @@ public class MoodFormFragment extends DialogFragment {
     private final int MAX_TRIGGER_LENGTH = 200;
 
     private GeoPoint selectedLocation;
-    private ActivityResultLauncher<String> locationPermissionActivity;
+    private LocationPermissionManager locationPermissionManager;
     private boolean isEditMode = false; // Flag to check if we're editing
     private Mood moodBeingEdited = null; // Reference to the mood being edited
 
@@ -329,14 +327,7 @@ public class MoodFormFragment extends DialogFragment {
                     }
                 });
 
-        locationPermissionActivity = registerForActivityResult(
-                new ActivityResultContracts.RequestPermission(),
-                result -> {
-                    if (result) {
-                        getLastLocation(locationField);
-                    }
-                }
-        );
+        locationPermissionManager = new LocationPermissionManager(this, () -> getLastLocation(locationField));
 
         locationField.setOnClickListener(v -> {
             List<Place.Field> fields = Arrays.asList(Place.Field.FORMATTED_ADDRESS,
@@ -350,9 +341,9 @@ public class MoodFormFragment extends DialogFragment {
     }
 
     private void getLastLocation(EditText locationText) {
-        if(!(ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED))
+        if(!locationPermissionManager.isPermissionGranted())
         {
-            locationPermissionActivity.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            locationPermissionManager.requestPermission();
             return;
         }
 

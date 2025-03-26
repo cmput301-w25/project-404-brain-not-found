@@ -15,6 +15,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,7 +31,14 @@ public class PlacesUtils {
                     .continueWith(Task::getResult);
         }
 
-        return Tasks.forException(new SecurityException());
+        return Tasks.forResult(null);
+    }
+
+    public static float getDistanceKm(GeoPoint a, GeoPoint b) {
+        float[] results = new float[1];
+        Location.distanceBetween(a.getLatitude(), a.getLongitude(), b.getLatitude(), b.getLongitude(), results);
+
+        return results[0] / 1000;
     }
 
     public static String getAddressFromLatLng(Context context, LatLng latLng) {

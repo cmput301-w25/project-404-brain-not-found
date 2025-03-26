@@ -6,7 +6,6 @@ import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 
-
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link MoodFollowingFragment#newInstance} factory method to
@@ -34,7 +33,7 @@ public class MoodFollowingFragment extends BaseMoodListFragment {
     @Override
     protected void loadMoodData() {
         userDatabaseService.getFollowing(FirebaseAuthenticationService.getInstance().getCurrentUser())
-                        .addOnSuccessListener(following -> moodDatabaseService.getFollowingMoods(following)
+                        .addOnSuccessListener(following -> moodDatabaseService.getFollowingMoods(following, moodFilterState)
                                 .addOnSuccessListener(moods -> {
                                     moodListAdapter.clear();
                                     moodListAdapter.addAll(moods);
