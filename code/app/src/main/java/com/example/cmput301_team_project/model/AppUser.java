@@ -23,7 +23,6 @@ public class AppUser {
         this.username = username;
         this.name = name;
         this.password = password;
-        this.mentionsCount = 0;
     }
     public String getUsername() {
         return username;
@@ -39,5 +38,4 @@ public class AppUser {
         return name;
     }
 
-    public Integer getMentionsCount(){return mentionsCount; }
 }

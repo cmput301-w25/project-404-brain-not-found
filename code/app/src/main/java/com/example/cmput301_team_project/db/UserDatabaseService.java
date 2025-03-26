@@ -434,6 +434,20 @@ public class UserDatabaseService extends BaseDatabaseService {
                 });
     }
 
+    public void deleteMentions(String moodId, String username){
+        usersRef.document(username)
+                .collection("mentions")
+                .whereEqualTo("moodId", moodId)
+                .get()
+                .addOnSuccessListener(query -> {
+                    for (DocumentSnapshot document: query.getDocuments()){
+                        usersRef.document(username)
+                                .collection("mentions")
+                                .document(document.getId())
+                                .delete();
+                    }
+                });
+    }
     public Task<Long> getMentionCount(String username){
         CollectionReference userRef = usersRef.document(username).collection("mentions");
         return userRef.count().get(AggregateSource.SERVER).continueWith(task -> {
@@ -443,32 +457,4 @@ public class UserDatabaseService extends BaseDatabaseService {
             return task.getResult().getCount();
         });
     }
-
-    public Task<Long> getCurrMentionCount(String username){
-        return usersRef.document(username).get().continueWith(task -> {
-            if (task.isSuccessful()){
-                DocumentSnapshot doc = task.getResult();
-                return doc.getLong("mentionCount");
-            }
-            return 0L;
-        });
-
-    }
-public Task<Boolean> checkViewedMentions() {
-    TaskCompletionSource<Boolean> taskCompletionSource = new TaskCompletionSource<>();
-    String username = FirebaseAuthenticationService.getInstance().getCurrentUser();getMentionCount(username).addOnSuccessListener(count -> {
-        getCurrMentionCount(username).addOnSuccessListener(currCount -> {
-            boolean mentionsViewed = Objects.equals(count, currCount);
-            taskCompletionSource.setResult(mentionsViewed);
-        }).addOnFailureListener(taskCompletionSource::setException);
-    }).addOnFailureListener(taskCompletionSource::setException);
-
-    return taskCompletionSource.getTask();
-}
-
-public void correctMentionCount(String username){
-        getMentionCount(username).addOnSuccessListener(count ->
-                usersRef.document(username).update("mentionCount", count));
-}
-
 }

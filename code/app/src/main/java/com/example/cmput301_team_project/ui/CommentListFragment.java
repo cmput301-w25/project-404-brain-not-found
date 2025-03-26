@@ -84,9 +84,7 @@ public class CommentListFragment extends DialogFragment {
                 parseComment(commentText, moodId);
                 moodDatabaseService.addComment(moodId, newComment).addOnSuccessListener(d -> {
                     moodDatabaseService.getComments(moodId).addOnSuccessListener(comments -> {
-                        commentAdapter.clear(); //
-                        commentAdapter.addAll(comments);
-                        commentAdapter.notifyDataSetChanged();
+                        commentAdapter.displayComments(comments);
                     });
                 });
 
