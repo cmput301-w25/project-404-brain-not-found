@@ -18,7 +18,9 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.concurrent.Executor;
 
@@ -185,13 +187,13 @@ public class MoodDatabaseService extends BaseDatabaseService {
         return Tasks.whenAllSuccess(fetchTasks)
                 .continueWith(result -> {
                     if(result.isSuccessful()) {
-                        List<Mood> moodList = new ArrayList<>();
+                        Set<Mood> moodList = new HashSet<>();
                         for(Object res : result.getResult()) {
                             if(res instanceof DocumentSnapshot documentSnapshot) {
                                moodList.add(moodFromDoc(documentSnapshot));
                             }
                         }
-                        return moodList;
+                        return new ArrayList<>(moodList);
                     }
                     return new ArrayList<>();
                 });

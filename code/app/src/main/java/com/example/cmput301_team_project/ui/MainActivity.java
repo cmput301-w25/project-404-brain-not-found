@@ -14,8 +14,12 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.cmput301_team_project.BuildConfig;
 import com.example.cmput301_team_project.R;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
+import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.firestore.auth.User;
 
 
 /**
@@ -23,7 +27,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  * It manages navigation between different fragments using a bottom navigation bar.
  */
 public class MainActivity extends BaseActivity {
-
+    UserDatabaseService userDatabaseService = UserDatabaseService.getInstance();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,18 +41,23 @@ public class MainActivity extends BaseActivity {
 
 
         BottomNavigationView navigation = findViewById(R.id.navigation_main);
+        userDatabaseService.getMentionCount(FirebaseAuthenticationService.getInstance().getCurrentUser()).addOnSuccessListener(count -> {
+            if (count != 0){
+                showNotification(navigation);
+            }else{
+                removeNotification(navigation);
+            }
+        });
         navigation.setOnApplyWindowInsetsListener((v, insets) -> {
             v.setPadding(0, 0, 0, 0);
             return insets;
         });
 
 
-        navigation.setSelectedItemId(R.id.mood_following_icon);
 
         replaceFragment(MoodFollowingFragment.newInstance());
 
         navigation.setOnItemSelectedListener(item -> {
-
             if(item.getItemId() == R.id.mood_history_icon) {
                 replaceFragment(MoodHistoryFragment.newInstance());
             }
@@ -60,7 +69,15 @@ public class MainActivity extends BaseActivity {
             }
             else if(item.getItemId() == R.id.mentioned_icon){
                 replaceFragment(MentionedMoodsFragment.newInstance());
+
             }
+            userDatabaseService.getMentionCount(FirebaseAuthenticationService.getInstance().getCurrentUser()).addOnSuccessListener(count -> {
+                if (count != 0){
+                    showNotification(navigation);
+                }else{
+                    removeNotification(navigation);
+                }
+            });
             return true;
         });
 
@@ -87,7 +104,13 @@ public class MainActivity extends BaseActivity {
             finish();
             return;
         }
-
         Places.initializeWithNewPlacesApiEnabled(getApplicationContext(), apiKey);
+    }
+
+    private void showNotification(BottomNavigationView navigation){
+        navigation.getMenu().findItem(R.id.mentioned_icon).setIcon(R.drawable.comment_icon_with_red);
+    }
+    private void removeNotification(BottomNavigationView navigation){
+        navigation.getMenu().findItem(R.id.mentioned_icon).setIcon(R.drawable.ic_baseline_chat_24);
     }
 }
