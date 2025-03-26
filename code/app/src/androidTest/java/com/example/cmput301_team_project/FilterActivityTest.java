@@ -19,6 +19,7 @@ import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.instanceOf;
 
+import androidx.lifecycle.Lifecycle;
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -29,7 +30,6 @@ import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
-import com.example.cmput301_team_project.ui.LoginSignupActivity;
 import com.example.cmput301_team_project.ui.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
@@ -48,8 +48,8 @@ import java.util.Date;
 @LargeTest
 public class FilterActivityTest extends BaseActivityTest {
     @Rule
-    public ActivityScenarioRule<LoginSignupActivity> scenario = new
-            ActivityScenarioRule<>(LoginSignupActivity.class);
+    public ActivityScenarioRule<MainActivity> scenario = new
+            ActivityScenarioRule<>(MainActivity.class);
 
     @BeforeClass
     public static void loginUser() {
@@ -58,6 +58,7 @@ public class FilterActivityTest extends BaseActivityTest {
 
     @Before
     public void AddExtraMoodsAndViewHistory() throws InterruptedException {
+        scenario.getScenario().moveToState(Lifecycle.State.RESUMED);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference moodsRef = db.collection("moods");
