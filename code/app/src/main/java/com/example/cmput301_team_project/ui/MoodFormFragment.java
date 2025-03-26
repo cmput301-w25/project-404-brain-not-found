@@ -9,9 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -178,20 +176,8 @@ public class MoodFormFragment extends DialogFragment {
                     .setPositiveButton(isEditMode ? "Save" : "Add", null)
                     .create();
 
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(requireContext(), R.color.background)));
-
         dialog.setOnShowListener(dialog1 -> {
-            int titleId = getResources().getIdentifier("alertTitle", "id", "android");
-            TextView dialogTitle = (TextView) dialog.findViewById(titleId);
-            dialogTitle.setTextColor(Color.BLACK);
-
             Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-            Button negativeButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-
-            // Set the positive button color
-            positiveButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
-            // Set the negative button color
-            negativeButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.black));
             positiveButton.setOnClickListener(v -> {
                 if (emotion.getSelectedItemPosition() == 0) {
                     emotionAdapter.setError(emotion.getSelectedView(), getString(R.string.no_emotional_state_error_msg));

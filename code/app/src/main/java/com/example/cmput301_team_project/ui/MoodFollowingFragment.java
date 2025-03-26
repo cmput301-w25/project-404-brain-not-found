@@ -1,12 +1,5 @@
 package com.example.cmput301_team_project.ui;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import com.example.cmput301_team_project.R;
-
 import androidx.fragment.app.Fragment;
 
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
@@ -22,7 +15,6 @@ import com.example.cmput301_team_project.db.UserDatabaseService;
 public class MoodFollowingFragment extends BaseMoodListFragment {
     private final MoodDatabaseService moodDatabaseService;
     private final UserDatabaseService userDatabaseService;
-    private TextView mood_list_title;
 
     public MoodFollowingFragment() {
         moodDatabaseService = MoodDatabaseService.getInstance();
@@ -39,20 +31,6 @@ public class MoodFollowingFragment extends BaseMoodListFragment {
         return new MoodFollowingFragment();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
-
-        // Initialize the title TextView
-        mood_list_title = view.findViewById(R.id.mood_list_title);
-
-        // Set the title to indicate it's for the user's followers
-        if (mood_list_title != null) {
-            mood_list_title.setText(R.string.followers_mood);
-        }
-
-        return view;
-    }
     @Override
     protected void loadMoodData() {
         userDatabaseService.getFollowing(FirebaseAuthenticationService.getInstance().getCurrentUser())

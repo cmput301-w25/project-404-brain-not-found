@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
     android:orientation="vertical">
 
     <LinearLayout
@@ -14,33 +14,27 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:gravity="center"
             android:orientation="horizontal"
-            android:padding="8dp">
+            android:gravity="center">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/addCommentLayout"
                 android:layout_width="0dp"
                 android:layout_height="60dp"
                 android:layout_weight="2"
-                app:boxBackgroundColor="@color/background"
                 app:boxCornerRadiusBottomEnd="20dp"
                 app:boxCornerRadiusBottomStart="20dp"
                 app:boxCornerRadiusTopEnd="20dp"
-                app:boxCornerRadiusTopStart="20dp"
-                app:hintTextColor="@color/buttons">
+                app:boxCornerRadiusTopStart="20dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/AddComment"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="@string/add_comment"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/buttons" />
+                    android:hint="@string/add_comment" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/addCommentButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -48,8 +42,7 @@
                 android:layout_marginEnd="5dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/buttons"
-                android:text="Post"
-                app:cornerRadius="20dp" />
+                android:text="Post" />
 
         </LinearLayout>
 
@@ -59,8 +52,12 @@
             android:layout_height="match_parent"
             android:paddingTop="10dp"
             android:dividerHeight="7dp"
-            android:divider="@color/default_background"/>
+            android:divider="@color/default_background">
+
+
+        </ListView>
 
     </LinearLayout>
+
 
 </RelativeLayout>

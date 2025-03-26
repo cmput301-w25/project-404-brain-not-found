@@ -5,19 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background"
     tools:context=".ui.MainActivity">
-
-    <ImageView
-        android:id="@+id/top_wave"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:contentDescription="@string/decorative_element"
-        android:scaleType="fitXY"
-        android:src="@drawable/top_wave_shape"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:id="@+id/frame_layout"
@@ -39,7 +27,6 @@
         app:menu="@menu/bottom_nav_menu"
         app:itemActiveIndicatorStyle="@null"
         app:itemRippleColor="@null"
-        app:itemIconSize="28dp"
-        app:backgroundTint="@color/buttons"/>
+        app:itemIconSize="28dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
