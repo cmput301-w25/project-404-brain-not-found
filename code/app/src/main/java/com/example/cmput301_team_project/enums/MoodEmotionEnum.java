@@ -6,7 +6,8 @@ import com.example.cmput301_team_project.ui.HintDropdownEnumInterface;
 import com.example.cmput301_team_project.R;
 
 /**
- * Enum that represents mood emotional state.
+ * Enumeration that represents possible emotions a Mood post can have.
+ *
  * It implements {@link HintDropdownEnumInterface} in order to be used in hint dropdowns on mood form.
  */
 public enum MoodEmotionEnum implements HintDropdownEnumInterface {
@@ -25,6 +26,12 @@ public enum MoodEmotionEnum implements HintDropdownEnumInterface {
         this.resId = resId;
     }
 
+    /**
+     * Returns the display String for the emotion based on its resource ID.
+     *
+     * @param context The context used to access the emotion resources.
+     * @return The display String of the selected emotion from the dropdown.
+     */
     @Override
     public String getDropdownDisplayName(Context context) {
         return context.getString(resId);

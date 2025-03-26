@@ -27,8 +27,11 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
- * Singleton class to manage user-related operations with the firestore database
- * Handles all user-related queries
+ * the UserDatabaseService singleton class includes methods for making queries on the "users"
+ * collection in the firestore database.
+ *
+ * Provides methods on logging in, signing out, and registering users, as well as relational
+ * data from one user to another such as following, searching, etc.
  */
 public class UserDatabaseService extends BaseDatabaseService {
     private static UserDatabaseService instance = null;
@@ -166,6 +169,12 @@ public class UserDatabaseService extends BaseDatabaseService {
                 });
     }
 
+    /**
+     * Returns the count of the user's followers from their respective "followers" collection
+     * @param username The username of the current user
+     * @return a Task containing a long value representing the count of all of the user's followers.
+     * If the query fails then an exception is added in the Task.
+     */
     public Task<Long> followerCount(String username){
         CollectionReference userRef = usersRef.document(username).collection("followers");
         return userRef.count().get(AggregateSource.SERVER).continueWith(task -> {
@@ -176,6 +185,13 @@ public class UserDatabaseService extends BaseDatabaseService {
         });
     }
 
+    /**
+     * Returns the count of the accounts that the user is following from their respective "following"
+     * collection.
+     * @param username the username of the current user
+     * @return a Task containing a long value representing the count of all of the accounts that the
+     * user is following. If the query fails then an exception is added in the Task.
+     */
     public Task<Long> followingCount(String username){
         CollectionReference userRef = usersRef.document(username).collection("following");
         return userRef.count().get(AggregateSource.SERVER).continueWith(task -> {
@@ -185,6 +201,7 @@ public class UserDatabaseService extends BaseDatabaseService {
             return task.getResult().getCount();
         });
     }
+
     /**
      * Searches for users in the database
      *
