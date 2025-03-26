@@ -48,8 +48,8 @@ import java.util.Date;
 @LargeTest
 public class FilterActivityTest extends BaseActivityTest {
     @Rule
-    public ActivityScenarioRule<MainActivity> scenario = new
-            ActivityScenarioRule<>(MainActivity.class);
+    public ActivityScenarioRule<LoginSignupActivity> scenario = new
+            ActivityScenarioRule<>(LoginSignupActivity.class);
 
     @BeforeClass
     public static void loginUser() {
