@@ -28,8 +28,6 @@ import java.util.Objects;
  * Performs firebase emulator setup, seeding, and teardown.
  */
 public class BaseActivityTest {
-    // override this user if testing with a user already logged is needed
-
     @BeforeClass
     public static void setup() throws InterruptedException {
         // Specific address for emulated device to access our localHost
