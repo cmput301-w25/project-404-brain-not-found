@@ -19,8 +19,6 @@ import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.instanceOf;
 
-import android.content.Intent;
-
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.matcher.RootMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -50,8 +48,8 @@ import java.util.Date;
 @LargeTest
 public class FilterActivityTest extends BaseActivityTest {
     @Rule
-    public ActivityScenarioRule<LoginSignupActivity> scenario = new
-            ActivityScenarioRule<>(LoginSignupActivity.class);
+    public ActivityScenarioRule<MainActivity> scenario = new
+            ActivityScenarioRule<>(MainActivity.class);
 
     @BeforeClass
     public static void loginUser() {
@@ -92,15 +90,6 @@ public class FilterActivityTest extends BaseActivityTest {
 
         Thread.sleep(2000);
 
-        scenario.getScenario().onActivity(activity -> {
-            Intent intent = new Intent(activity, MainActivity.class);
-            activity.startActivity(intent);
-        });
-
-        // Give time for MainActivity to load before test interactions
-        Thread.sleep(2000);
-
-        onView(withId(R.id.mood_history_icon)).perform(click());
     }
 
 
@@ -118,6 +107,7 @@ public class FilterActivityTest extends BaseActivityTest {
     @Test
     public void filterByEmotionDoesShowsValidMoods() {
         Espresso.onIdle(); //idle to wait for the Moods to Load
+        onView(withId(R.id.mood_history_icon)).perform(click());
         onView(withId(R.id.filter_button)).perform(click());
 
         // set the 'Shame' selection from the spinner
@@ -142,6 +132,7 @@ public class FilterActivityTest extends BaseActivityTest {
     public void testResetFilters() {
         Espresso.onIdle();
         // set the 'Shame' selection from the spinner (remove some posts from the view)
+        onView(withId(R.id.mood_history_icon)).perform(click());
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.filter_by_mood_spinner)).perform(click());
         onData(allOf(is(instanceOf(String.class)), is("Shame")))
@@ -166,6 +157,7 @@ public class FilterActivityTest extends BaseActivityTest {
     @Test
     public void filterByDayShowsValidMoods() {
         Espresso.onIdle();
+        onView(withId(R.id.mood_history_icon)).perform(click());
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.filter_by_day)).perform(click());
         onView(withText("SET FILTER")).inRoot(isDialog()).perform(click());
@@ -185,6 +177,7 @@ public class FilterActivityTest extends BaseActivityTest {
     @Test
     public void filterByWeekShowsValidMoods() {
         Espresso.onIdle();
+        onView(withId(R.id.mood_history_icon)).perform(click());
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.filter_by_week)).perform(click());
         onView(withText("SET FILTER")).inRoot(isDialog()).perform(click());
@@ -203,6 +196,7 @@ public class FilterActivityTest extends BaseActivityTest {
     @Test
     public void filterByMonthShowsValidMoods() {
         Espresso.onIdle();
+        onView(withId(R.id.mood_history_icon)).perform(click());
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.filter_by_month)).perform(click());
         onView(withText("SET FILTER")).inRoot(isDialog()).perform(click());
@@ -222,6 +216,7 @@ public class FilterActivityTest extends BaseActivityTest {
     @Test
     public void filterByTextShowsValidMoods() {
         Espresso.onIdle();
+        onView(withId(R.id.mood_history_icon)).perform(click());
         onView(withId(R.id.filter_button)).perform(click());
         onView(withId(R.id.filter_by_text)).perform(typeText("test1")).perform(closeSoftKeyboard());
         onView(withText("SET FILTER")).inRoot(isDialog()).perform(click());
@@ -238,6 +233,7 @@ public class FilterActivityTest extends BaseActivityTest {
     @Test
     public void cancelFiltersDoesntUpdateList() {
         Espresso.onIdle();
+        onView(withId(R.id.mood_history_icon)).perform(click());
         onView(withId(R.id.filter_button)).perform(click());
 
 
