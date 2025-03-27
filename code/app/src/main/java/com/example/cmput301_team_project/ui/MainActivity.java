@@ -52,15 +52,13 @@ public class MainActivity extends BaseActivity{
             checkNotification();
             if(item.getItemId() == R.id.mood_history_icon) {
                 replaceFragment(MoodHistoryFragment.newInstance());
-                checkNotification();
             }
             else if(item.getItemId() == R.id.user_icon) {
                 replaceFragment(UserFragment.newInstance());
-                checkNotification();
+
             }
             else if(item.getItemId() == R.id.mood_following_icon) {
                 replaceFragment(MoodFollowingFragment.newInstance());
-                checkNotification();
             }
             else if(item.getItemId() == R.id.mentioned_icon){
                 replaceFragment(MentionedMoodsFragment.newInstance(this::checkNotification));
