@@ -13,6 +13,7 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -203,10 +204,14 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 });
     }
 
-    public Task<List<Mood>> getMentionedMoods(List<String> moodIds) {
-        List<Task<DocumentSnapshot>> fetchTasks = new ArrayList<>();
+    public Task<List<Mood>> getMentionedMoods(List<String> moodIds, MoodFilterState moodFilterState) {
+        List<Task<QuerySnapshot>> fetchTasks = new ArrayList<>();
         for(String moodId : moodIds) {
-            fetchTasks.add(moodsRef.document(moodId).get());
+            Query query = moodsRef.whereEqualTo(FieldPath.documentId(), moodId);
+
+            query = applyFilteringQueries(query, moodFilterState);
+
+            fetchTasks.add(query.get());
         }
 
         return Tasks.whenAllSuccess(fetchTasks)
@@ -214,9 +219,13 @@ public class MoodDatabaseService extends BaseDatabaseService {
                     if(result.isSuccessful()) {
                         Set<Mood> moodList = new HashSet<>();
                         for(Object res : result.getResult()) {
-                            if(res instanceof DocumentSnapshot documentSnapshot) {
-                                moodList.add(moodFromDoc(documentSnapshot));
-
+                            if(res instanceof QuerySnapshot querySnapshot) {
+                                for(DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                    Mood mood = moodFromDoc(document);
+                                    if(moodFilterState.verifyNonDatabaseFilters(mood)) {
+                                        moodList.add(mood);
+                                    }
+                                }
                             }
                         }
                         return new ArrayList<>(moodList);

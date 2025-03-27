@@ -46,7 +46,7 @@ public class MentionedMoodsFragment extends BaseMoodListFragment {
     @Override
     protected void loadMoodData() {
         userDatabaseService.getMentions(FirebaseAuthenticationService.getInstance().getCurrentUser())
-                .addOnSuccessListener(mentions -> moodDatabaseService.getMentionedMoods(mentions)
+                .addOnSuccessListener(mentions -> moodDatabaseService.getMentionedMoods(mentions, moodFilterState)
                         .addOnSuccessListener(moods -> {
                             moodListAdapter.clear();
                             moodListAdapter.addAll(moods);
