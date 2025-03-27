@@ -76,7 +76,7 @@ public class MentionedMoodsFragment extends BaseMoodListFragment {
         List<Task<Void>> deleteList = new ArrayList<>();
         for (Mood mood: seenItems){
             String moodId = mood.getId();
-            deleteList.add(userDatabaseService.deleteMentions(moodId));
+            deleteList.add(userDatabaseService.deleteMentions(moodId, FirebaseAuthenticationService.getInstance().getCurrentUser()));
         }
         return Tasks.whenAll(deleteList);
     }

@@ -193,7 +193,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         moodList.remove(position);
         // Remove from database
         moodDatabaseService.deleteMood(mood);
-        userDatabaseService.deleteMentions(mood.getId());
+        userDatabaseService.deleteMentions(mood.getId(), null);
         // Notify the adapter to refresh the list view
         notifyDataSetChanged();
     }

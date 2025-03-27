@@ -432,13 +432,18 @@ public class UserDatabaseService extends BaseDatabaseService {
                 });
     }
 
-    public Task<Void> deleteMentions(String moodId){
-        return mentionsRef
-                .whereEqualTo("moodId", moodId)
-                .get()
-                .continueWithTask(query -> {
+    public Task<Void> deleteMentions(String moodId, String username){
+        Query query = mentionsRef
+                .whereEqualTo("moodId", moodId);
+
+        if(username != null) {
+            query = query.whereEqualTo("mentionedUser", username);
+        }
+
+        return query.get()
+                .continueWithTask(task -> {
                     List<Task<Void>> deleteList = new ArrayList<>();
-                    for (DocumentSnapshot document: query.getResult().getDocuments()){
+                    for (DocumentSnapshot document: task.getResult().getDocuments()){
                         deleteList.add(document.getReference().delete());
                     }
                     return Tasks.whenAll(deleteList);
