@@ -429,6 +429,9 @@ public class UserDatabaseService extends BaseDatabaseService {
                 });
     }
 
+    public Task<QuerySnapshot> getAllUsers() {
+        return usersRef.get();
+    }
     public Task<Void> deleteMentions(String moodId, String username){
         return usersRef.document(username)
                 .collection("mentions")

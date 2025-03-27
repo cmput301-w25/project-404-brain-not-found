@@ -12,6 +12,7 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
@@ -45,6 +46,9 @@ public class CommentListFragment extends DialogFragment {
         return fragment;
     }
 
+    /**
+     * A method for checking if a comment contains valid users if any mentions have been included.
+     */
     public Task<Boolean> parseComment(String comment, String moodId) {
         String[] commentArray = comment.split(" ");
         ArrayList<Task<Boolean>> tasks = new ArrayList<>();
@@ -71,7 +75,6 @@ public class CommentListFragment extends DialogFragment {
                 tasks.add(taskSource.getTask());
             }
         }
-
         return Tasks.whenAll(tasks).continueWith(task -> {
             if (mentionArray.contains("")) {
                 return false;
@@ -118,7 +121,7 @@ public class CommentListFragment extends DialogFragment {
                                     commentAdapter.displayComments(comments);
                                 });
                             });
-                            commentTextBox.setText(null); // Clear the input box
+                            commentTextBox.setText(null);
                         } else {
                             commentTextBox.setError("At least one mentioned user does not exist");
                         }
