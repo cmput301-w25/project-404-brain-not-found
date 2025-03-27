@@ -57,6 +57,8 @@ public class MentionedMoodsFragment extends BaseMoodListFragment {
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
+        view.findViewById(R.id.filter_button).setVisibility(View.GONE);
+        view.findViewById(R.id.mood_map_button).setVisibility(View.GONE);
         ListView mentionList = view.findViewById(R.id.mood_List);
 
         mentionList.setOnScrollListener(new AbsListView.OnScrollListener(){
