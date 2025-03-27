@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -26,12 +27,23 @@ import java.util.List;
 public abstract class BaseUserListFragment extends Fragment {
     protected abstract int getUserButtonTextId();
     protected abstract UserButtonActionEnum getUserButtonAction();
+    protected abstract Task<List<PublicUser>> loadDefaultData(int low, int high);
 
+    protected UserDatabaseService userDatabaseService;
+
+    @FunctionalInterface
+    interface LoadDataWrapper {
+        Task<List<PublicUser>> load(String currentUser, String query, int low, int high);
+    }
+    private final int BATCH_SIZE = 10;
     private UserListAdapter userAdapter;
-    private UserDatabaseService userDatabaseService;
+    private LoadDataWrapper loadDataWrapper;
+    private int low, high;
 
     protected BaseUserListFragment() {
         // empty protected constructor to be called by sub-classes
+        low = 0;
+        high = BATCH_SIZE;
     }
 
     @Override
@@ -49,6 +61,10 @@ public abstract class BaseUserListFragment extends Fragment {
         userAdapter = new UserListAdapter(requireContext(), new ArrayList<>(), getString(getUserButtonTextId()), getUserButtonAction());
         userList.setAdapter(userAdapter);
 
+        loadDataWrapper = (user, q, l, h) -> loadDefaultData(l, h);
+        loadDataWrapper.load(FirebaseAuthenticationService.getInstance().getCurrentUser(), "", low, high)
+                .addOnSuccessListener(res -> userAdapter.addAll(res));
+
         SearchView searchView = view.findViewById(R.id.user_search);
         searchView.setOnCloseListener(() -> {
             userAdapter.clear();
@@ -58,16 +74,15 @@ public abstract class BaseUserListFragment extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 String currentUser = FirebaseAuthenticationService.getInstance().getCurrentUser();
-                Task<List<PublicUser>> searchTask;
 
                 switch (getUserButtonAction()) {
-                    case FOLLOW -> searchTask = userDatabaseService.userSearch(currentUser, query);
-                    case UNFOLLOW -> searchTask = userDatabaseService.userFollowingSearch(currentUser, query);
-                    case REMOVE -> searchTask = userDatabaseService.userFollowersSearch(currentUser, query);
+                    case FOLLOW -> loadDataWrapper = (user, q, l, h) -> userDatabaseService.userSearch(user, q);
+                    case UNFOLLOW -> loadDataWrapper = (user, q, l, h) -> userDatabaseService.userFollowingSearch(user, q);
+                    case REMOVE -> loadDataWrapper = (user, q, l, h) -> userDatabaseService.userFollowersSearch(user, q);
                     default -> throw new IllegalStateException("Unexpected action: " + getUserButtonAction());
                 }
 
-                searchTask.addOnSuccessListener(users -> userAdapter.replaceItems(users))
+                loadDataWrapper.load(currentUser, query, low, high).addOnSuccessListener(users -> userAdapter.replaceItems(users))
                         .addOnFailureListener(users -> userAdapter.clear());
 
                 return true;
@@ -82,6 +97,16 @@ public abstract class BaseUserListFragment extends Fragment {
             PublicUser user = userAdapter.getItem(position);
             ViewProfileFragment.newInstance(user.getUsername(), user.getName()).show(requireActivity().getSupportFragmentManager(), "Profile");
         });
+
+        Button showMoreButton = (Button) inflater.inflate(R.layout.user_search_footer, userList, false);
+        showMoreButton.setOnClickListener(v -> {
+            low += BATCH_SIZE;
+            high += BATCH_SIZE;
+            loadDataWrapper.load(FirebaseAuthenticationService.getInstance().getCurrentUser(), searchView.getQuery().toString(), low, high)
+                    .addOnSuccessListener(users -> userAdapter.addAll(users));
+        });
+        userList.addFooterView(showMoreButton);
+
         return view;
     }
 

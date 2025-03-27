@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -346,7 +347,10 @@ public class UserDatabaseService extends BaseDatabaseService {
                 .set(new PublicUser(follower, task.getResult())));
 
         return Tasks.whenAll(followingTask, followerTask)
-                .continueWithTask(voidTask -> removeRequest(follower, target));
+                .continueWithTask(voidTask -> {
+                    updateFollowerCount(target, true);
+                    return removeRequest(follower, target);
+                });
     }
 
     /**
@@ -385,24 +389,95 @@ public class UserDatabaseService extends BaseDatabaseService {
                 .document(follower)
                 .delete();
 
-        return Tasks.whenAll(followingTask, followersTask);
+
+        return Tasks.whenAll(followingTask, followersTask).continueWithTask(voidTask -> {
+            updateFollowerCount(target, false);
+            return voidTask;
+        });
     }
 
-    public Task<List<String>> getFollowing(String username) {
-        return usersRef.document(username)
-                .collection("following")
-                .get()
+    public void updateFollowerCount(String username, boolean increment) {
+        DocumentReference userRef = usersRef.document(username);
+
+        db.runTransaction((Transaction.Function<Void>) transaction -> {
+            DocumentSnapshot snapshot = transaction.get(userRef);
+            Long currentCount = snapshot.getLong("followerCount");
+
+            if (currentCount == null) {
+                currentCount = 0L;
+            }
+
+            long newCount = increment ? currentCount + 1 : Math.max(currentCount - 1, 0);
+
+            transaction.update(userRef, "followerCount", newCount);
+            return null;
+        }).addOnSuccessListener(aVoid ->
+                Log.d("Firestore", "Follower count updated successfully")
+        ).addOnFailureListener(e ->
+                Log.e("Firestore", "Error updating follower count", e)
+        );
+    }
+
+    public Task<List<PublicUser>> getFollowing(String username, Integer low, Integer high) {
+        CollectionReference followingRef = usersRef.document(username).collection("following");
+        Task<QuerySnapshot> followingTask;
+
+        if(low != null && high != null) {
+            followingTask = followingRef.startAt(low).limit(high).get();
+        }
+        else {
+            followingTask = followingRef.get();
+        }
+        return followingTask.continueWith(task -> {
+            if(task.isSuccessful()) {
+                return task.getResult().getDocuments().stream()
+                        .map(document -> new PublicUser(document.getId(), document.getString("name")))
+                        .collect(Collectors.toList());
+            }
+
+            return new ArrayList<>();
+        });
+    }
+
+    public Task<List<PublicUser>> getFollowers(String username, Integer low, Integer high) {
+        CollectionReference followersRef = usersRef.document(username).collection("followers");
+        Task<QuerySnapshot> followersTask;
+        if(low != null && high != null) {
+            followersTask = followersRef.startAt(low).limit(high).get();
+        }
+        else {
+            followersTask = followersRef.get();
+        }
+        return followersTask.continueWith(task -> {
+           if(task.isSuccessful()) {
+               return task.getResult().getDocuments().stream()
+                       .map(document -> new PublicUser(document.getId(), document.getString("name")))
+                       .collect(Collectors.toList());
+           }
+
+           return new ArrayList<>();
+        });
+    }
+
+    public Task<List<PublicUser>> getMostFollowedUsers(Integer low, Integer high) {
+        Query query = usersRef.orderBy("followerCount", Query.Direction.DESCENDING);
+
+        if(low != null && high != null) {
+            query = query.startAt(low).limit(high);
+        }
+
+        return query.get()
                 .continueWith(task -> {
                     if(task.isSuccessful()) {
-                        return task.getResult()
-                                .getDocuments()
-                                .stream()
-                                .map(DocumentSnapshot::getId)
+                        return task.getResult().getDocuments().stream()
+                                .map(document -> new PublicUser(document.getId(), document.getString("name")))
                                 .collect(Collectors.toList());
                     }
+
                     return new ArrayList<>();
                 });
     }
+
     public Task<DocumentReference> addMention(String moodId, String mentionedUser){
         Map<String, Object> mentionData = new HashMap<>();
         mentionData.put("moodId", moodId);

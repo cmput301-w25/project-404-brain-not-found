@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment;
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
+import com.example.cmput301_team_project.model.PublicUser;
+
+import java.util.stream.Collectors;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,8 +36,8 @@ public class MoodFollowingFragment extends BaseMoodListFragment {
 
     @Override
     protected void loadMoodData() {
-        userDatabaseService.getFollowing(FirebaseAuthenticationService.getInstance().getCurrentUser())
-                        .addOnSuccessListener(following -> moodDatabaseService.getFollowingMoods(following, moodFilterState)
+        userDatabaseService.getFollowing(FirebaseAuthenticationService.getInstance().getCurrentUser(), null, null)
+                        .addOnSuccessListener(following -> moodDatabaseService.getFollowingMoods(following.stream().map(PublicUser::getUsername).collect(Collectors.toList()), moodFilterState)
                                 .addOnSuccessListener(moods -> {
                                     moodListAdapter.clear();
                                     moodListAdapter.addAll(moods);
