@@ -45,31 +45,6 @@ public class CommentListFragment extends DialogFragment {
         return fragment;
     }
 
-
-//    public boolean parseComment(String comment, String moodId){
-//        String[] commentArray = comment.split(" ");
-//        ArrayList<String> mentionArray = new ArrayList<>();
-//        for (String i:commentArray){
-//            if (i.charAt(0) == '@'){
-//                String mentionedUser = i.substring(1);
-//                userDatabaseService.userExists(mentionedUser).addOnSuccessListener(exists ->{
-//                    if (exists){
-//                        mentionArray.add(mentionedUser);
-//                    }else{
-//                        mentionArray.add("");
-//                    }
-//                });
-//            }
-//        }
-//        if (mentionArray.contains("")){
-//            return false;
-//        }
-//        for (String user:mentionArray){
-//            userDatabaseService.addMention(moodId, user);
-//        }
-//        return true;
-//    }
-
     public Task<Boolean> parseComment(String comment, String moodId) {
         String[] commentArray = comment.split(" ");
         ArrayList<Task<Boolean>> tasks = new ArrayList<>();
@@ -90,17 +65,16 @@ public class CommentListFragment extends DialogFragment {
                     }
                 }).addOnFailureListener(e -> {
                     mentionArray.add("");
-                    taskSource.setResult(false);  // Handle failure
+                    taskSource.setResult(false);
                 });
 
-                tasks.add(taskSource.getTask()); // Store each async task
+                tasks.add(taskSource.getTask());
             }
         }
 
-        // Wait for all async tasks to finish before proceeding
         return Tasks.whenAll(tasks).continueWith(task -> {
             if (mentionArray.contains("")) {
-                return false; // If any invalid mention exists, return false
+                return false;
             }
             for (String user : mentionArray) {
                 userDatabaseService.addMention(moodId, user);
