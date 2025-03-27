@@ -80,15 +80,17 @@ public class CommentListFragment extends DialogFragment {
 
             commentButton.setOnClickListener(v -> {
                 String commentText = commentTextBox.getText().toString();
-                Comment newComment = new Comment(firebaseAuthenticationService.getCurrentUser(), commentText);
-                parseComment(commentText, moodId);
-                moodDatabaseService.addComment(moodId, newComment).addOnSuccessListener(d -> {
-                    moodDatabaseService.getComments(moodId).addOnSuccessListener(comments -> {
-                        commentAdapter.displayComments(comments);
+                if (!commentText.isEmpty()) {
+                    Comment newComment = new Comment(firebaseAuthenticationService.getCurrentUser(), commentText);
+                    parseComment(commentText, moodId);
+                    moodDatabaseService.addComment(moodId, newComment).addOnSuccessListener(d -> {
+                        moodDatabaseService.getComments(moodId).addOnSuccessListener(comments -> {
+                            commentAdapter.displayComments(comments);
+                        });
                     });
-                });
 
-                commentTextBox.setText(null);
+                    commentTextBox.setText(null);
+                }
 
             });
         });
