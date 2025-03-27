@@ -1,9 +1,5 @@
 package com.example.cmput301_team_project.db;
 
-
-
-
-
 import com.example.cmput301_team_project.enums.FollowRelationshipEnum;
 import com.example.cmput301_team_project.model.AppUser;
 import com.example.cmput301_team_project.model.PublicUser;
