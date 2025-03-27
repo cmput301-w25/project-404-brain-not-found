@@ -26,6 +26,9 @@ import java.util.Objects;
  */
 public class BaseActivityTest {
 
+    /**
+     * Sets up the ip and port number for the Firebase emulator.
+     */
     @BeforeClass
     public static void setup(){
         // Specific address for emulated device to access our localHost
@@ -35,6 +38,10 @@ public class BaseActivityTest {
         FirebaseFirestore.getInstance().useEmulator(androidLocalhost, portNumber);
     }
 
+    /**
+     * Seeds the emulated Firebase database with data for testing, such as some Mood posts and some
+     * users. Runs before the tests.
+     */
     @Before
     public void seedDatabase() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -58,8 +65,9 @@ public class BaseActivityTest {
         }
     }
 
-
-
+    /**
+     * Removes all data added to the emulated Firebase database. Runs after all tests are completed.
+     */
     @After
     public void tearDown() {
         String projectId = "cmput301-project-d122a";

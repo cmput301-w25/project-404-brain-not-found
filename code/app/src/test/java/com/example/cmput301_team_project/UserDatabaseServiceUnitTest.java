@@ -29,7 +29,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 /**
- * Class for testing {@link UserDatabaseService}
+ * Class for testing {@link UserDatabaseService}.
+ *
+ * Verifies that all methods regarding adding users to the database are working as intended.
  */
 public class UserDatabaseServiceUnitTest {
     @Mock
@@ -48,6 +50,12 @@ public class UserDatabaseServiceUnitTest {
     private UserDatabaseService userDatabaseService;
     private FirebaseAuthenticationService firebaseAuthenticationService;
 
+    /**
+     * sets up the mocks needed before testing the UserDatabaseService class.
+     *
+     * Mocks a user collection, UserDatabaseService instance, and FirebaseAuthenticationService
+     * instance.
+     */
     @Before
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -63,6 +71,9 @@ public class UserDatabaseServiceUnitTest {
         firebaseAuthenticationService = FirebaseAuthenticationService.getInstance();
     }
 
+    /**
+     * Verifies that a newly created user is being added to the database and is visible in it.
+     */
     @Test
     public void testAddUser() {
         AppUser mockUser = new AppUser("mockUsername", "mockName", "mockPassword");
@@ -77,6 +88,11 @@ public class UserDatabaseServiceUnitTest {
         verify(mockDocRef).set(mockUser);
     }
 
+    /**
+     * Verifies that a user actually exists in the database, ensuring that the userExists() method
+     * is properly interacting with the Firestore database and correctly identifies the user's
+     * document.
+     */
     @Test
     public void testUserExists() {
         String username = "mockUsername";

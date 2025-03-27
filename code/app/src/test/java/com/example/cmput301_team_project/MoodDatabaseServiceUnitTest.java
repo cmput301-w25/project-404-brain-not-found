@@ -23,7 +23,10 @@ import org.mockito.MockitoAnnotations;
 import java.util.Date;
 
 /**
- * Class for testing {@link MoodDatabaseService}
+ * Class for testing {@link MoodDatabaseService}.
+ *
+ * Tests to validate all methods of adding, deleting, and editing Moods are being updated to the
+ * database.
  */
 public class MoodDatabaseServiceUnitTest {
     @Mock
@@ -35,6 +38,11 @@ public class MoodDatabaseServiceUnitTest {
 
     private MoodDatabaseService moodDatabaseService;
 
+    /**
+     * Sets up the mocks needed for the tests to run properly.
+     *
+     * Makes a mock Mood collection, and a mock MoodDatabaseService instance.
+     */
     @Before
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -47,6 +55,9 @@ public class MoodDatabaseServiceUnitTest {
         moodDatabaseService = MoodDatabaseService.getInstance();
     }
 
+    /**
+     * Verifies that the newly added Mood is actually being added to the database.
+     */
     @Test
     public void testAddMood() {
         Mood mood = Mood.createMood(MoodEmotionEnum.ANGER, MoodSocialSituationEnum.ALONE, "test", true, "me", new Date(), null, null);
@@ -55,6 +66,10 @@ public class MoodDatabaseServiceUnitTest {
         verify(mockMoodCollection).add(mood);
     }
 
+    /**
+     * verifies that the deleted Mood and all other related objects (such as the Moods respective
+     * comments) are actually being removed from the database.
+     */
     @Test
     public void testDeleteMood() {
         Mood mood = Mood.createMood(MoodEmotionEnum.DISGUST, MoodSocialSituationEnum.SEVERAL, "test", true, "me", new Date(), null, null);
@@ -68,6 +83,9 @@ public class MoodDatabaseServiceUnitTest {
         verify(mockDocRef).delete();
     }
 
+    /**
+     * Verifies that the edited Mood is actually being updated in the database.
+     */
     @Test
     public void testUpdateMood() {
         Mood mood = Mood.createMood(MoodEmotionEnum.SADNESS, MoodSocialSituationEnum.ALONE, "test", true, "me", new Date(), null, null);
