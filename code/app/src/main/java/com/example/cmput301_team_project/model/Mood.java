@@ -149,4 +149,18 @@ public abstract class Mood implements Serializable {
     public GeoPoint getLocation() {
         return location;
     }
+
+    @Override
+    public boolean equals(Object obj){
+        Mood mood = (Mood) obj;
+        if (Objects.equals(this.getId(), mood.getId())){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
 }

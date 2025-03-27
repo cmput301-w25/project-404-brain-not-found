@@ -1,5 +1,6 @@
 package com.example.cmput301_team_project.db;
 
+import android.util.Log;
 
 import com.example.cmput301_team_project.enums.FollowRelationshipEnum;
 import com.example.cmput301_team_project.model.AppUser;
@@ -10,7 +11,9 @@ import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -22,7 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -32,9 +34,11 @@ import java.util.stream.Collectors;
 public class UserDatabaseService extends BaseDatabaseService {
     private static UserDatabaseService instance = null;
     private final CollectionReference usersRef;
+    private final CollectionReference mentionsRef;
 
     {
         usersRef = db.collection("users");
+        mentionsRef = db.collection("mentions");
     }
 
     private UserDatabaseService() {
@@ -398,5 +402,59 @@ public class UserDatabaseService extends BaseDatabaseService {
                     }
                     return new ArrayList<>();
                 });
+    }
+    public Task<DocumentReference> addMention(String moodId, String mentionedUser){
+        Map<String, Object> mentionData = new HashMap<>();
+        mentionData.put("moodId", moodId);
+        mentionData.put("date", FieldValue.serverTimestamp());
+        mentionData.put("mentionedUser", mentionedUser);
+
+        return mentionsRef.add(mentionData);
+    }
+
+    public Task<List<String>> getMentions(String username) {
+        return mentionsRef
+                .whereEqualTo("mentionedUser", username)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .continueWith(task -> {
+                    if (task.isSuccessful()) {
+                        return task.getResult()
+                                .getDocuments()
+                                .stream()
+                                .map(DocumentSnapshot -> DocumentSnapshot.getString("moodId"))
+                                .collect(Collectors.toList());
+                    }
+                    else {
+                        Log.d("Mentions", "Error getting mentions: " + task.getException());
+                    }
+                    return new ArrayList<>();
+                });
+    }
+
+    public Task<Void> deleteMentions(String moodId, String username){
+        Query query = mentionsRef
+                .whereEqualTo("moodId", moodId);
+
+        if(username != null) {
+            query = query.whereEqualTo("mentionedUser", username);
+        }
+
+        return query.get()
+                .continueWithTask(task -> {
+                    List<Task<Void>> deleteList = new ArrayList<>();
+                    for (DocumentSnapshot document: task.getResult().getDocuments()){
+                        deleteList.add(document.getReference().delete());
+                    }
+                    return Tasks.whenAll(deleteList);
+                });
+    }
+    public Task<Long> getMentionCount(String username) {
+        return mentionsRef.whereEqualTo("mentionedUser", username).count().get(AggregateSource.SERVER).continueWith(task -> {
+            if (!task.isSuccessful()){
+                throw task.getException();
+            }
+            return task.getResult().getCount();
+        });
     }
 }

@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
+import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.utils.ImageUtils;
@@ -36,6 +37,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
     private Context context;
     private ArrayList<Mood> moodList;
     private MoodDatabaseService moodDatabaseService; // Reference to the database service
+    private UserDatabaseService userDatabaseService;
     private Fragment parentFragment;
     private boolean isOwned;
 
@@ -54,6 +56,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         this.context = context;
         this.moodList = moodList;
         this.moodDatabaseService = MoodDatabaseService.getInstance(); // Get a singleton instance
+        this.userDatabaseService = UserDatabaseService.getInstance();
         this.parentFragment = parentFragment;
         this.isOwned = isOwned;
 
@@ -190,6 +193,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         moodList.remove(position);
         // Remove from database
         moodDatabaseService.deleteMood(mood);
+        userDatabaseService.deleteMentions(mood.getId(), null);
         // Notify the adapter to refresh the list view
         notifyDataSetChanged();
     }
