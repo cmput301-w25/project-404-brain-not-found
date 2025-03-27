@@ -55,7 +55,7 @@ public class CommentListFragment extends DialogFragment {
         ArrayList<String> mentionArray = new ArrayList<>();
 
         for (String word : commentArray) {
-            if (word.charAt(0) == '@') {
+            if (word.startsWith("@")) {
                 String mentionedUser = word.substring(1);
                 TaskCompletionSource<Boolean> taskSource = new TaskCompletionSource<>();
 
@@ -75,14 +75,18 @@ public class CommentListFragment extends DialogFragment {
                 tasks.add(taskSource.getTask());
             }
         }
-        return Tasks.whenAll(tasks).continueWith(task -> {
+        return Tasks.whenAll(tasks).continueWithTask(task -> {
             if (mentionArray.contains("")) {
-                return false;
+                return Tasks.forResult(false);
             }
-            for (String user : mentionArray) {
-                userDatabaseService.addMention(moodId, user);
-            }
-            return true;
+            return moodDatabaseService.isPublic(moodId).continueWith(publicTask -> {
+                if (publicTask.isSuccessful() && Boolean.TRUE.equals(publicTask.getResult())) {
+                    for (String user : mentionArray) {
+                        userDatabaseService.addMention(moodId, user);
+                    }
+                }
+                return true;
+            });
         });
     }
 

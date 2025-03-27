@@ -11,7 +11,6 @@ public class AppUser {
     private String name;
     private String password;
 
-    private Integer mentionsCount;
 
     /**
      * Constructs an AppUser object with the specified username, password, and salt.

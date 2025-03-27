@@ -216,7 +216,8 @@ public class MoodDatabaseService extends BaseDatabaseService {
                         Set<Mood> moodList = new HashSet<>();
                         for(Object res : result.getResult()) {
                             if(res instanceof DocumentSnapshot documentSnapshot) {
-                               moodList.add(moodFromDoc(documentSnapshot));
+                                moodList.add(moodFromDoc(documentSnapshot));
+
                             }
                         }
                         return new ArrayList<>(moodList);
@@ -228,4 +229,16 @@ public class MoodDatabaseService extends BaseDatabaseService {
     public void updateMood(Mood mood) {
         moodsRef.document(mood.getId()).set(mood);
     }
+
+    public Task<Boolean> isPublic(String moodId){
+        return moodsRef.document(moodId).get()
+                .continueWith(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        return documentSnapshot.getBoolean("public");
+                    }
+                    return false;
+                });
+    }
+
 }
