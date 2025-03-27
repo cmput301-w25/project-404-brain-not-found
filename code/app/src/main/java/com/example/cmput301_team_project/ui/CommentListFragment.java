@@ -19,6 +19,8 @@ import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.model.Comment;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.TaskCompletionSource;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.auth.User;
 
@@ -44,14 +46,67 @@ public class CommentListFragment extends DialogFragment {
     }
 
 
-    public void parseComment(String comment, String moodId){
+//    public boolean parseComment(String comment, String moodId){
+//        String[] commentArray = comment.split(" ");
+//        ArrayList<String> mentionArray = new ArrayList<>();
+//        for (String i:commentArray){
+//            if (i.charAt(0) == '@'){
+//                String mentionedUser = i.substring(1);
+//                userDatabaseService.userExists(mentionedUser).addOnSuccessListener(exists ->{
+//                    if (exists){
+//                        mentionArray.add(mentionedUser);
+//                    }else{
+//                        mentionArray.add("");
+//                    }
+//                });
+//            }
+//        }
+//        if (mentionArray.contains("")){
+//            return false;
+//        }
+//        for (String user:mentionArray){
+//            userDatabaseService.addMention(moodId, user);
+//        }
+//        return true;
+//    }
+
+    public Task<Boolean> parseComment(String comment, String moodId) {
         String[] commentArray = comment.split(" ");
-        for (String i:commentArray){
-            if (i.charAt(0) == '@'){
-                String mentionedUser = i.substring(1);
-                userDatabaseService.addMention(moodId, mentionedUser);
+        ArrayList<Task<Boolean>> tasks = new ArrayList<>();
+        ArrayList<String> mentionArray = new ArrayList<>();
+
+        for (String word : commentArray) {
+            if (word.charAt(0) == '@') {
+                String mentionedUser = word.substring(1);
+                TaskCompletionSource<Boolean> taskSource = new TaskCompletionSource<>();
+
+                userDatabaseService.userExists(mentionedUser).addOnSuccessListener(exists -> {
+                    if (exists) {
+                        mentionArray.add(mentionedUser);
+                        taskSource.setResult(true);
+                    } else {
+                        mentionArray.add("");
+                        taskSource.setResult(false);
+                    }
+                }).addOnFailureListener(e -> {
+                    mentionArray.add("");
+                    taskSource.setResult(false);  // Handle failure
+                });
+
+                tasks.add(taskSource.getTask()); // Store each async task
             }
         }
+
+        // Wait for all async tasks to finish before proceeding
+        return Tasks.whenAll(tasks).continueWith(task -> {
+            if (mentionArray.contains("")) {
+                return false; // If any invalid mention exists, return false
+            }
+            for (String user : mentionArray) {
+                userDatabaseService.addMention(moodId, user);
+            }
+            return true;
+        });
     }
 
     @NonNull
@@ -82,19 +137,24 @@ public class CommentListFragment extends DialogFragment {
                 String commentText = commentTextBox.getText().toString();
                 if (!commentText.isEmpty()) {
                     Comment newComment = new Comment(firebaseAuthenticationService.getCurrentUser(), commentText);
-                    parseComment(commentText, moodId);
-                    moodDatabaseService.addComment(moodId, newComment).addOnSuccessListener(d -> {
-                        moodDatabaseService.getComments(moodId).addOnSuccessListener(comments -> {
-                            commentAdapter.displayComments(comments);
-                        });
+                    parseComment(commentText, moodId).addOnSuccessListener(result -> {
+                        if (result) {
+                            moodDatabaseService.addComment(moodId, newComment).addOnSuccessListener(d -> {
+                                moodDatabaseService.getComments(moodId).addOnSuccessListener(comments -> {
+                                    commentAdapter.displayComments(comments);
+                                });
+                            });
+                            commentTextBox.setText(null); // Clear the input box
+                        } else {
+                            commentTextBox.setError("At least one mentioned user does not exist");
+                        }
+                    }).addOnFailureListener(e -> {
+                        System.out.println("Error while parsing comment: " + e.getMessage());
                     });
-
-                    commentTextBox.setText(null);
                 }
-
             });
         });
         return dialog;
-    }
 
-}
+
+}}
