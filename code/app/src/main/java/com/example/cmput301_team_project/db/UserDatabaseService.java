@@ -26,8 +26,11 @@ import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
- * Singleton class to manage user-related operations with the firestore database
- * Handles all user-related queries
+ * the UserDatabaseService singleton class includes methods for making queries on the "users"
+ * collection in the firestore database.
+ *
+ * Provides methods on logging in, signing out, and registering users, as well as relational
+ * data from one user to another such as following, searching, etc.
  */
 public class UserDatabaseService extends BaseDatabaseService {
     private static UserDatabaseService instance = null;
@@ -45,6 +48,11 @@ public class UserDatabaseService extends BaseDatabaseService {
         super(db, executor);
     }
 
+    /**
+     * Gets/creates an instance of the UserDatabaseService.
+     *
+     * @return The instances of the UserDatabaseService.
+     */
     public static UserDatabaseService getInstance() {
         if (instance == null) {
             instance = new UserDatabaseService();
@@ -52,10 +60,23 @@ public class UserDatabaseService extends BaseDatabaseService {
         return instance;
     }
 
+    /**
+     * Sets up a custom Firebase db and executor for testing purposes. Overrides the singleton
+     * instance of UserDatabaseService.
+     *
+     * @param db The Firestore instance to be used.
+     * @param executor The Executor to handle the Firestore operations during the tests.
+     */
     public static void setInstanceForTesting(FirebaseFirestore db, Executor executor) {
         instance = new UserDatabaseService(db, executor);
     }
 
+    /**
+     * Adds a user to the firebase db.
+     *
+     * @param user The AppUser to be added to the db.
+     * @return A void Task if the addition to the db is successful, or an exception if unsuccessful.
+     */
     public Task<Void> addUser(AppUser user) {
         return FirebaseAuthenticationService.getInstance().registerUser(user.getUsername(), user.getPassword())
                 .continueWithTask(taskExecutor, task -> {
@@ -74,6 +95,13 @@ public class UserDatabaseService extends BaseDatabaseService {
                 });
     }
 
+    /**
+     * Gets the users display name.
+     *
+     * @param username The username of the user.
+     * @return A Task containing a String with the user's display name if successful, otherwise an
+     * exception is thrown.
+     */
     public Task<String> getDisplayName(String username){
         DocumentReference uref = usersRef.document(username);
         return uref.get().continueWith(task -> {
@@ -165,6 +193,13 @@ public class UserDatabaseService extends BaseDatabaseService {
                 });
     }
 
+    /**
+     * Gets the count of all accounts following the user.
+     *
+     * @param username The username of the user.
+     * @return A Task containing the count of the user's followers if successful, otherwise an
+     * exception is thrown.
+     */
     public Task<Long> followerCount(String username){
         CollectionReference userRef = usersRef.document(username).collection("followers");
         return userRef.count().get(AggregateSource.SERVER).continueWith(task -> {
@@ -175,6 +210,13 @@ public class UserDatabaseService extends BaseDatabaseService {
         });
     }
 
+    /**
+     * Gets the count of accounts the user is following.
+     *
+     * @param username The username of the user.
+     * @return A task containing the count of accounts the user is following, otherwise an
+     * exception is thrown.
+     */
     public Task<Long> followingCount(String username){
         CollectionReference userRef = usersRef.document(username).collection("following");
         return userRef.count().get(AggregateSource.SERVER).continueWith(task -> {
@@ -184,6 +226,7 @@ public class UserDatabaseService extends BaseDatabaseService {
             return task.getResult().getCount();
         });
     }
+
     /**
      * Searches for users in the database
      *
@@ -384,6 +427,13 @@ public class UserDatabaseService extends BaseDatabaseService {
         return Tasks.whenAll(followingTask, followersTask);
     }
 
+    /**
+     * Gets the list of accounts the users is following.
+     *
+     * @param username The username of the user.
+     * @return A Task containing a list of users that the user is following, otherwise an empty
+     * ArrayList is returned.
+     */
     public Task<List<String>> getFollowing(String username) {
         return usersRef.document(username)
                 .collection("following")

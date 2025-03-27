@@ -6,8 +6,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.concurrent.Executor;
 
 /**
- * Base class of DatabaseService
- * Provides a shared FirebaseFirestore instance for all database services
+ * the BaseDatabaseService class serves as the base for all other DatabaseService classes.
+ *
+ * It provides a shared instance of the FirebaseFirestore database.
  */
 public abstract class BaseDatabaseService {
     protected FirebaseFirestore db;
