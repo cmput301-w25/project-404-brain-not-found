@@ -117,7 +117,7 @@ public class UserDatabaseService extends BaseDatabaseService {
      * This method retrieves the stored password hash and salt from Firestore,
      * hashes the input password with the same salt, and compares the results.
      *
-     * @param username The username of the user.
+     * @param username      The username of the user.
      * @param inputPassword The password entered by the user.
      * @return A {@link Task} that resolves to {@code true} if the password matches, otherwise {@code false}.
      */
@@ -153,8 +153,8 @@ public class UserDatabaseService extends BaseDatabaseService {
      * Base query that searches field for query in the given collection. The search is case-insensitive
      *
      * @param collectionRef collection reference to search in
-     * @param field field to search in
-     * @param query query to search for
+     * @param field         field to search in
+     * @param query         query to search for
      * @return IF query is empty, returns all documents in the collection, otherwise returns all documents that start with query (case-insensitive)
      */
     private Task<QuerySnapshot> getBaseUserSearchQuery(CollectionReference collectionRef, String field, String query) {
@@ -230,8 +230,8 @@ public class UserDatabaseService extends BaseDatabaseService {
     /**
      * Searches for users in the database
      *
-     * @param currentUser username of the user making the search
-     * @param query search query
+     * @param currentUser   username of the user making the search
+     * @param query         search query
      * @return A {@link Task} that resolves to a list of users matching the query
      */
     public Task<List<PublicUser>> userSearch(String currentUser, String query) {
@@ -272,9 +272,9 @@ public class UserDatabaseService extends BaseDatabaseService {
     /**
      * Searches for users in a nested collection of a given user
      *
-     * @param username username of the user
-     * @param collection nested collection name
-     * @param query search query
+     * @param username      username of the user
+     * @param collection    nested collection name
+     * @param query         search query
      * @return A {@link Task} that resolves to a list of users matching the query in the nested collection
      */
     private Task<List<PublicUser>> userSearchNestedCollection(String username, String collection, String query) {

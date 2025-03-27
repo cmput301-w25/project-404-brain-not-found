@@ -21,7 +21,7 @@ public class MapsUtils {
      *
      * @param emoji The emoji of the Mood post.
      * @param color The color of the Mood post.
-     * @param size The size of the Marker.
+     * @param size  The size of the Marker.
      * @return A {@link BitmapDescriptor} consisting of the custom marker.
      */
     public static BitmapDescriptor getEmojiMarker(String emoji, int color, int size) {
