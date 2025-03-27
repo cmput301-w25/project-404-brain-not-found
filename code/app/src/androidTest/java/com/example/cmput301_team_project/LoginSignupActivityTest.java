@@ -30,6 +30,11 @@ public class LoginSignupActivityTest extends BaseActivityTest {
     public ActivityScenarioRule<LoginSignupActivity> scenario = new
             ActivityScenarioRule<>(LoginSignupActivity.class);
 
+    /**
+     * Checks that the proper error is displayed if the password text input field is left empty
+     * when logging in.
+     * @throws InterruptedException if the Thread.sleep() method is interrupted.
+     */
     @Test
     public void logInPasswordErrorShown() throws InterruptedException {
         Thread.sleep(500);
@@ -42,6 +47,11 @@ public class LoginSignupActivityTest extends BaseActivityTest {
 
     }
 
+    /**
+     * Checks that the proper error is displayed if the username text input field is left empty
+     * when logging in.
+     * @throws InterruptedException if the Thread.sleep() method is interrupted.
+     */
     @Test
     public void logInUserErrorShown() throws InterruptedException {
         Thread.sleep(500);
@@ -53,6 +63,11 @@ public class LoginSignupActivityTest extends BaseActivityTest {
         onView(withId(R.id.login_username)).check(matches(hasErrorText("Username cannot be empty")));
     }
 
+    /**
+     * Checks that the proper error is displayed if the password input field is too short when
+     * signing up a new user.
+     * @throws InterruptedException if the Thread.sleep() method is interrupted.
+     */
     @Test
     public void SignUpPasswordErrorShown() throws InterruptedException {
         Thread.sleep(500);
@@ -65,6 +80,11 @@ public class LoginSignupActivityTest extends BaseActivityTest {
 
     }
 
+    /**
+     * Checks that the proper error is displayed if the username text input field is left empty
+     * when signing up a new user.
+     * @throws InterruptedException if the Thread.sleep() method is interrupted.
+     */
     @Test
     public void signUpUserEmptyErrorShown() throws InterruptedException {
         Thread.sleep(500);
@@ -76,7 +96,11 @@ public class LoginSignupActivityTest extends BaseActivityTest {
         onView(withId(R.id.signup_username)).check(matches(hasErrorText("Username cannot be empty")));
     }
 
-
+    /**
+     * Checks that the proper error is displayed when a user signing in types in a
+     * username that already exists
+     * @throws InterruptedException if the Thread.sleep() method is interrupted.
+     */
     @Test
     public void signUpUserErrorShown() throws InterruptedException {
         Thread.sleep(500);
@@ -91,6 +115,11 @@ public class LoginSignupActivityTest extends BaseActivityTest {
         onView(withId(R.id.signup_username)).check(matches(hasErrorText("Username already taken")));
     }
 
+    /**
+     * Checks that the proper error is displayed when a user logging in inputs the incorrect
+     * password for their account.
+     * @throws InterruptedException if the Thread.sleep() method is interrupted.
+     */
     @Test
     public void incorrectPasswordErrorShown() throws InterruptedException {
         Thread.sleep(500);

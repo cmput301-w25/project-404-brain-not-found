@@ -19,9 +19,16 @@ import org.junit.Test;
 
 
 /**
- * Class for testing {@link Mood} class and its subclasses
+ * Class for testing {@link Mood} class and its subclasses.
+ *
+ * Ensures Moods are being created as intended.
  */
 public class MoodUnitTest {
+    /**
+     * Tests that each Mood is properly being created based on its respective emotion.
+     *
+     * Uses a testHelper class to help with creating new Moods to verify.
+     */
     @Test
     public void testCreateMood() {
         class TestHelper {
@@ -40,6 +47,10 @@ public class MoodUnitTest {
         assertEquals(MoodSurprise.class,testHelper.createMoodUtil(MoodEmotionEnum.SURPRISE).getClass());
     }
 
+    /**
+     *  Verifies that the {@link IllegalArgumentException} is being thrown if a Mood is being created
+     *  incorrectly.
+     */
     @Test
     public void testIllegalCreateMood() {
         assertThrows(IllegalArgumentException.class, () -> {

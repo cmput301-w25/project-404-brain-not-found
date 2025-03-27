@@ -20,7 +20,18 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Utility class for retrieving location data and converting to addresses for the location part of
+ * Mood posts.
+ */
 public class PlacesUtils {
+    /**
+     * Gets the last known location of the user's device.
+     *
+     * @param context The app context needed for location services.
+     * @return A Task containing the last known location of the user's device if permission is
+     * granted, returns an exception otherwise.
+     */
     public static Task<Location> getLastLocation(Context context) {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
@@ -33,6 +44,14 @@ public class PlacesUtils {
         return Tasks.forException(new SecurityException());
     }
 
+    /**
+     * converts latitude and longitude coordinates to a more readable address.
+     *
+     * @param context The context needed for location services.
+     * @param latLng The latitude and longitude coordinates to be converted.
+     * @return A String representing the converted address if successful, otherwise an exception is
+     * thrown and the latitude and longitude coordinates are returned as a String.
+     */
     public static String getAddressFromLatLng(Context context, LatLng latLng) {
         Geocoder geocoder = new Geocoder(context, Locale.getDefault());
         try {
