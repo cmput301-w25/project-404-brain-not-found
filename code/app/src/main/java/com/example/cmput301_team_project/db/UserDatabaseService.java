@@ -96,11 +96,11 @@ public class UserDatabaseService extends BaseDatabaseService {
     public Task<Boolean> validateCredentials(String username, String inputPassword)
     {
         return usersRef.document(username).get()
-                .continueWithTask(task -> {
+                .continueWithTask(taskExecutor, task -> {
                     String email = task.getResult().getString("email");
                     return FirebaseAuthenticationService.getInstance().loginUser(email, inputPassword);
                 })
-                .continueWith(task -> {
+                .continueWith(taskExecutor, task -> {
                     if(task.isSuccessful())
                     {
                         return task.getResult().getUser() != null;

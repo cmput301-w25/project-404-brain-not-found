@@ -21,7 +21,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.Date;
-import java.util.concurrent.Executors;
 
 /**
  * Class for testing {@link MoodDatabaseService}

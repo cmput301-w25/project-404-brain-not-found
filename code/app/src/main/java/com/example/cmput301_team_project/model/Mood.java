@@ -4,7 +4,6 @@ import androidx.annotation.Nullable;
 
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.GeoPoint;
 
@@ -16,7 +15,7 @@ import java.util.TimeZone;
 
 /**
  * Base class for mood event.
- * Use {@link Mood#createMood(MoodEmotionEnum, MoodSocialSituationEnum, String, boolean, String, Date, String)} factory method
+ * Use {@link Mood#createMood(MoodEmotionEnum, MoodSocialSituationEnum, String, boolean, String, Date, String, GeoPoint)} factory method
  * to create the correct subclass instance of the base class
  */
 public abstract class Mood implements Serializable {
@@ -28,6 +27,10 @@ public abstract class Mood implements Serializable {
     private Date date;
     private String imageBase64;
     private GeoPoint location;
+
+    public Mood() {
+        // Required no-arg constructor for Firestore (queries)
+    }
 
     protected Mood(MoodSocialSituationEnum socialSituation, String trigger, boolean isPublic, String author, String imageBase64, GeoPoint location) {
         this(socialSituation, trigger, isPublic, author, new Date(), imageBase64, location);

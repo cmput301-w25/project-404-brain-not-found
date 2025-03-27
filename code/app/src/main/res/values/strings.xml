@@ -46,6 +46,11 @@
     <string name="empty_password_error">Password cannot be empty</string>
     <string name="too_short_password_error">Password should be at least 6 characters</string>
     <string name="username_exists_error">Username already taken</string>
+    <string name="filter_moods_by_time_title">Filter by time:</string>
+    <string name="filter_moods_by_day">Past Day</string>
+    <string name="filter_moods_by_week">Past week</string>
+    <string name="filter_moods_by_month">Past month</string>
+    <string name="filter_by_text_hint">Find text in moods</string>
     <string name="requests">Requests</string>
     <string name="find_people">People</string>
     <string name="followers">Followers</string>
@@ -63,4 +68,5 @@
     <string name="is">is</string>
     <string name="search_location">Search location</string>
     <string name="use_my_current_location">Use my current location</string>
+    <string name="moods_within_5_km">Only moods within 5 km of my current location</string>
 </resources>

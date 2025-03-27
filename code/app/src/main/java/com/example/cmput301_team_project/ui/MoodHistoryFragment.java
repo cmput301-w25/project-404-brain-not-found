@@ -23,8 +23,6 @@ import com.example.cmput301_team_project.model.Mood;
 public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFormFragment.MoodFormDialogListener {
     private final MoodDatabaseService moodDatabaseService;
 
-
-
     public MoodHistoryFragment() {
         moodDatabaseService = MoodDatabaseService.getInstance();
 
@@ -78,7 +76,7 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
      */
     @Override
     protected void loadMoodData() {
-        moodDatabaseService.getMoodList(FirebaseAuthenticationService.getInstance().getCurrentUser())
+        moodDatabaseService.getMoodList(FirebaseAuthenticationService.getInstance().getCurrentUser(), moodFilterState)
                 .addOnSuccessListener(moods -> {
                     // Clear existing list and add new data
                     moodListAdapter.clear();

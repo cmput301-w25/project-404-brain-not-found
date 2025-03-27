@@ -6,6 +6,7 @@ import com.example.cmput301_team_project.model.Comment;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
+import com.example.cmput301_team_project.model.MoodFilterState;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.Timestamp;
@@ -18,6 +19,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -116,6 +118,21 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 });
     }
 
+    private Query applyFilteringQueries(Query query, MoodFilterState moodFilterState) {
+        if(moodFilterState.emotion() != null) {
+            query = query.whereEqualTo("emotion", moodFilterState.emotion().toString());
+        }
+
+        if(moodFilterState.time() != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, moodFilterState.time());
+            Timestamp timestamp = new Timestamp(calendar.getTime());
+            query = query.whereGreaterThan("date", timestamp);
+        }
+
+        return query;
+    }
+
     private Mood moodFromDoc(DocumentSnapshot document) {
         Mood mood = Mood.createMood(MoodEmotionEnum.valueOf(document.getString("emotion")),
                 MoodSocialSituationEnum.valueOf(document.getString("socialSituation")),
@@ -130,16 +147,22 @@ public class MoodDatabaseService extends BaseDatabaseService {
   }
 
     /**this is the method to get all the documents in the moods collection*/
-    public Task<List<Mood>> getMoodList(String username) {
-        return moodsRef
+    public Task<List<Mood>> getMoodList(String username, MoodFilterState moodFilterState) {
+        Query query = moodsRef
                 .whereEqualTo("author", username)
-                .orderBy("date", Query.Direction.DESCENDING)
-                .get().continueWith(task -> {
+                .orderBy("date", Query.Direction.DESCENDING);
+
+        query = applyFilteringQueries(query, moodFilterState);
+
+        return query.get().continueWith(taskExecutor, task -> {
             List<Mood> moodList = new ArrayList<>();
 
             if (task.isSuccessful() && task.getResult() != null) {
                 for (DocumentSnapshot doc : task.getResult().getDocuments()) {
-                    moodList.add(moodFromDoc(doc));
+                    Mood mood = moodFromDoc(doc);
+                    if(moodFilterState.verifyNonDatabaseFilters(mood)) {
+                        moodList.add(mood);
+                    }
                 }
             } else if (task.getException() != null) {
                 // Log the task exception
@@ -150,15 +173,16 @@ public class MoodDatabaseService extends BaseDatabaseService {
         });
     }
 
-    public Task<List<Mood>> getFollowingMoods(List<String> following) {
+    public Task<List<Mood>> getFollowingMoods(List<String> following, MoodFilterState moodFilterState) {
 
         List<Task<QuerySnapshot>> fetchTasks = new ArrayList<>();
         for(String username : following) {
-            fetchTasks.add(moodsRef.orderBy("date", Query.Direction.DESCENDING)
-                            .whereEqualTo("author", username)
-                            .whereEqualTo("public", true)
-                            .limit(3)
-                            .get());
+            Query query = moodsRef.orderBy("date", Query.Direction.DESCENDING)
+                    .whereEqualTo("author", username)
+                    .whereEqualTo("public", true)
+                    .limit(3);
+
+            fetchTasks.add(applyFilteringQueries(query, moodFilterState).get());
         }
 
         return Tasks.whenAllSuccess(fetchTasks)
@@ -168,7 +192,10 @@ public class MoodDatabaseService extends BaseDatabaseService {
                         for(Object res : result.getResult()) {
                             if(res instanceof QuerySnapshot querySnapshot) {
                                 for(DocumentSnapshot document : querySnapshot.getDocuments()) {
-                                    moodList.add(moodFromDoc(document));
+                                    Mood mood = moodFromDoc(document);
+                                    if(moodFilterState.verifyNonDatabaseFilters(mood)) {
+                                        moodList.add(mood);
+                                    }
                                 }
                             }
                         }
