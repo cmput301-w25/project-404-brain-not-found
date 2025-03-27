@@ -17,6 +17,7 @@ import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
@@ -93,21 +94,31 @@ public class MainActivity extends BaseActivity{
         Places.initializeWithNewPlacesApiEnabled(getApplicationContext(), apiKey);
     }
 
-    public void showNotification(){
+    private void badgeSetup(int id, int alerts){
         BottomNavigationView navigation = findViewById(R.id.navigation_main);
-        navigation.getMenu().findItem(R.id.mentioned_icon).setIcon(R.drawable.comment_icon_with_red);
+        BadgeDrawable badge = navigation.getOrCreateBadge(id);
+        badge.setVisible(true);
+        badge.setNumber(alerts);
     }
-    public void removeNotification(){
+
+    private void badgeClear(int id){
         BottomNavigationView navigation = findViewById(R.id.navigation_main);
-        navigation.getMenu().findItem(R.id.mentioned_icon).setIcon(R.drawable.ic_baseline_chat_24);
+        BadgeDrawable badgeDrawable = navigation.getBadge(id);
+        if (badgeDrawable != null){
+            badgeDrawable.setVisible(false);
+            badgeDrawable.clearNumber();
+        }
     }
+
 
     public void checkNotification(){
         UserDatabaseService.getInstance().getMentionCount(FirebaseAuthenticationService.getInstance().getCurrentUser()).addOnSuccessListener(count -> {
             if (count != 0){
-                showNotification();
+                int countInt = count.intValue();
+                badgeSetup(R.id.mentioned_icon, countInt);
             }else{
-                removeNotification();
+                badgeClear(R.id.mentioned_icon);
+
             }
         });
     }
