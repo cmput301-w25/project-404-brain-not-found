@@ -24,6 +24,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,7 +50,6 @@ public abstract class BaseMoodListFragment extends Fragment implements OnMapRead
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.base_mood_list, container, false);
-
         moodListView = view.findViewById(R.id.mood_List);
         moodListAdapter = new MoodListAdapter(getContext(), new ArrayList<>(), this, isMoodOwned());
         moodListView.setAdapter(moodListAdapter);

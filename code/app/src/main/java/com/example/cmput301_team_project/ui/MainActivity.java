@@ -17,22 +17,21 @@ import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.material.bottomnavigation.BottomNavigationItemView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.auth.User;
 
 
 /**
  * The main activity that serves as the entry point for the application after login.
  * It manages navigation between different fragments using a bottom navigation bar.
  */
-public class MainActivity extends BaseActivity {
-    UserDatabaseService userDatabaseService = UserDatabaseService.getInstance();
+public class MainActivity extends BaseActivity{
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        checkNotification();
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -41,43 +40,30 @@ public class MainActivity extends BaseActivity {
 
 
         BottomNavigationView navigation = findViewById(R.id.navigation_main);
-        userDatabaseService.getMentionCount(FirebaseAuthenticationService.getInstance().getCurrentUser()).addOnSuccessListener(count -> {
-            if (count != 0){
-                showNotification(navigation);
-            }else{
-                removeNotification(navigation);
-            }
-        });
         navigation.setOnApplyWindowInsetsListener((v, insets) -> {
             v.setPadding(0, 0, 0, 0);
             return insets;
         });
 
-
-
         replaceFragment(MoodFollowingFragment.newInstance());
 
         navigation.setOnItemSelectedListener(item -> {
+            checkNotification();
             if(item.getItemId() == R.id.mood_history_icon) {
                 replaceFragment(MoodHistoryFragment.newInstance());
+                checkNotification();
             }
             else if(item.getItemId() == R.id.user_icon) {
                 replaceFragment(UserFragment.newInstance());
+                checkNotification();
             }
             else if(item.getItemId() == R.id.mood_following_icon) {
                 replaceFragment(MoodFollowingFragment.newInstance());
+                checkNotification();
             }
             else if(item.getItemId() == R.id.mentioned_icon){
-                replaceFragment(MentionedMoodsFragment.newInstance());
-
+                replaceFragment(MentionedMoodsFragment.newInstance(this::checkNotification));
             }
-            userDatabaseService.getMentionCount(FirebaseAuthenticationService.getInstance().getCurrentUser()).addOnSuccessListener(count -> {
-                if (count != 0){
-                    showNotification(navigation);
-                }else{
-                    removeNotification(navigation);
-                }
-            });
             return true;
         });
 
@@ -107,10 +93,22 @@ public class MainActivity extends BaseActivity {
         Places.initializeWithNewPlacesApiEnabled(getApplicationContext(), apiKey);
     }
 
-    private void showNotification(BottomNavigationView navigation){
+    public void showNotification(){
+        BottomNavigationView navigation = findViewById(R.id.navigation_main);
         navigation.getMenu().findItem(R.id.mentioned_icon).setIcon(R.drawable.comment_icon_with_red);
     }
-    private void removeNotification(BottomNavigationView navigation){
+    public void removeNotification(){
+        BottomNavigationView navigation = findViewById(R.id.navigation_main);
         navigation.getMenu().findItem(R.id.mentioned_icon).setIcon(R.drawable.ic_baseline_chat_24);
+    }
+
+    public void checkNotification(){
+        UserDatabaseService.getInstance().getMentionCount(FirebaseAuthenticationService.getInstance().getCurrentUser()).addOnSuccessListener(count -> {
+            if (count != 0){
+                showNotification();
+            }else{
+                removeNotification();
+            }
+        });
     }
 }

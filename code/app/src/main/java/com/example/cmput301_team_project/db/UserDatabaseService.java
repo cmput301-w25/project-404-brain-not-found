@@ -2,16 +2,12 @@ package com.example.cmput301_team_project.db;
 
 
 
-import android.util.Log;
-import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 
 import com.example.cmput301_team_project.enums.FollowRelationshipEnum;
 import com.example.cmput301_team_project.model.AppUser;
 import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.CollectionReference;
@@ -21,7 +17,6 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -434,18 +429,20 @@ public class UserDatabaseService extends BaseDatabaseService {
                 });
     }
 
-    public void deleteMentions(String moodId, String username){
-        usersRef.document(username)
+    public Task<Void> deleteMentions(String moodId, String username){
+        return usersRef.document(username)
                 .collection("mentions")
                 .whereEqualTo("moodId", moodId)
                 .get()
-                .addOnSuccessListener(query -> {
-                    for (DocumentSnapshot document: query.getDocuments()){
-                        usersRef.document(username)
+                .continueWithTask(query -> {
+                    List<Task<Void>> deleteList = new ArrayList<>();
+                    for (DocumentSnapshot document: query.getResult().getDocuments()){
+                        deleteList.add(usersRef.document(username)
                                 .collection("mentions")
                                 .document(document.getId())
-                                .delete();
+                                .delete());
                     }
+                    return Tasks.whenAll(deleteList);
                 });
     }
     public Task<Long> getMentionCount(String username){
