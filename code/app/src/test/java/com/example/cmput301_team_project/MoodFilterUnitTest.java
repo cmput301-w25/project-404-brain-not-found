@@ -53,6 +53,12 @@ public class MoodFilterUnitTest {
 
     private MoodDatabaseService moodDatabaseService;
 
+    /**
+     * Sets up the mocks necessary for the unit tests.
+     *
+     * creates a mock instance of the {@link MoodDatabaseService}, mock Firestore db and mock
+     * queries.
+     */
     @Before
     public void setup() {
         MockitoAnnotations.openMocks(this);
@@ -66,6 +72,10 @@ public class MoodFilterUnitTest {
         moodDatabaseService = MoodDatabaseService.getInstance();
     }
 
+    /**
+     * Verifies that when a user filters their MoodList by emotion, then only the Moods
+     * with matching emotion are visible.
+     */
     @Test
     public void filterByEmotionShouldShowValidMoods() {
         MoodFilterState moodFilterState = new MoodFilterState(null, MoodEmotionEnum.ANGER, null, null);
@@ -89,6 +99,10 @@ public class MoodFilterUnitTest {
         assertSame(mood.get(0).getEmotion(), MoodEmotionEnum.ANGER);
     }
 
+    /**
+     * Verifies that when a user filters their MoodList by emotion, then an empty list is returned
+     * if there are no matching Moods.
+     */
     @Test
     public void filterByEmotionShouldShowEmptyOnNoMatch() {
         MoodFilterState moodFilterState = new MoodFilterState(null, MoodEmotionEnum.ANGER, null, null);
@@ -109,6 +123,10 @@ public class MoodFilterUnitTest {
         assertTrue(mood.isEmpty());
     }
 
+    /**
+     * Verifies that when the user filters their MoodList by time (Moods from past day), then only
+     * Moods posted within the last 24 hrs are shown.
+     */
     @Test
     public void filterByDayShouldShowValidMoods() {
         MoodFilterState moodFilterState = new MoodFilterState(-1, null, null, null);
@@ -132,6 +150,10 @@ public class MoodFilterUnitTest {
         assertFalse(mood.isEmpty());
     }
 
+    /**
+     * Verifies that when the user filters their MoodList by time (Moods from past week), then only
+     * Moods posted within the last 7 days are shown.
+     */
     @Test
     public void filterByWeekShouldShowValidMoods() {
         MoodFilterState moodFilterState = new MoodFilterState(-7, null, null, null);
@@ -155,6 +177,10 @@ public class MoodFilterUnitTest {
         assertFalse(mood.isEmpty());
     }
 
+    /**
+     * Verifies that when the user filters their MoodList by time (Moods from past month), then only
+     * Moods posted within the last 30 days are shown.
+     */
     @Test
     public void filterByMonthShouldShowValidMoods() {
         MoodFilterState moodFilterState = new MoodFilterState(-30, null, null, null);
@@ -178,6 +204,10 @@ public class MoodFilterUnitTest {
         assertFalse(mood.isEmpty());
     }
 
+    /**
+     * Verifies that when the user filters their MoodList by trigger text, then only Moods with
+     * that specific text in their respective trigger/reason are visible
+     */
     @Test
     public void filterByTextShouldShowValidMoods() {
         // ensure case-insensitive comparison
