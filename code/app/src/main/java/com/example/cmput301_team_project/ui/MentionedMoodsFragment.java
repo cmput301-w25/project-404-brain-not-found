@@ -57,8 +57,6 @@ public class MentionedMoodsFragment extends BaseMoodListFragment {
 
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState){
         super.onViewCreated(view, savedInstanceState);
-        view.findViewById(R.id.filter_button).setVisibility(View.GONE);
-        view.findViewById(R.id.mood_map_button).setVisibility(View.GONE);
         ListView mentionList = view.findViewById(R.id.mood_List);
 
         mentionList.setOnScrollListener(new AbsListView.OnScrollListener(){
@@ -78,7 +76,7 @@ public class MentionedMoodsFragment extends BaseMoodListFragment {
         List<Task<Void>> deleteList = new ArrayList<>();
         for (Mood mood: seenItems){
             String moodId = mood.getId();
-            deleteList.add(userDatabaseService.deleteMentions(moodId, FirebaseAuthenticationService.getInstance().getCurrentUser()));
+            deleteList.add(userDatabaseService.deleteMentions(moodId));
         }
         return Tasks.whenAll(deleteList);
     }

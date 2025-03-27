@@ -33,8 +33,6 @@ public class MoodDatabaseService extends BaseDatabaseService {
     private static MoodDatabaseService instance = null;
     private final CollectionReference moodsRef;
 
-    private UserDatabaseService userDatabaseService = UserDatabaseService.getInstance();
-
     private MoodDatabaseService() {
         super();
 
@@ -72,32 +70,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 document.getReference().delete();
             }});
 
-        userDatabaseService.getAllUsers().addOnSuccessListener(userDocs -> {
-            List<Task<Void>> deleteTasks = new ArrayList<>();
-
-            for (DocumentSnapshot userDoc : userDocs.getDocuments()) {
-                CollectionReference mentionsRef = userDoc.getReference().collection("mentions");
-                Task<QuerySnapshot> mentionQuery = mentionsRef.whereEqualTo("moodId", mood.getId()).get();
-
-                mentionQuery.addOnSuccessListener(mentionsSnapshot -> {
-                    for (DocumentSnapshot mentionDoc : mentionsSnapshot.getDocuments()) {
-                        deleteTasks.add(mentionDoc.getReference().delete());
-                    }
-                });
-            }
-
-            Tasks.whenAll(deleteTasks).addOnSuccessListener(aVoid -> {
-                moodDocRef.delete().addOnSuccessListener(aVoid2 -> {
-                    System.out.println("Mood and all related mentions deleted successfully.");
-                }).addOnFailureListener(e -> {
-                    System.err.println("Failed to delete mood: " + e.getMessage());
-                });
-            }).addOnFailureListener(e -> {
-                System.err.println("Failed to delete mentions: " + e.getMessage());
-            });
-        }).addOnFailureListener(e -> {
-            System.err.println("Failed to retrieve user documents: " + e.getMessage());
-        });
+        moodDocRef.delete();
     }
 
     public Task<String> getMostRecentMood(String username){
