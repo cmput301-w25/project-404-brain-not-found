@@ -30,6 +30,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * BaseMoodListFragment is an abstract fragment that displays a list of moods
+ * and an optional map view for visualizing mood locations.
+ *
+ * It supports filtering moods, highlighting selected moods on a map,
+ * and managing UI interactions such as opening a comment section.
+ */
 public abstract class BaseMoodListFragment extends Fragment implements OnMapReadyCallback, MoodListAdapter.CommentButtonListener, MoodFilterFragment.MoodFilterDialogListener {
     protected abstract void loadMoodData();
     protected abstract boolean isMoodOwned();
@@ -48,6 +55,14 @@ public abstract class BaseMoodListFragment extends Fragment implements OnMapRead
         // Refresh mood data when returning to the fragment
         loadMoodData();
     }
+
+    /**
+     * Initializes the fragment's view, including the mood list and map button.
+     * @param inflater  LayoutInflater to inflate the fragment layout
+     * @param container ViewGroup container
+     * @param savedInstanceState Saved instance state bundle
+     * @return The root view of the fragment
+     */
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -118,6 +133,10 @@ public abstract class BaseMoodListFragment extends Fragment implements OnMapRead
         return view;
     }
 
+    /**
+     * Handles comment button click by opening a comment list for the selected mood.
+     * @param position Position of the selected mood
+     */
     @Override
     public void onCommentButtonClicked(int position) {
         Mood selectedMood = moodListAdapter.getItem(position);
@@ -125,6 +144,10 @@ public abstract class BaseMoodListFragment extends Fragment implements OnMapRead
         CommentListFragment.newInstance(moodId).show(requireActivity().getSupportFragmentManager(), "CommentListFragment");
     }
 
+    /**
+     * Populates the Google Map with mood markers and adjusts the camera to fit all markers.
+     * @param map The GoogleMap instance
+     */
     @Override
     public void onMapReady(GoogleMap map) {
         LatLngBounds.Builder builder = new LatLngBounds.Builder();
@@ -158,6 +181,11 @@ public abstract class BaseMoodListFragment extends Fragment implements OnMapRead
             map.animateCamera(CameraUpdateFactory.newLatLngBounds(builder.build(), padding));
         }
     }
+
+    /**
+     * Updates the mood list based on the new filter state.
+     * @param moodFilterState The updated filter state
+     */
 
     @Override
     public void updateFilter(MoodFilterState moodFilterState) {

@@ -25,10 +25,17 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
+
+/**
+ * A base fragment for displaying a list of users with search functionality.
+ * Subclasses must specify the button text and action for user interactions.
+ *
+ * This fragment initializes a search view and a list view to display users.
+ * Depending on the action type (FOLLOW, UNFOLLOW, REMOVE), it fetches relevant user data from the database.
+ */
 public abstract class BaseUserListFragment extends Fragment {
     protected abstract int getUserButtonTextId();
     protected abstract UserButtonActionEnum getUserButtonAction();
-    protected abstract Task<List<PublicUser>> loadDefaultData(BatchLoader batchLoader);
 
     protected UserDatabaseService userDatabaseService;
     protected FirebaseAuthenticationService authService;
@@ -41,7 +48,11 @@ public abstract class BaseUserListFragment extends Fragment {
         // empty protected constructor to be called by sub-classes
         batchLoader = new BatchLoader(BATCH_SIZE);
     }
-
+    /**
+     * Initializes the UserDatabaseService instance when the fragment is created.
+     *
+     * @param savedInstanceState The saved state of the fragment.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +60,14 @@ public abstract class BaseUserListFragment extends Fragment {
         authService = FirebaseAuthenticationService.getInstance();
     }
 
+    /**
+     * to create and return the view associated with the fragment.
+     *
+     * @param inflater  The LayoutInflater object used to inflate views in the fragment.
+     * @param container The parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState The saved state of the fragment.
+     * @return The View for the fragment's UI.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -85,6 +104,7 @@ public abstract class BaseUserListFragment extends Fragment {
                 String currentUser = authService.getCurrentUser();
                 Task<List<PublicUser>> searchTask;
 
+                // Determines the appropriate database search based on user action
                 switch (getUserButtonAction()) {
                     case FOLLOW -> searchTask = userDatabaseService.userSearch(currentUser, query);
                     case UNFOLLOW -> searchTask = userDatabaseService.userFollowingSearch(currentUser, query);
@@ -110,7 +130,11 @@ public abstract class BaseUserListFragment extends Fragment {
                 return true;
             }
         });
-
+        // Handles item clicks to open the profile view of the selected user
+        userList.setOnItemClickListener((parent, view1, position, id) -> {
+            PublicUser user = userAdapter.getItem(position);
+            ViewProfileFragment.newInstance(user.getUsername(), user.getName()).show(requireActivity().getSupportFragmentManager(), "Profile");
+        });
         return view;
     }
 
