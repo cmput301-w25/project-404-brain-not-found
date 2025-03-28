@@ -18,18 +18,25 @@ import com.example.cmput301_team_project.R;
  */
 public class LoginSignupFragment extends Fragment {
     private onButtonClickListener listener;
-
+    /**
+     * Interface for handling button click events from this fragment.
+     */
     public interface onButtonClickListener{
         void onButtonClicked(int buttonId);
     }
+
     public LoginSignupFragment() {
         // Required empty public constructor
     }
 
+    /**
+     * Makes a new instance of LoginSignupFragment.
+     * @return the new fragment
+     */
+
     public static LoginSignupFragment newInstance() {
         return new LoginSignupFragment();
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,6 +45,14 @@ public class LoginSignupFragment extends Fragment {
         listener = (onButtonClickListener) getActivity();
         }
 
+    /**
+     * Creates and returns the view with login and signup buttons.
+     *
+     * @param inflater Used to create the view from the layout file
+     * @param container The parent view that this fragment's view will be attached to
+     * @param savedInstanceState If the fragment was previously saved, this contains the saved data (may be null)
+     * @return The created view with both login and signup buttons
+     */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

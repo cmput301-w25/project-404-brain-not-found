@@ -21,7 +21,11 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * A DialogFragment that displays and manages comments for a specific mood event.
+ * This fragment shows a list of existing comments and provides functionality
+ * to add new comments to a mood event.
+ */
 public class CommentListFragment extends DialogFragment {
     MoodDatabaseService moodDatabaseService = MoodDatabaseService.getInstance();
     private CommentListAdapter commentAdapter;
@@ -31,6 +35,13 @@ public class CommentListFragment extends DialogFragment {
     public CommentListFragment(){
     }
 
+    /**
+     * Creates a new instance of CommentListFragment with the specified mood event ID.
+     *
+     * @param id The unique identifier of the mood event to display comments for
+     * @return A new instance of CommentListFragment
+     */
+
     public static CommentListFragment newInstance(String id){
         Bundle args = new Bundle();
         args.putSerializable("id", id);
@@ -39,6 +50,12 @@ public class CommentListFragment extends DialogFragment {
         return fragment;
     }
 
+    /**
+     * Creates the dialog to display the comment list and functionality to add a comment.
+     *
+     * @param savedInstanceState If non-null, this fragment is created from previous saved state
+     * @return A new Dialog instance to be displayed by the Fragment
+     */
 
     @NonNull
     @Override

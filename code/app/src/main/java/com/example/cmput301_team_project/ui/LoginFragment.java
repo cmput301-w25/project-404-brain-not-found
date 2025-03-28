@@ -79,12 +79,25 @@ public class LoginFragment extends Fragment {
         }
     }
 
+    /**
+     * Called when the fragment is created.
+     *
+     * @param savedInstanceState If the fragment is being re-created from a previous saved state, this is the state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         listener = (LoginSignupFragment.onButtonClickListener) getActivity();
     }
 
+    /**
+     * Creates and returns the view associated with the fragment.
+     *
+     * @param inflater The LayoutInflater object that can be used to inflate any views in the fragment.
+     * @param container If non-null, this is the parent view that the fragment's UI should be attached to.
+     * @param savedInstanceState If non-null, this fragment is being re-constructed from a previous saved state.
+     * @return The View for the fragment's UI.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
