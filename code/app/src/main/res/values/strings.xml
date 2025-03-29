@@ -74,5 +74,9 @@
     <string name="login">Login</string>
     <string name="privacy_policy">© Privacy Policy</string>
     <string name="Slogan">Track your emotions. Improve your wellbeing.</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="create_your_account">Create your account</string>
+    <string name="display_name">Display name</string>
 
 </resources>
