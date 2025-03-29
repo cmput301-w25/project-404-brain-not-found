@@ -35,6 +35,7 @@ public abstract class BaseUserListFragment extends Fragment {
     private final int BATCH_SIZE = 10;
     private final BatchLoader batchLoader;
     private UserListAdapter userAdapter;
+    private SearchView searchView;
 
     protected BaseUserListFragment() {
         // empty protected constructor to be called by sub-classes
@@ -77,7 +78,7 @@ public abstract class BaseUserListFragment extends Fragment {
         });
         userList.addFooterView(showMoreButton);
 
-        SearchView searchView = view.findViewById(R.id.user_search);
+        searchView = view.findViewById(R.id.user_search);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -111,5 +112,13 @@ public abstract class BaseUserListFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(searchView.getQuery().toString().isEmpty()) {
+            loadDefaultData(batchLoader).addOnSuccessListener(res -> userAdapter.replaceItems(res));
+        }
     }
 }
