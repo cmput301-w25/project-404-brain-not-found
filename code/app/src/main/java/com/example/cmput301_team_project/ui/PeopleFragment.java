@@ -21,7 +21,7 @@ public class PeopleFragment extends BaseUserListFragment {
 
     @Override
     protected Task<List<PublicUser>> loadDefaultData(BatchLoader batchLoader) {
-        return userDatabaseService.getMostFollowedUsers(batchLoader);
+        return userDatabaseService.getMostFollowedUsers(authService.getCurrentUser(), batchLoader);
     }
 
     public PeopleFragment() {

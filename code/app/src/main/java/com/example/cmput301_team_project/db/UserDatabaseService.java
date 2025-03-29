@@ -11,6 +11,7 @@ import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
@@ -466,8 +467,8 @@ public class UserDatabaseService extends BaseDatabaseService {
         });
     }
 
-    public Task<List<PublicUser>> getMostFollowedUsers(BatchLoader batchLoader) {
-        Query query = usersRef.orderBy("followerCount", Query.Direction.DESCENDING);
+    public Task<List<PublicUser>> getMostFollowedUsers(String currentUser, BatchLoader batchLoader) {
+        Query query = usersRef.orderBy("followerCount", Query.Direction.DESCENDING).whereNotEqualTo(FieldPath.documentId(), currentUser);
 
         if(batchLoader != null) {
             query = batchLoader.getNextBatchQuery(query);

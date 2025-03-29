@@ -31,6 +31,7 @@ public abstract class BaseUserListFragment extends Fragment {
     protected abstract Task<List<PublicUser>> loadDefaultData(BatchLoader batchLoader);
 
     protected UserDatabaseService userDatabaseService;
+    protected FirebaseAuthenticationService authService;
     private final int BATCH_SIZE = 10;
     private final BatchLoader batchLoader;
     private UserListAdapter userAdapter;
@@ -44,6 +45,7 @@ public abstract class BaseUserListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userDatabaseService = UserDatabaseService.getInstance();
+        authService = FirebaseAuthenticationService.getInstance();
     }
 
     @Override
@@ -79,7 +81,7 @@ public abstract class BaseUserListFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                String currentUser = FirebaseAuthenticationService.getInstance().getCurrentUser();
+                String currentUser = authService.getCurrentUser();
                 Task<List<PublicUser>> searchTask;
 
                 switch (getUserButtonAction()) {

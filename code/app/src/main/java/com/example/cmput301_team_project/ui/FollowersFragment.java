@@ -2,7 +2,6 @@ package com.example.cmput301_team_project.ui;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.BatchLoader;
-import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.enums.UserButtonActionEnum;
 import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
@@ -22,7 +21,7 @@ public class FollowersFragment extends BaseUserListFragment {
 
     @Override
     protected Task<List<PublicUser>> loadDefaultData(BatchLoader batchLoader) {
-        return userDatabaseService.getFollowers(FirebaseAuthenticationService.getInstance().getCurrentUser(), batchLoader);
+        return userDatabaseService.getFollowers(authService.getCurrentUser(), batchLoader);
     }
 
     public FollowersFragment() {
