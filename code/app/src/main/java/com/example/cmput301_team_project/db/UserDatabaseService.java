@@ -11,10 +11,12 @@ import com.google.firebase.firestore.AggregateSource;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,6 +73,7 @@ public class UserDatabaseService extends BaseDatabaseService {
                         updates.put("usernameLower", user.getUsername().toLowerCase());
                         updates.put("nameLower", user.getName().toLowerCase());
                         updates.put("email", task.getResult());
+                        updates.put("followerCount", 0);
                         return uref.update(updates);
                     }
                     Tasks.forException(task.getException());
@@ -346,7 +349,10 @@ public class UserDatabaseService extends BaseDatabaseService {
                 .set(new PublicUser(follower, task.getResult())));
 
         return Tasks.whenAll(followingTask, followerTask)
-                .continueWithTask(voidTask -> removeRequest(follower, target));
+                .continueWithTask(voidTask -> {
+                    updateFollowerCount(target, true);
+                    return removeRequest(follower, target);
+                });
     }
 
     /**
@@ -385,24 +391,107 @@ public class UserDatabaseService extends BaseDatabaseService {
                 .document(follower)
                 .delete();
 
-        return Tasks.whenAll(followingTask, followersTask);
+
+        return Tasks.whenAll(followingTask, followersTask).continueWithTask(voidTask -> {
+            updateFollowerCount(target, false);
+            return voidTask;
+        });
     }
 
-    public Task<List<String>> getFollowing(String username) {
-        return usersRef.document(username)
-                .collection("following")
-                .get()
+    public void updateFollowerCount(String username, boolean increment) {
+        DocumentReference userRef = usersRef.document(username);
+
+        db.runTransaction((Transaction.Function<Void>) transaction -> {
+            DocumentSnapshot snapshot = transaction.get(userRef);
+            Long currentCount = snapshot.getLong("followerCount");
+
+            if (currentCount == null) {
+                currentCount = 0L;
+            }
+
+            long newCount = increment ? currentCount + 1 : Math.max(currentCount - 1, 0);
+
+            transaction.update(userRef, "followerCount", newCount);
+            return null;
+        });
+    }
+
+    public Task<List<PublicUser>> getFollowing(String username, BatchLoader batchLoader) {
+        CollectionReference followingRef = usersRef.document(username).collection("following");
+        Task<QuerySnapshot> followingTask;
+
+        if(batchLoader != null) {
+            followingTask = batchLoader.getNextBatchQuery(followingRef).get();
+        }
+        else {
+            followingTask = followingRef.get();
+        }
+        return followingTask.continueWith(task -> {
+            if(task.isSuccessful()) {
+                List<DocumentSnapshot> documents = task.getResult().getDocuments();
+                if(batchLoader != null) {
+                    batchLoader.nextBatch(documents);
+                }
+                return documents.stream()
+                        .map(document -> new PublicUser(document.getId(), document.getString("name")))
+                        .collect(Collectors.toList());
+            }
+
+            return new ArrayList<>();
+        });
+    }
+
+    public Task<List<PublicUser>> getFollowers(String username, BatchLoader batchLoader) {
+        CollectionReference followersRef = usersRef.document(username).collection("followers");
+        Task<QuerySnapshot> followersTask;
+        if(batchLoader != null) {
+            followersTask = batchLoader.getNextBatchQuery(followersRef).get();
+        }
+        else {
+            followersTask = followersRef.get();
+        }
+        return followersTask.continueWith(task -> {
+           if(task.isSuccessful()) {
+               List<DocumentSnapshot> documents = task.getResult().getDocuments();
+
+               if(batchLoader != null) {
+                   batchLoader.nextBatch(documents);
+               }
+
+               return documents.stream()
+                       .map(document -> new PublicUser(document.getId(), document.getString("name")))
+                       .collect(Collectors.toList());
+           }
+
+           return new ArrayList<>();
+        });
+    }
+
+    public Task<List<PublicUser>> getMostFollowedUsers(String currentUser, BatchLoader batchLoader) {
+        Query query = usersRef.orderBy("followerCount", Query.Direction.DESCENDING).whereNotEqualTo(FieldPath.documentId(), currentUser);
+
+        if(batchLoader != null) {
+            query = batchLoader.getNextBatchQuery(query);
+        }
+
+        return query.get()
                 .continueWith(task -> {
                     if(task.isSuccessful()) {
-                        return task.getResult()
-                                .getDocuments()
-                                .stream()
-                                .map(DocumentSnapshot::getId)
+                        List<DocumentSnapshot> documents = task.getResult().getDocuments();
+
+                        if(batchLoader != null) {
+                            batchLoader.nextBatch(documents);
+                        }
+
+                        return documents.stream()
+                                .map(document -> new PublicUser(document.getId(), document.getString("name")))
                                 .collect(Collectors.toList());
                     }
+
                     return new ArrayList<>();
                 });
     }
+
     public Task<DocumentReference> addMention(String moodId, String mentionedUser){
         Map<String, Object> mentionData = new HashMap<>();
         mentionData.put("moodId", moodId);

@@ -7,10 +7,12 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.example.cmput301_team_project.R;
+import com.example.cmput301_team_project.db.BatchLoader;
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.UserButtonActionEnum;
@@ -26,18 +28,25 @@ import java.util.List;
 public abstract class BaseUserListFragment extends Fragment {
     protected abstract int getUserButtonTextId();
     protected abstract UserButtonActionEnum getUserButtonAction();
+    protected abstract Task<List<PublicUser>> loadDefaultData(BatchLoader batchLoader);
 
+    protected UserDatabaseService userDatabaseService;
+    protected FirebaseAuthenticationService authService;
+    private final int BATCH_SIZE = 10;
+    private final BatchLoader batchLoader;
     private UserListAdapter userAdapter;
-    private UserDatabaseService userDatabaseService;
+    private SearchView searchView;
 
     protected BaseUserListFragment() {
         // empty protected constructor to be called by sub-classes
+        batchLoader = new BatchLoader(BATCH_SIZE);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         userDatabaseService = UserDatabaseService.getInstance();
+        authService = FirebaseAuthenticationService.getInstance();
     }
 
     @Override
@@ -49,15 +58,31 @@ public abstract class BaseUserListFragment extends Fragment {
         userAdapter = new UserListAdapter(requireContext(), new ArrayList<>(), getString(getUserButtonTextId()), getUserButtonAction());
         userList.setAdapter(userAdapter);
 
-        SearchView searchView = view.findViewById(R.id.user_search);
-        searchView.setOnCloseListener(() -> {
-            userAdapter.clear();
-            return false;
+        loadDefaultData(batchLoader).addOnSuccessListener(res -> userAdapter.addAll(res));
+
+
+        userList.setOnItemClickListener((parent, view1, position, id) -> {
+            PublicUser user = userAdapter.getItem(position);
+            ViewProfileFragment.newInstance(user.getUsername(), user.getName()).show(requireActivity().getSupportFragmentManager(), "Profile");
         });
+
+        Button showMoreButton = (Button) inflater.inflate(R.layout.user_search_footer, userList, false);
+        showMoreButton.setOnClickListener(v -> {
+            loadDefaultData(batchLoader)
+                    .addOnSuccessListener(users -> {
+                        userAdapter.addAll(users);
+                        if(batchLoader.isAllLoaded()) {
+                            showMoreButton.setVisibility(View.GONE);
+                        }
+                    });
+        });
+        userList.addFooterView(showMoreButton);
+
+        searchView = view.findViewById(R.id.user_search);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                String currentUser = FirebaseAuthenticationService.getInstance().getCurrentUser();
+                String currentUser = authService.getCurrentUser();
                 Task<List<PublicUser>> searchTask;
 
                 switch (getUserButtonAction()) {
@@ -67,6 +92,9 @@ public abstract class BaseUserListFragment extends Fragment {
                     default -> throw new IllegalStateException("Unexpected action: " + getUserButtonAction());
                 }
 
+                showMoreButton.setVisibility(View.GONE);
+                batchLoader.reset();
+
                 searchTask.addOnSuccessListener(users -> userAdapter.replaceItems(users))
                         .addOnFailureListener(users -> userAdapter.clear());
 
@@ -75,14 +103,23 @@ public abstract class BaseUserListFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
+                if(newText.isEmpty()) {
+                    loadDefaultData(batchLoader).addOnSuccessListener(res -> userAdapter.replaceItems(res));
+                    showMoreButton.setVisibility(View.VISIBLE);
+                }
                 return true;
             }
         });
-        userList.setOnItemClickListener((parent, view1, position, id) -> {
-            PublicUser user = userAdapter.getItem(position);
-            ViewProfileFragment.newInstance(user.getUsername(), user.getName()).show(requireActivity().getSupportFragmentManager(), "Profile");
-        });
+
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(searchView.getQuery().toString().isEmpty()) {
+            batchLoader.reset();
+            loadDefaultData(batchLoader).addOnSuccessListener(res -> userAdapter.replaceItems(res));
+        }
+    }
 }
