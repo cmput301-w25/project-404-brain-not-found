@@ -36,11 +36,24 @@ public class RequestsFragment extends Fragment {
         return new RequestsFragment();
     }
 
+    /**
+     * Called when the fragment is created.
+     *
+     * @param savedInstanceState The saved state of the fragment, if available.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Inflates the layout for this fragment and initializes UI components.
+     *
+     * @param inflater The LayoutInflater object used to inflate views in the fragment.
+     * @param container The parent view that this fragment's UI should be attached to.
+     * @param savedInstanceState The saved state of the fragment, if available.
+     * @return The root view of the fragment.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -55,6 +68,10 @@ public class RequestsFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Called when the fragment resumes.
+     * Refreshes the list of requests and updates the UI accordingly.
+     */
     @Override
     public void onResume() {
         super.onResume();

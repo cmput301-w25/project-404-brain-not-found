@@ -22,7 +22,9 @@ import com.example.cmput301_team_project.model.Mood;
  */
 public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFormFragment.MoodFormDialogListener {
     private final MoodDatabaseService moodDatabaseService;
-
+    /**
+     * Constructor initializes the MoodDatabaseService instance.
+     */
     public MoodHistoryFragment() {
         moodDatabaseService = MoodDatabaseService.getInstance();
 
@@ -43,6 +45,11 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Sets up the UI elements and event listeners for the fragment.
+     *
+     * @param view The root view of the fragment.
+     */
     @Override
     protected void setupUI(View view) {
         ImageButton addMoodButton;
@@ -59,12 +66,22 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
         });
     }
 
+    /**
+     * Adds a new mood entry to the database.
+     *
+     * @param mood The mood object to be added.
+     */
     @Override
     public void addMood(Mood mood) {
         moodDatabaseService.addMood(mood);
         loadMoodData();
     }
 
+    /**
+     * Updates an existing mood entry in the database.
+     *
+     * @param newMood The updated mood object.
+     */
     @Override
     public void replaceMood(Mood newMood) {
         moodDatabaseService.updateMood(newMood);
@@ -73,6 +90,7 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
 
     /**
      * Loads mood data from Firestore database
+     * Retrieves the user's mood list based on the current filter state.
      */
     @Override
     protected void loadMoodData() {
@@ -91,6 +109,12 @@ public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFor
                             Toast.LENGTH_SHORT).show();
                 });
     }
+
+    /**
+     * Determines if the moods displayed in the list belong to the current user.
+     *
+     * @return true, indicating that the moods are owned by the user.
+     */
 
     @Override
     protected boolean isMoodOwned() {
