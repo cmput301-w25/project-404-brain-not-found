@@ -26,7 +26,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  * It manages navigation between different fragments using a bottom navigation bar.
  */
 public class MainActivity extends BaseActivity{
-
+    /**
+     * Called when the activity is first created.
+     * Sets up the main layout, navigation bar, and initial fragment.
+     * @param savedInstanceState If the activity is being re-created, this contains saved data
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +49,7 @@ public class MainActivity extends BaseActivity{
             v.setPadding(0, 0, 0, 0);
             return insets;
         });
+        navigation.setSelectedItemId(R.id.mood_following_icon);
 
         replaceFragment(MoodFollowingFragment.newInstance());
 
@@ -83,6 +88,11 @@ public class MainActivity extends BaseActivity{
         fragmentTransaction.commit();
     }
 
+    /**
+     * Initializes the Google Places API with the API key from BuildConfig.
+     * If no valid API key is found, logs an error and closes the activity.
+     */
+
     private void initializePlacesApi() {
         String apiKey = BuildConfig.MAPS_API_KEY;
 
@@ -91,6 +101,7 @@ public class MainActivity extends BaseActivity{
             finish();
             return;
         }
+
         Places.initializeWithNewPlacesApiEnabled(getApplicationContext(), apiKey);
     }
 

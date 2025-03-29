@@ -17,9 +17,19 @@ import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.model.Mood;
 
+/**
+ * A DialogFragment that displays the user's profile with their name, username, follower count,
+ * following count, and most recent mood emoji.
+ */
 public class ViewProfileFragment extends DialogFragment {
 
-
+    /**
+     * Factory method to create a new instance of ViewProfileFragment.
+     *
+     * @param username The username of the user whose profile is being viewed.
+     * @param name The name of the user whose profile is being viewed.
+     * @return A new instance of ViewProfileFragment.
+     */
     public static ViewProfileFragment newInstance(String username, String name){
         Bundle args = new Bundle();
         args.putSerializable("username",username);
@@ -29,6 +39,12 @@ public class ViewProfileFragment extends DialogFragment {
         return fragment;
     }
 
+    /**
+     * Called when the fragment is created. It inflates the view and sets up the profile information.
+     *
+     * @param savedInstanceState A bundle containing any saved state from a previous instance of the fragment.
+     * @return A dialog with the user's profile information.
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState){

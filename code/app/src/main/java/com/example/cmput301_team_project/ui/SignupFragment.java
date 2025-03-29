@@ -81,12 +81,27 @@ public class SignupFragment extends Fragment {
         });
     }
 
+    /**
+     * Called when the fragment is created.
+     * Initializes the button click listener.
+     *
+     * @param savedInstanceState The saved instance state.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         listener = (LoginSignupFragment.onButtonClickListener) getActivity();
     }
 
+    /**
+     * Called to create the fragment's view hierarchy.
+     * Initializes UI components and sets up event listeners.
+     *
+     * @param inflater The LayoutInflater used to inflate the view.
+     * @param container The parent view the fragment is attached to.
+     * @param savedInstanceState The saved instance state.
+     * @return The inflated view for the fragment.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

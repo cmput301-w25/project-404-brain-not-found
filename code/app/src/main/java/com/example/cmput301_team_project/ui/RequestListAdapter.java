@@ -21,14 +21,30 @@ import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.google.android.gms.tasks.Task;
 
 import java.util.List;
-
+/**
+ * Adapter class for managing a list of follow requests.
+ */
 public class RequestListAdapter extends ArrayAdapter<String> {
     private final UserDatabaseService userDatabaseService;
+    /**
+     * Constructor for RequestListAdapter.
+     *
+     * @param context The context of the application.
+     * @param objects The list of usernames representing follow requests.
+     */
     public RequestListAdapter(@NonNull Context context, @NonNull List<String> objects) {
         super(context, 0, objects);
         userDatabaseService = UserDatabaseService.getInstance();
     }
 
+    /**
+     * Gets the view for an individual follow request item.
+     *
+     * @param position The position of the item in the list.
+     * @param convertView The recycled view to populate.
+     * @param parent The parent view that this view will be attached to.
+     * @return The populated view representing a follow request.
+     */
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
@@ -59,6 +75,11 @@ public class RequestListAdapter extends ArrayAdapter<String> {
         return view;
     }
 
+    /**
+     * Refreshes the list of follow requests by retrieving the latest requests from the database.
+     *
+     * @return A {@link Task} that resolves with the number of follow requests retrieved.
+     */
     public Task<Integer> refreshRequests() {
         clear();
 
