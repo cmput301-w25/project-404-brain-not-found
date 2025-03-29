@@ -1,6 +1,7 @@
 package com.example.cmput301_team_project.ui;
 
 import com.example.cmput301_team_project.R;
+import com.example.cmput301_team_project.db.BatchLoader;
 import com.example.cmput301_team_project.enums.UserButtonActionEnum;
 import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
@@ -19,8 +20,8 @@ public class PeopleFragment extends BaseUserListFragment {
     }
 
     @Override
-    protected Task<List<PublicUser>> loadDefaultData(int low, int high) {
-        return userDatabaseService.getMostFollowedUsers(low, high);
+    protected Task<List<PublicUser>> loadDefaultData(BatchLoader batchLoader) {
+        return userDatabaseService.getMostFollowedUsers(batchLoader);
     }
 
     public PeopleFragment() {

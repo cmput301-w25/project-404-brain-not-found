@@ -72,6 +72,7 @@ public class UserDatabaseService extends BaseDatabaseService {
                         updates.put("usernameLower", user.getUsername().toLowerCase());
                         updates.put("nameLower", user.getName().toLowerCase());
                         updates.put("email", task.getResult());
+                        updates.put("followerCount", 0);
                         return uref.update(updates);
                     }
                     Tasks.forException(task.getException());
@@ -411,26 +412,26 @@ public class UserDatabaseService extends BaseDatabaseService {
 
             transaction.update(userRef, "followerCount", newCount);
             return null;
-        }).addOnSuccessListener(aVoid ->
-                Log.d("Firestore", "Follower count updated successfully")
-        ).addOnFailureListener(e ->
-                Log.e("Firestore", "Error updating follower count", e)
-        );
+        });
     }
 
-    public Task<List<PublicUser>> getFollowing(String username, Integer low, Integer high) {
+    public Task<List<PublicUser>> getFollowing(String username, BatchLoader batchLoader) {
         CollectionReference followingRef = usersRef.document(username).collection("following");
         Task<QuerySnapshot> followingTask;
 
-        if(low != null && high != null) {
-            followingTask = followingRef.startAt(low).limit(high).get();
+        if(batchLoader != null) {
+            followingTask = batchLoader.getNextBatchQuery(followingRef).get();
         }
         else {
             followingTask = followingRef.get();
         }
         return followingTask.continueWith(task -> {
             if(task.isSuccessful()) {
-                return task.getResult().getDocuments().stream()
+                List<DocumentSnapshot> documents = task.getResult().getDocuments();
+                if(batchLoader != null) {
+                    batchLoader.nextBatch(documents);
+                }
+                return documents.stream()
                         .map(document -> new PublicUser(document.getId(), document.getString("name")))
                         .collect(Collectors.toList());
             }
@@ -439,18 +440,24 @@ public class UserDatabaseService extends BaseDatabaseService {
         });
     }
 
-    public Task<List<PublicUser>> getFollowers(String username, Integer low, Integer high) {
+    public Task<List<PublicUser>> getFollowers(String username, BatchLoader batchLoader) {
         CollectionReference followersRef = usersRef.document(username).collection("followers");
         Task<QuerySnapshot> followersTask;
-        if(low != null && high != null) {
-            followersTask = followersRef.startAt(low).limit(high).get();
+        if(batchLoader != null) {
+            followersTask = batchLoader.getNextBatchQuery(followersRef).get();
         }
         else {
             followersTask = followersRef.get();
         }
         return followersTask.continueWith(task -> {
            if(task.isSuccessful()) {
-               return task.getResult().getDocuments().stream()
+               List<DocumentSnapshot> documents = task.getResult().getDocuments();
+
+               if(batchLoader != null) {
+                   batchLoader.nextBatch(documents);
+               }
+
+               return documents.stream()
                        .map(document -> new PublicUser(document.getId(), document.getString("name")))
                        .collect(Collectors.toList());
            }
@@ -459,17 +466,23 @@ public class UserDatabaseService extends BaseDatabaseService {
         });
     }
 
-    public Task<List<PublicUser>> getMostFollowedUsers(Integer low, Integer high) {
+    public Task<List<PublicUser>> getMostFollowedUsers(BatchLoader batchLoader) {
         Query query = usersRef.orderBy("followerCount", Query.Direction.DESCENDING);
 
-        if(low != null && high != null) {
-            query = query.startAt(low).limit(high);
+        if(batchLoader != null) {
+            query = batchLoader.getNextBatchQuery(query);
         }
 
         return query.get()
                 .continueWith(task -> {
                     if(task.isSuccessful()) {
-                        return task.getResult().getDocuments().stream()
+                        List<DocumentSnapshot> documents = task.getResult().getDocuments();
+
+                        if(batchLoader != null) {
+                            batchLoader.nextBatch(documents);
+                        }
+
+                        return documents.stream()
                                 .map(document -> new PublicUser(document.getId(), document.getString("name")))
                                 .collect(Collectors.toList());
                     }

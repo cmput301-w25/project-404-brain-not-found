@@ -36,7 +36,7 @@ public class MoodFollowingFragment extends BaseMoodListFragment {
 
     @Override
     protected void loadMoodData() {
-        userDatabaseService.getFollowing(FirebaseAuthenticationService.getInstance().getCurrentUser(), null, null)
+        userDatabaseService.getFollowing(FirebaseAuthenticationService.getInstance().getCurrentUser(), null)
                         .addOnSuccessListener(following -> moodDatabaseService.getFollowingMoods(following.stream().map(PublicUser::getUsername).collect(Collectors.toList()), moodFilterState)
                                 .addOnSuccessListener(moods -> {
                                     moodListAdapter.clear();
