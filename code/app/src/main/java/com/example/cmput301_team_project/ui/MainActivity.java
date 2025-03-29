@@ -48,6 +48,8 @@ public class MainActivity extends BaseActivity{
 
         replaceFragment(MoodFollowingFragment.newInstance());
 
+        navigation.setSelectedItemId(R.id.mood_following_icon);
+
         navigation.setOnItemSelectedListener(item -> {
             checkNotification();
             if(item.getItemId() == R.id.mood_history_icon) {
