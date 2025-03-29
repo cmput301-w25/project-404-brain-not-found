@@ -70,4 +70,9 @@
     <string name="use_my_current_location">Use my current location</string>
     <string name="moods_within_5_km">Only moods within 5 km of my current location</string>
     <string name="show_more">Show more</string>
+    <string name="sign_up">Sign up</string>
+    <string name="login">Login</string>
+    <string name="privacy_policy">© Privacy Policy</string>
+    <string name="Slogan">Track your emotions. Improve your wellbeing.</string>
+
 </resources>
