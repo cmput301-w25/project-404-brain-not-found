@@ -118,6 +118,7 @@ public abstract class BaseUserListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if(searchView.getQuery().toString().isEmpty()) {
+            batchLoader.reset();
             loadDefaultData(batchLoader).addOnSuccessListener(res -> userAdapter.replaceItems(res));
         }
     }
