@@ -26,7 +26,7 @@ public class MoodUnitTest {
     public void testCreateMood() {
         class TestHelper {
             Mood createMoodUtil(MoodEmotionEnum emotion) {
-                return Mood.createMood(emotion, MoodSocialSituationEnum.ALONE, "", "", null, null);
+                return Mood.createMood(emotion, MoodSocialSituationEnum.ALONE, "", true,"", null, null, null);
             }
         }
         TestHelper testHelper = new TestHelper();
@@ -43,7 +43,7 @@ public class MoodUnitTest {
     @Test
     public void testIllegalCreateMood() {
         assertThrows(IllegalArgumentException.class, () -> {
-            Mood.createMood(MoodEmotionEnum.NONE, MoodSocialSituationEnum.ALONE, "", "", null, null);
+            Mood.createMood(MoodEmotionEnum.NONE, MoodSocialSituationEnum.ALONE, "", true,"", null, null, null);
         });
     }
 }

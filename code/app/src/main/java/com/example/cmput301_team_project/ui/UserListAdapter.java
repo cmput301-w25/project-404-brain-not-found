@@ -12,18 +12,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.SessionManager;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.UserDatabaseService;
-import com.example.cmput301_team_project.enums.UserButtonAction;
+import com.example.cmput301_team_project.enums.FollowRelationshipEnum;
+import com.example.cmput301_team_project.enums.UserButtonActionEnum;
 import com.example.cmput301_team_project.model.PublicUser;
 
 import java.util.List;
 
 public class UserListAdapter extends ArrayAdapter<PublicUser> {
     private final String buttonText;
-    private final UserButtonAction buttonAction;
+    private final UserButtonActionEnum buttonAction;
     private final UserDatabaseService userDatabaseService;
-    public UserListAdapter(@NonNull Context context, @NonNull List<PublicUser> objects, String buttonText, UserButtonAction buttonAction) {
+    public UserListAdapter(@NonNull Context context, @NonNull List<PublicUser> objects, String buttonText, UserButtonActionEnum buttonAction) {
         super(context, 0, objects);
         this.buttonText = buttonText;
         this.buttonAction = buttonAction;
@@ -48,18 +49,47 @@ public class UserListAdapter extends ArrayAdapter<PublicUser> {
         PublicUser user = getItem(position);
         username.setText(user.getUsername());
         name.setText(user.getName());
-        button.setText(buttonText);
+        setButtonView(button, user);
 
-        SessionManager sessionManager = SessionManager.getInstance();
+        String currentUser = FirebaseAuthenticationService.getInstance().getCurrentUser();
         button.setOnClickListener(v -> {
             switch (buttonAction) {
-                case FOLLOW -> userDatabaseService.followUser(sessionManager.getCurrentUser(), user.getUsername());
-                case UNFOLLOW -> userDatabaseService.unfollowUser(sessionManager.getCurrentUser(), user.getUsername());
-                case REMOVE -> userDatabaseService.revokeFollow(sessionManager.getCurrentUser(), user.getUsername());
+                case FOLLOW -> userDatabaseService.requestFollow(currentUser, user.getUsername())
+                        .addOnSuccessListener(vd -> {
+                            user.setFollowRelationshipWithCurrUser(FollowRelationshipEnum.REQUESTED);
+                            setButtonView(button, user);
+                        });
+                case UNFOLLOW -> userDatabaseService.removeFollow(currentUser, user.getUsername())
+                        .addOnSuccessListener(vd -> { remove(user); notifyDataSetChanged(); });
+                case REMOVE -> userDatabaseService.removeFollow(user.getUsername(), currentUser)
+                        .addOnSuccessListener(vd -> { remove(user); notifyDataSetChanged(); });
             }
         });
 
         return view;
+    }
+
+    private void setButtonView(Button button, PublicUser user) {
+        button.setText(getButtonText(user));
+        button.setEnabled(buttonAction != UserButtonActionEnum.FOLLOW || user.getFollowRelationshipWithCurrUser() == FollowRelationshipEnum.NONE);
+    }
+
+    private int getButtonText(PublicUser user) {
+        return switch(buttonAction) {
+            case FOLLOW -> getFollowText(user.getFollowRelationshipWithCurrUser());
+            case REMOVE -> R.string.remove;
+            case UNFOLLOW -> R.string.unfollow;
+        };
+    }
+
+    private int getFollowText(FollowRelationshipEnum relationship) {
+        if (relationship == FollowRelationshipEnum.NONE) {
+            return R.string.follow;
+        } else if (relationship == FollowRelationshipEnum.REQUESTED) {
+            return R.string.requested;
+        } else {
+            return R.string.following;
+        }
     }
 
     public void replaceItems(List<PublicUser> items) {

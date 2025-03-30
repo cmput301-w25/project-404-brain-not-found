@@ -4,18 +4,15 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.cmput301_team_project.R;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
 import com.example.cmput301_team_project.model.Mood;
-
-import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass for user mood history screen.
@@ -23,16 +20,11 @@ import java.util.ArrayList;
  * Use the {@link MoodHistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MoodHistoryFragment extends Fragment implements MoodFormFragment.MoodFormDialogListener {
+public class MoodHistoryFragment extends BaseMoodListFragment implements MoodFormFragment.MoodFormDialogListener {
     private final MoodDatabaseService moodDatabaseService;
-    private ListView moodListView;
-    private MoodListAdapter moodListAdapter;
-    private ArrayList<Mood> moodList;
-
 
     public MoodHistoryFragment() {
         moodDatabaseService = MoodDatabaseService.getInstance();
-        moodList = new ArrayList<>();
 
     }
 
@@ -52,31 +44,24 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_mood_history, container, false);
-        moodListView = view.findViewById(R.id.Mood_List);
-        moodListAdapter = new MoodListAdapter(getContext(), moodList, this);
-        moodListView.setAdapter(moodListAdapter);
+    protected void setupUI(View view) {
+        ImageButton addMoodButton;
+        ViewStub addMoodStub = view.findViewById(R.id.add_mood_stub);
+        if(addMoodStub == null) {
+            addMoodButton = view.findViewById(R.id.add_mood_button);
+        }
+        else {
+            addMoodButton = (ImageButton) addMoodStub.inflate();
+        }
 
-        ImageButton addMoodButton = view.findViewById(R.id.add_mood_button);
         addMoodButton.setOnClickListener(v -> {
             MoodFormFragment.newInstance(null).show(getChildFragmentManager(), "Add Mood Event");
         });
-
-        loadMoodData();
-        return view;
     }
 
     @Override
     public void addMood(Mood mood) {
         moodDatabaseService.addMood(mood);
-        loadMoodData();
-    }
-    @Override
-    public void onResume() {
-        super.onResume();
-        // Refresh mood data when returning to the fragment
         loadMoodData();
     }
 
@@ -89,12 +74,13 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
     /**
      * Loads mood data from Firestore database
      */
-    private void loadMoodData() {
-        moodDatabaseService.getMoodList()
+    @Override
+    protected void loadMoodData() {
+        moodDatabaseService.getMoodList(FirebaseAuthenticationService.getInstance().getCurrentUser(), moodFilterState)
                 .addOnSuccessListener(moods -> {
                     // Clear existing list and add new data
-                    moodList.clear();
-                    moodList.addAll(moods);
+                    moodListAdapter.clear();
+                    moodListAdapter.addAll(moods);
 
                     // Notify adapter that data has changed
                     moodListAdapter.notifyDataSetChanged();
@@ -106,5 +92,9 @@ public class MoodHistoryFragment extends Fragment implements MoodFormFragment.Mo
                 });
     }
 
+    @Override
+    protected boolean isMoodOwned() {
+        return true;
+    }
 
 }

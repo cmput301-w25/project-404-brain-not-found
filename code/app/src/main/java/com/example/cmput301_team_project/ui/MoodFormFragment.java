@@ -31,19 +31,27 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.SessionManager;
-import com.example.cmput301_team_project.db.MoodDatabaseService;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.utils.ImageUtils;
+import com.example.cmput301_team_project.utils.LocationPermissionManager;
+import com.example.cmput301_team_project.utils.PlacesUtils;
+import com.github.angads25.toggle.widget.LabeledSwitch;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.button.MaterialButton;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * A {@link DialogFragment} subclass that implements form for adding and editing moods
@@ -54,6 +62,8 @@ public class MoodFormFragment extends DialogFragment {
     private final int MAX_IMAGE_SIZE = 65536;
     private final int MAX_TRIGGER_LENGTH = 200;
 
+    private GeoPoint selectedLocation;
+    private LocationPermissionManager locationPermissionManager;
     private boolean isEditMode = false; // Flag to check if we're editing
     private Mood moodBeingEdited = null; // Reference to the mood being edited
 
@@ -106,6 +116,8 @@ public class MoodFormFragment extends DialogFragment {
         View view = getLayoutInflater().inflate(R.layout.fragment_mood_form, null);
 
         initializePhotoPicker(view);
+        initializeLocationSearch(view);
+
         Spinner emotion = view.findViewById(R.id.form_emotion);
         Spinner socialSituation = view.findViewById(R.id.form_situation);
         EditText trigger = view.findViewById(R.id.form_trigger);
@@ -119,9 +131,12 @@ public class MoodFormFragment extends DialogFragment {
         socialSituation.setOnItemSelectedListener(new HintDropdownItemSelectedListener());
         socialSituation.setAdapter(socialSituationAdapter);
 
+        LabeledSwitch isPublicSwitch = view.findViewById(R.id.form_public_switch);
+
         if (isEditMode) {
             Mood editedMood = (Mood) getArguments().getSerializable("mood");
             ImageView moodImagePreview = view.findViewById(R.id.mood_image_preview);
+            EditText locationField = view.findViewById(R.id.form_location);
 
             //display old mood's emotion
             MoodEmotionEnum oldEmotion = editedMood.getEmotion();
@@ -134,6 +149,8 @@ public class MoodFormFragment extends DialogFragment {
             //display old moods trigger
             trigger.setText(editedMood.getTrigger());
 
+            isPublicSwitch.setOn(editedMood.isPublic());
+
             //display image
             if (editedMood.getImageBase64() != null && !editedMood.getImageBase64().isEmpty()) {
                 moodImagePreview.setImageBitmap(ImageUtils.decodeBase64(editedMood.getImageBase64()));
@@ -141,6 +158,13 @@ public class MoodFormFragment extends DialogFragment {
                 ImageButton removePreviewButton = view.findViewById(R.id.remove_preview);
                 removePreviewButton.setVisibility(View.VISIBLE);
             }
+
+            selectedLocation = editedMood.getLocation();
+            LatLng latLng = selectedLocation == null ? null : new LatLng(selectedLocation.getLatitude(), selectedLocation.getLongitude());
+            if(latLng != null) {
+                locationField.setText(PlacesUtils.getAddressFromLatLng(getContext(), latLng));
+            }
+
         }
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             AlertDialog dialog = builder
@@ -172,9 +196,11 @@ public class MoodFormFragment extends DialogFragment {
                             selectedEmotion, // New Emotion
                             MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
                             trigger.getText().toString(),
+                            isPublicSwitch.isOn(),
                             moodBeingEdited.getAuthor(),
                             moodBeingEdited.getDate(),
-                            imageViewToBase64(view.findViewById(R.id.mood_image_preview))
+                            imageViewToBase64(view.findViewById(R.id.mood_image_preview)),
+                            selectedLocation
                     );
 
                     newMood.setId(moodBeingEdited.getId()); // Preserve Firestore document ID
@@ -186,9 +212,11 @@ public class MoodFormFragment extends DialogFragment {
                             selectedEmotion,
                             MoodSocialSituationEnum.values()[socialSituation.getSelectedItemPosition()],
                             inputtedTrigger,
-                            SessionManager.getInstance().getCurrentUser(),
+                            isPublicSwitch.isOn(),
+                            FirebaseAuthenticationService.getInstance().getCurrentUser(),
                             null,
-                            imageViewToBase64(view.findViewById(R.id.mood_image_preview))
+                            imageViewToBase64(view.findViewById(R.id.mood_image_preview)),
+                            selectedLocation
                     );
                     listener.addMood(newMood);
                 }
@@ -268,6 +296,63 @@ public class MoodFormFragment extends DialogFragment {
             removePreview.setVisibility(View.GONE);
             preview.setImageDrawable(null);
         });
+    }
+
+    private void initializeLocationSearch(View view) {
+        EditText locationField = view.findViewById(R.id.form_location);
+
+        MaterialButton currLocationButton = view.findViewById(R.id.form_current_location_button);
+        currLocationButton.setOnClickListener(v -> {
+            getLastLocation(locationField);
+        });
+
+        ImageView clearLocation = view.findViewById(R.id.form_location_clear);
+        clearLocation.setOnClickListener(v -> {
+            locationField.setText(null);
+            selectedLocation = null;
+        });
+
+        ActivityResultLauncher<Intent> startAutocomplete = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent intent = result.getData();
+                        if (intent != null) {
+                            Place place = Autocomplete.getPlaceFromIntent(intent);
+
+                            LatLng latLng = place.getLocation();
+                            selectedLocation = latLng == null ? null : new GeoPoint(latLng.latitude, latLng.longitude);
+                            locationField.setText(place.getFormattedAddress());
+                        }
+                    }
+                });
+
+        locationPermissionManager = new LocationPermissionManager(this, () -> getLastLocation(locationField));
+
+        locationField.setOnClickListener(v -> {
+            List<Place.Field> fields = Arrays.asList(Place.Field.FORMATTED_ADDRESS,
+                    Place.Field.LOCATION);
+
+            Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                    .build(requireContext());
+            startAutocomplete.launch(intent);
+        });
+
+    }
+
+    private void getLastLocation(EditText locationText) {
+        if(!locationPermissionManager.isPermissionGranted())
+        {
+            locationPermissionManager.requestPermission();
+            return;
+        }
+
+        PlacesUtils.getLastLocation(getContext())
+                .addOnSuccessListener(location -> {
+                    selectedLocation = new GeoPoint(location.getLatitude(), location.getLongitude());
+                    LatLng latLng = new LatLng(selectedLocation.getLatitude(), selectedLocation.getLongitude());
+                    locationText.setText(PlacesUtils.getAddressFromLatLng(getContext(), latLng));
+                });
     }
 
     /**

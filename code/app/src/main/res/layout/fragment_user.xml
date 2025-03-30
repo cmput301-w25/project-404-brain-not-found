@@ -1,59 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="@drawable/gradient_background"
     tools:context=".ui.UserFragment">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <!-- Profile Header Container -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/profile_header_card"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/appUserEmoji"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/profile"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10sp"
-            android:layout_marginRight="1sp"
-            android:layout_weight="1"
-            android:text="@string/emoji_emotionless"
-            android:textAlignment="center"
-            android:textSize="50sp"
-            android:visibility="visible" />
+            android:background="#FEF7FF"
+            android:padding="16dp">
 
-        <TextView
-            android:id="@+id/displayName"
-            android:layout_width="310dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20sp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="Name"
-            android:textSize="40sp"
-            android:visibility="visible" />
+            <!-- Emoji Container -->
+            <TextView
+                android:id="@+id/appUserEmoji"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:background="@drawable/circle_emoji_background"
+                android:gravity="center"
+                android:text="@string/emoji_emotionless"
+                android:textAlignment="center"
+                android:textSize="50sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
+            <!-- User Info Container -->
+            <LinearLayout
+                android:id="@+id/user_info_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@id/appUserEmoji"
+                app:layout_constraintEnd_toStartOf="@id/logout_button"
+                app:layout_constraintStart_toEndOf="@id/appUserEmoji"
+                app:layout_constraintTop_toTopOf="@id/appUserEmoji">
 
-    <TextView
-        android:id="@+id/usernameDisplay"
-        android:layout_width="365dp"
-        android:layout_height="41dp"
-        android:layout_marginLeft="20sp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="TextView"
-        android:textSize="24sp" />
+                <TextView
+                    android:id="@+id/displayName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/usernameDisplay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="@string/username"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <!-- Logout Button -->
+            <ImageButton
+                android:id="@+id/logout_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_baseline_logout_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/black" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Tabs Container -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/user_tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_header_card"
+        app:tabIndicatorColor="@color/buttons"
+        app:tabSelectedTextColor="@color/black"
+        app:tabTextColor="@color/buttons" />
 
+    <!-- ViewPager -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-</LinearLayout>
+        android:layout_height="0dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_tab_layout" />
+</androidx.constraintlayout.widget.ConstraintLayout>

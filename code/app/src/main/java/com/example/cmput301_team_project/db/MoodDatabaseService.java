@@ -2,21 +2,29 @@ package com.example.cmput301_team_project.db;
 
 import android.util.Log;
 
+import com.example.cmput301_team_project.model.Comment;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
-import com.example.cmput301_team_project.SessionManager;
+import com.example.cmput301_team_project.model.MoodFilterState;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashSet;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.concurrent.Executor;
 
 /**
  * Singleton class to manage mood-related operations with the firestore database
@@ -32,8 +40,8 @@ public class MoodDatabaseService extends BaseDatabaseService {
         moodsRef = db.collection("moods");
     }
 
-    private MoodDatabaseService(FirebaseFirestore db) {
-        super(db);
+    private MoodDatabaseService(FirebaseFirestore db, Executor executor) {
+        super(db, executor);
 
         moodsRef = db.collection("moods");
     }
@@ -45,8 +53,8 @@ public class MoodDatabaseService extends BaseDatabaseService {
         return instance;
     }
 
-    public static void setInstanceForTesting(FirebaseFirestore db) {
-        instance = new MoodDatabaseService(db);
+    public static void setInstanceForTesting(FirebaseFirestore db, Executor executor) {
+        instance = new MoodDatabaseService(db, executor);
     }
 
     public void addMood(Mood mood) {
@@ -57,7 +65,13 @@ public class MoodDatabaseService extends BaseDatabaseService {
     /**Find the mood event in database with doc ID and delete it
      * @param mood The mood event in history to be deleted.*/
     public void deleteMood(Mood mood){
-        moodsRef.document(mood.getId()).delete();
+        DocumentReference moodDocRef = moodsRef.document(mood.getId());
+        moodDocRef.collection("comments").get().addOnSuccessListener(querySnapshot -> {
+            for (DocumentSnapshot document : querySnapshot.getDocuments()) {
+                document.getReference().delete();
+            }});
+
+        moodDocRef.delete();
     }
 
     public Task<String> getMostRecentMood(String username){
@@ -77,70 +91,51 @@ public class MoodDatabaseService extends BaseDatabaseService {
                     return document.getString("emotion");
                 });
     }
+
+    private Query applyFilteringQueries(Query query, MoodFilterState moodFilterState) {
+        if(moodFilterState.emotion() != null) {
+            query = query.whereEqualTo("emotion", moodFilterState.emotion().toString());
+        }
+
+        if(moodFilterState.time() != null) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_YEAR, moodFilterState.time());
+            Timestamp timestamp = new Timestamp(calendar.getTime());
+            query = query.whereGreaterThan("date", timestamp);
+        }
+
+        return query;
+    }
+
+    private Mood moodFromDoc(DocumentSnapshot document) {
+        Mood mood = Mood.createMood(MoodEmotionEnum.valueOf(document.getString("emotion")),
+                MoodSocialSituationEnum.valueOf(document.getString("socialSituation")),
+                document.getString("trigger"),
+                Boolean.TRUE.equals(document.getBoolean("public")),
+                document.getString("author"),
+                document.getDate("date"),
+                document.getString("imageBase64"),
+                document.getGeoPoint("location"));
+        mood.setId(document.getId());
+        return mood;
+  }
+
     /**this is the method to get all the documents in the moods collection*/
-    public Task<List<Mood>> getMoodList() {
-        //Log.d("username", SessionManager.getInstance().getCurrentUser());
-        return moodsRef
-                .whereEqualTo("author", SessionManager.getInstance().getCurrentUser())
-                .orderBy("date", Query.Direction.DESCENDING)
-                .get().continueWith(task -> {
+    public Task<List<Mood>> getMoodList(String username, MoodFilterState moodFilterState) {
+        Query query = moodsRef
+                .whereEqualTo("author", username)
+                .orderBy("date", Query.Direction.DESCENDING);
+
+        query = applyFilteringQueries(query, moodFilterState);
+
+        return query.get().continueWith(taskExecutor, task -> {
             List<Mood> moodList = new ArrayList<>();
 
             if (task.isSuccessful() && task.getResult() != null) {
                 for (DocumentSnapshot doc : task.getResult().getDocuments()) {
-                    try {
-                        // Safely extract fields with null checks
-                        Object authorObj = doc.get("author");
-                        String author = (authorObj != null) ? authorObj.toString() : "Guest";
-
-                        Object imageObj = doc.get("imageBase64");
-                        String imageBase64 = (imageObj != null) ? imageObj.toString() : "";
-
-                        Object situationObj = doc.get("socialSituation");
-                        String socialSituationString = (situationObj != null) ? situationObj.toString() : "";
-
-                        MoodSocialSituationEnum socialSituation = MoodSocialSituationEnum.NONE;
-                        // Safely converting the socialSituation string to the enum
-                        try {
-                            if (socialSituationString != null && !socialSituationString.isEmpty()) {
-                                socialSituation = MoodSocialSituationEnum.valueOf(socialSituationString.toUpperCase());
-                            }
-                        } catch (IllegalArgumentException e) {
-                            // Keep the default NONE value
-                        }
-
-                        Object triggerObj = doc.get("trigger");
-                        String trigger = (triggerObj != null) ? triggerObj.toString() : "";
-
-                        // Safely get date with fallback to current date
-                        Date date = new Date();
-                        Timestamp timestamp = doc.getTimestamp("date");
-                        if (timestamp != null) {
-                            date = timestamp.toDate();
-                        }
-
-                        // Safely get emotion with default to prevent crashes
-                        Object emotionObj = doc.get("emotion");
-                        String emotionString = (emotionObj != null) ? emotionObj.toString().toLowerCase() : "";
-
-                        MoodEmotionEnum emotion = MoodEmotionEnum.NONE;
-                        // Safely converting the socialSituation string to the enum
-                        try {
-                            if (emotionString != null && !emotionString.isEmpty()) {
-                                emotion = MoodEmotionEnum.valueOf(emotionString.toUpperCase());
-                            }
-                        } catch (IllegalArgumentException e) {
-                            // Keep the default NONE value
-                        }
-                        // Creating mood objects based on the emotion
-                        Mood mood = Mood.createMood(emotion, socialSituation, trigger, author, date, imageBase64);
-                        if (mood != null) {
-                            mood.setId(doc.getId()); // Set the Firestore document ID
-                            moodList.add(mood);
-                        }
-                    } catch (Exception e) {
-                        // Log the exception but continue processing other documents
-                        Log.e("MoodDatabaseService", "Error processing document: " + doc.getId(), e);
+                    Mood mood = moodFromDoc(doc);
+                    if(moodFilterState.verifyNonDatabaseFilters(mood)) {
+                        moodList.add(mood);
                     }
                 }
             } else if (task.getException() != null) {
@@ -152,8 +147,106 @@ public class MoodDatabaseService extends BaseDatabaseService {
         });
     }
 
+    public Task<List<Mood>> getFollowingMoods(List<String> following, MoodFilterState moodFilterState) {
+
+        List<Task<QuerySnapshot>> fetchTasks = new ArrayList<>();
+        for(String username : following) {
+            Query query = moodsRef.orderBy("date", Query.Direction.DESCENDING)
+                    .whereEqualTo("author", username)
+                    .whereEqualTo("public", true)
+                    .limit(3);
+
+            fetchTasks.add(applyFilteringQueries(query, moodFilterState).get());
+        }
+
+        return Tasks.whenAllSuccess(fetchTasks)
+                .continueWith(result -> {
+                    if(result.isSuccessful()) {
+                        List<Mood> moodList = new ArrayList<>();
+                        for(Object res : result.getResult()) {
+                            if(res instanceof QuerySnapshot querySnapshot) {
+                                for(DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                    Mood mood = moodFromDoc(document);
+                                    if(moodFilterState.verifyNonDatabaseFilters(mood)) {
+                                        moodList.add(mood);
+                                    }
+                                }
+                            }
+                        }
+
+                        moodList.sort((m1, m2) -> m2.getDate().compareTo(m1.getDate()));
+                        return moodList;
+                    }
+                    return new ArrayList<>();
+                });
+    }
+
+
+    public Task<DocumentReference> addComment(String moodId, Comment comment){
+        comment.setTimestamp(Timestamp.now());
+        return moodsRef.document(moodId).collection("comments")
+                .add(comment);
+    }
+
+    public Task<List<Comment>> getComments(String moodId){
+        return moodsRef.document(moodId)
+                .collection("comments")
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .continueWith(task ->{
+                    if(task.isSuccessful()){
+                        return task.getResult().getDocuments()
+                                .stream()
+                                .map(document -> new Comment(document.getString("username"), document.getString("text")))
+                                .collect(Collectors.toList());
+                    }
+                    return new ArrayList<>();
+                });
+    }
+
+    public Task<List<Mood>> getMentionedMoods(List<String> moodIds, MoodFilterState moodFilterState) {
+        List<Task<QuerySnapshot>> fetchTasks = new ArrayList<>();
+        for(String moodId : moodIds) {
+            Query query = moodsRef.whereEqualTo(FieldPath.documentId(), moodId);
+
+            query = applyFilteringQueries(query, moodFilterState);
+
+            fetchTasks.add(query.get());
+        }
+
+        return Tasks.whenAllSuccess(fetchTasks)
+                .continueWith(result -> {
+                    if(result.isSuccessful()) {
+                        Set<Mood> moodList = new HashSet<>();
+                        for(Object res : result.getResult()) {
+                            if(res instanceof QuerySnapshot querySnapshot) {
+                                for(DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                    Mood mood = moodFromDoc(document);
+                                    if(moodFilterState.verifyNonDatabaseFilters(mood)) {
+                                        moodList.add(mood);
+                                    }
+                                }
+                            }
+                        }
+                        return new ArrayList<>(moodList);
+                    }
+                    return new ArrayList<>();
+                });
+    }
 
     public void updateMood(Mood mood) {
         moodsRef.document(mood.getId()).set(mood);
     }
+
+    public Task<Boolean> isPublic(String moodId){
+        return moodsRef.document(moodId).get()
+                .continueWith(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        return documentSnapshot.getBoolean("public");
+                    }
+                    return false;
+                });
+    }
+
 }

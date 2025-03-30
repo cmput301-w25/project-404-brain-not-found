@@ -61,7 +61,7 @@ public class LoginSignupActivityTest extends BaseActivityTest {
                 .perform(ViewActions.typeText("hello"))
                 .perform(closeSoftKeyboard());
         onView(withId(R.id.button_signin)).perform(click());
-        onView(withId(R.id.signup_password)).check(matches(hasErrorText("Password cannot be empty")));
+        onView(withId(R.id.signup_password)).check(matches(hasErrorText("Password should be at least 6 characters")));
 
     }
 
@@ -104,6 +104,4 @@ public class LoginSignupActivityTest extends BaseActivityTest {
         onView(withId(R.id.button_login)).perform(click());
         onView(withId(R.id.login_password)).check(matches(hasErrorText("Incorrect password")));
     }
-
-
 }

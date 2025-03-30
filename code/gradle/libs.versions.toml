@@ -3,6 +3,7 @@ agp = "8.7.3"
 byteBuddy = "1.17.1"
 firebaseBom = "33.9.0"
 firebaseFirestore = "25.1.2"
+githubToggle = "1.1.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -12,12 +13,16 @@ activity = "1.10.0"
 constraintlayout = "2.2.0"
 mockitoCore = "5.7.0"
 mockitoInline = "5.2.0"
+places = "4.2.0"
+secretsGradlePlugin = "2.0.1"
 
 
 [libraries]
 byte-buddy = { module = "net.bytebuddy:byte-buddy", version.ref = "byteBuddy" }
+firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore", version.ref = "firebaseFirestore" }
+github-toggle = { module = "com.github.angads25:toggle", version.ref = "githubToggle" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -27,6 +32,8 @@ activity = { group = "androidx.activity", name = "activity", version.ref = "acti
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+places = { module = "com.google.android.libraries.places:places", version.ref = "places" }
+secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
 
 
 [plugins]

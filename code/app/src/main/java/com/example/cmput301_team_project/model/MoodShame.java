@@ -4,6 +4,7 @@ import com.example.cmput301_team_project.enums.MoodEmotionEnum;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.R;
 import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.util.Date;
 
@@ -13,12 +14,12 @@ import java.util.Date;
  */
 public class MoodShame extends Mood {
 
-    public MoodShame(MoodSocialSituationEnum socialSituation, String trigger, String author, String imageBase64) {
-        super(socialSituation, trigger, author, imageBase64);
+    public MoodShame(MoodSocialSituationEnum socialSituation, String trigger, boolean isPublic, String author, String imageBase64, GeoPoint location) {
+        super(socialSituation, trigger, isPublic, author, imageBase64, location);
     }
 
-    public MoodShame(MoodSocialSituationEnum socialSituation, String trigger, String author, Date date, String imageBase64) {
-        super(socialSituation, trigger, author, date, imageBase64);
+    public MoodShame(MoodSocialSituationEnum socialSituation, String trigger, boolean isPublic, String author, Date date, String imageBase64, GeoPoint location) {
+        super(socialSituation, trigger, isPublic, author, date, imageBase64, location);
     }
 
     @Override
@@ -38,6 +39,7 @@ public class MoodShame extends Mood {
         return R.string.emoji_shame;
     }
 
+    @Exclude
     public int getDisplayName(){
         return R.string.mood_shame;
     }

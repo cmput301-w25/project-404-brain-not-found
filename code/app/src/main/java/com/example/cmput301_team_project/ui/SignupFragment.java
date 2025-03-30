@@ -14,10 +14,8 @@ import android.widget.ImageButton;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import android.util.Base64;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.model.AppUser;
 
@@ -29,12 +27,10 @@ import com.example.cmput301_team_project.model.AppUser;
 public class SignupFragment extends Fragment {
 
     private final UserDatabaseService userDatabaseService;
-    private final SessionManager sessionManager;
     private LoginSignupFragment.onButtonClickListener listener;
 
     public SignupFragment() {
         userDatabaseService = UserDatabaseService.getInstance();
-        sessionManager = SessionManager.getInstance();
     }
     public static SignupFragment newInstance() {
         return new SignupFragment();
@@ -64,22 +60,20 @@ public class SignupFragment extends Fragment {
             usernameInput.setError(getString(R.string.empty_username_error));
             return;
         }
-        if (password.isEmpty()){
-            passwordInput.setError(getString(R.string.empty_password_error));
+        if (password.length() < 6){
+            passwordInput.setError(getString(R.string.too_short_password_error));
             return;
         }
-
-        byte[] salt = userDatabaseService.generateSalt();
-        String hashed = userDatabaseService.hashPassword(password, salt);
 
         userDatabaseService.userExists(username).addOnCompleteListener(task -> {
             if (!task.getResult()){
                 usernameInput.setError(null);
-                AppUser newUser = new AppUser(username, name, hashed, Base64.encodeToString(salt, Base64.NO_WRAP));
-                userDatabaseService.addUser(newUser);
-                sessionManager.setCurrentUser(username);
-                Intent myIntent = new Intent(getContext(), MainActivity.class);
-                getContext().startActivity(myIntent);
+                AppUser newUser = new AppUser(username, name, password);
+                userDatabaseService.addUser(newUser).addOnSuccessListener(v -> {
+                    Intent intent = new Intent(getContext(), MainActivity.class);
+                    requireContext().startActivity(intent);
+                    requireActivity().finish();
+                });
             }
             else {
                 usernameInput.setError(getString(R.string.username_exists_error));

@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.example.cmput301_team_project.R;
-import com.example.cmput301_team_project.SessionManager;
 import com.example.cmput301_team_project.db.UserDatabaseService;
 
 import java.security.NoSuchAlgorithmException;
@@ -26,12 +25,10 @@ import java.security.spec.InvalidKeySpecException;
  */
 public class LoginFragment extends Fragment {
     private final UserDatabaseService userDatabaseService;
-    private final SessionManager sessionManager;
     private LoginSignupFragment.onButtonClickListener listener;
 
     public LoginFragment() {
         userDatabaseService = UserDatabaseService.getInstance();
-        sessionManager = SessionManager.getInstance();
     }
 
     public static LoginFragment newInstance() {
@@ -66,9 +63,9 @@ public class LoginFragment extends Fragment {
                     userDatabaseService.validateCredentials(username, password).addOnCompleteListener(validationTask -> {
                         if(validationTask.isSuccessful() && validationTask.getResult()) {
                             passwordInput.setError(null);
-                            sessionManager.setCurrentUser(username);
-                            Intent myIntent = new Intent(getContext(), MainActivity.class);
-                            getContext().startActivity(myIntent);
+                            Intent intent = new Intent(getContext(), MainActivity.class);
+                            requireContext().startActivity(intent);
+                            requireActivity().finish();
                         }
                         else {
                             passwordInput.setError("Incorrect password");
