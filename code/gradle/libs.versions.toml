@@ -1,6 +1,7 @@
 [versions]
 agp = "8.7.3"
 byteBuddy = "1.17.1"
+espressoIntents = "3.6.1"
 firebaseBom = "33.9.0"
 firebaseFirestore = "25.1.2"
 githubToggle = "1.1.0"
@@ -19,6 +20,7 @@ secretsGradlePlugin = "2.0.1"
 
 [libraries]
 byte-buddy = { module = "net.bytebuddy:byte-buddy", version.ref = "byteBuddy" }
+espresso-intents = { module = "androidx.test.espresso:espresso-intents", version.ref = "espressoIntents" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore", version.ref = "firebaseFirestore" }
