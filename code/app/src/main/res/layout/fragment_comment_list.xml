@@ -2,6 +2,7 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -14,14 +15,15 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/addCommentLayout"
                 android:layout_width="0dp"
-                android:layout_height="60dp"
-                android:layout_weight="2"
+                android:layout_height="70dp"
+                android:layout_marginTop="7dp"
+                android:layout_weight="3"
                 app:boxCornerRadiusBottomEnd="20dp"
                 app:boxCornerRadiusBottomStart="20dp"
                 app:boxCornerRadiusTopEnd="20dp"
@@ -31,7 +33,10 @@
                     android:id="@+id/AddComment"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:hint="@string/add_comment" />
+                    android:layout_margin="16dp"
+                    android:layout_weight="3"
+                    android:hint="@string/add_comment"
+                    tools:layout_weight="3" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
@@ -39,10 +44,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
+                android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:backgroundTint="@color/buttons"
-                android:text="Post" />
+                android:text="Post"
+                tools:layout_weight="1" />
 
         </LinearLayout>
 
@@ -50,9 +56,9 @@
             android:id="@+id/commentList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingTop="10dp"
+            android:divider="@color/default_background"
             android:dividerHeight="7dp"
-            android:divider="@color/default_background">
+            android:paddingTop="10dp">
 
 
         </ListView>
