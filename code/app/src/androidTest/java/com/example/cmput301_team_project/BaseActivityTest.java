@@ -37,8 +37,12 @@ public class BaseActivityTest {
         int firestorePortNumber = 8080;
         int authPortNumber = 9099;
 
-        FirebaseFirestore.getInstance().useEmulator(androidLocalhost, firestorePortNumber);
-        FirebaseAuth.getInstance().useEmulator(androidLocalhost, authPortNumber);
+        try {
+            FirebaseFirestore.getInstance().useEmulator(androidLocalhost, firestorePortNumber);
+            FirebaseAuth.getInstance().useEmulator(androidLocalhost, authPortNumber);
+        } catch (IllegalStateException e) {
+            // emulators have already been initialized
+        }
     }
 
     @Before
