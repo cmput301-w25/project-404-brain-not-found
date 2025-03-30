@@ -12,11 +12,13 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
 
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.ui.LoginSignupActivity;
 import com.example.cmput301_team_project.ui.MainActivity;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +29,11 @@ public class MoodInstrumentedTest extends BaseActivityTest {
     @Rule
     public ActivityScenarioRule<LoginSignupActivity> scenario = new
             ActivityScenarioRule<>(LoginSignupActivity.class);
+
+    @BeforeClass
+    public static void authSetup() {
+        FirebaseAuthenticationService.getInstance().setUserForTesting("Henrietta");
+    }
 
     @Before
     public void login() throws InterruptedException {
