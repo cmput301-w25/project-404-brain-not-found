@@ -27,10 +27,11 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
 @RunWith(AndroidJUnit4.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @LargeTest
 public class MoodInstrumentedTest extends BaseActivityTest {
-    private ActivityScenario<MainActivity> scenario;
+    @Rule
+    public ActivityScenarioRule<MainActivity> scenario = new
+            ActivityScenarioRule<>(MainActivity.class);
 
     @BeforeClass
     public static void setTestUser() {
@@ -38,18 +39,12 @@ public class MoodInstrumentedTest extends BaseActivityTest {
     }
 
     @Before
-    public void login() throws InterruptedException {
-        scenario = ActivityScenario.launch(MainActivity.class);
-        Thread.sleep(15000);
-    }
-
-    @After
-    public void release() {
-        scenario.close();
+    public void waitLoading() throws InterruptedException {
+        Thread.sleep(1000);
     }
 
     @Test
-    public void aaa_my_testcase() throws InterruptedException {
+    public void testcase() throws InterruptedException {
 
         onView(withId(R.id.mood_history_icon)).perform(click());
     }

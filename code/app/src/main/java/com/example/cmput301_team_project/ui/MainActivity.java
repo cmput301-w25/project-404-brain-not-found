@@ -86,10 +86,13 @@ public class MainActivity extends BaseActivity{
     private void initializePlacesApi() {
         String apiKey = BuildConfig.MAPS_API_KEY;
 
-        if (TextUtils.isEmpty(apiKey) || apiKey.equals("DEFAULT_API_KEY")) {
-            Log.e("Places test", "No api key");
+        if (TextUtils.isEmpty(apiKey)) {
+            Log.e("Maps key test", "No api key");
             finish();
             return;
+        }
+        else if(apiKey.equals("DEFAULT_API_KEY")) {
+            Log.d("Maps key test", "Using default api key, google maps functionality is disabled");
         }
         Places.initializeWithNewPlacesApiEnabled(getApplicationContext(), apiKey);
     }
