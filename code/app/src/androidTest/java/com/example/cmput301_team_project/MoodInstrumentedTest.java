@@ -35,16 +35,6 @@ public class MoodInstrumentedTest extends BaseActivityTest {
         FirebaseAuthenticationService.getInstance().setUserForTesting("Henrietta");
     }
 
-    @Before
-    public void login() throws InterruptedException {
-        Intents.init();
-    }
-
-    @After
-    public void release() {
-        Intents.release();
-    }
-
     @Test
     public void test() throws InterruptedException {
         Thread.sleep(500);
@@ -55,9 +45,8 @@ public class MoodInstrumentedTest extends BaseActivityTest {
         onView(withId(R.id.button_login)).perform(click());
         System.out.println("Login pressed");
 
-        Thread.sleep(2000);
+        Thread.sleep(15000);
 
-        ActivityScenario.launch(MainActivity.class);
 
         onView(withId(R.id.mood_history_icon)).perform(click());
     }
