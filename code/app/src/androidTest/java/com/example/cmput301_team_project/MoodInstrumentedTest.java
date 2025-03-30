@@ -27,9 +27,7 @@ import org.junit.runner.RunWith;
 @RunWith(AndroidJUnit4.class)
 @LargeTest
 public class MoodInstrumentedTest extends BaseActivityTest {
-    @Rule
-    public ActivityScenarioRule<MainActivity> scenario = new
-            ActivityScenarioRule<>(MainActivity.class);
+    private ActivityScenario<MainActivity> scenario;
 
     @BeforeClass
     public static void setTestUser() {
@@ -38,12 +36,12 @@ public class MoodInstrumentedTest extends BaseActivityTest {
 
     @Before
     public void login() throws InterruptedException {
-        Intents.init();
+        scenario = ActivityScenario.launch(MainActivity.class);
     }
 
     @After
     public void release() {
-        Intents.release();
+        scenario.close();
     }
 
     @Test
