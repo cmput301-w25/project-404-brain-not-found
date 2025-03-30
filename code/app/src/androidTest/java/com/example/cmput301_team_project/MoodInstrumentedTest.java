@@ -41,6 +41,7 @@ public class MoodInstrumentedTest extends BaseActivityTest {
     public void test() throws InterruptedException {
         Thread.sleep(500);
         Log.i("TEST_LOG", "Login started");
+        Log.d("TEST_LOG", "Debug login started");
         onView(withId(R.id.login_button)).perform(click());
         onView(withId(R.id.login_username)).perform(typeText("Henrietta"), closeSoftKeyboard());
         onView(withId(R.id.login_password)).perform(typeText("some_password"), closeSoftKeyboard());
