@@ -26,8 +26,8 @@ import org.junit.runner.RunWith;
 @LargeTest
 public class MoodInstrumentedTest extends BaseActivityTest {
     @Rule
-    public ActivityScenarioRule<MainActivity> scenario = new
-            ActivityScenarioRule<>(MainActivity.class);
+    public ActivityScenarioRule<LoginSignupActivity> scenario = new
+            ActivityScenarioRule<>(LoginSignupActivity.class);
 
     @Before
     public void login() throws InterruptedException {
@@ -42,16 +42,16 @@ public class MoodInstrumentedTest extends BaseActivityTest {
     @Test
     public void test() throws InterruptedException {
         Thread.sleep(500);
-//        System.out.println("Login started");
-//        onView(withId(R.id.login_button)).perform(click());
-//        onView(withId(R.id.login_username)).perform(typeText("Henrietta"), closeSoftKeyboard());
-//        onView(withId(R.id.login_password)).perform(typeText("some_password"), closeSoftKeyboard());
-//        onView(withId(R.id.button_login)).perform(click());
-//        System.out.println("Login pressed");
-//
-//        Thread.sleep(500);
-//        intended(hasComponent(MainActivity.class.getName()));
-//        System.out.println("Intended passed");
+        System.out.println("Login started");
+        onView(withId(R.id.login_button)).perform(click());
+        onView(withId(R.id.login_username)).perform(typeText("Henrietta"), closeSoftKeyboard());
+        onView(withId(R.id.login_password)).perform(typeText("some_password"), closeSoftKeyboard());
+        onView(withId(R.id.button_login)).perform(click());
+        System.out.println("Login pressed");
+
+        Thread.sleep(500);
+        intended(hasComponent(MainActivity.class.getName()));
+        System.out.println("Intended passed");
 
         onView(withId(R.id.mood_history_icon)).perform(click());
     }
