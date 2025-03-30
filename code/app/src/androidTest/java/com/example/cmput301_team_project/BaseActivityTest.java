@@ -39,7 +39,7 @@ public class BaseActivityTest {
 
         try {
             FirebaseFirestore.getInstance().useEmulator(androidLocalhost, firestorePortNumber);
-            FirebaseAuth.getInstance().useEmulator(androidLocalhost, authPortNumber);
+            // FirebaseAuth.getInstance().useEmulator(androidLocalhost, authPortNumber);
         } catch (IllegalStateException e) {
             // emulators have already been initialized
         }
@@ -59,13 +59,13 @@ public class BaseActivityTest {
             moodDatabaseService.addMood(mood);
         }
 
-        AppUser[] users = {
-                new AppUser("Henrietta", "", "some_password")
-        };
-
-        for (AppUser user: users) {
-            userDatabaseService.addUser(user).addOnSuccessListener(v -> FirebaseAuthenticationService.getInstance().logoutUser());
-        }
+//        AppUser[] users = {
+//                new AppUser("Henrietta", "", "some_password")
+//        };
+//
+//        for (AppUser user: users) {
+//            userDatabaseService.addUser(user).addOnSuccessListener(v -> FirebaseAuthenticationService.getInstance().logoutUser());
+//        }
     }
 
     private void clearData(String urlStr) {
@@ -97,6 +97,6 @@ public class BaseActivityTest {
         String projectId = "cmput301-project-d122a";
 
         clearData("http://10.0.2.2:8080/emulator/v1/projects/" + projectId + "/databases/(default)/documents");
-        clearData("http://10.0.2.2:9099/emulator/v1/projects/" + projectId + "/accounts");
+        // clearData("http://10.0.2.2:9099/emulator/v1/projects/" + projectId + "/accounts");
     }
 }
