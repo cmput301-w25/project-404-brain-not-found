@@ -66,3 +66,6 @@ jobs:
             ./gradlew connectedCheck
             cat logcat_output.txt
           working-directory: code
+      - name: Print logcat output
+        if: always()  # Ensures this step runs even if the previous one failed
+        run: cat code/logcat_output.txt || echo "No logcat output captured."
