@@ -139,15 +139,15 @@
             android:textColor="@color/design_default_color_on_secondary"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <ImageView
             android:id="@+id/ImageBase64"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:scaleType="centerCrop"
-            android:visibility="gone" />
+            android:layout_marginTop="0dp"
+            android:scaleType="fitCenter"
+            android:visibility="visible" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
