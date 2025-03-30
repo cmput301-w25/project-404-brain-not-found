@@ -69,7 +69,7 @@ public class UserFragment extends Fragment {
         displayName.setVisibility(View.INVISIBLE);
         TextView username = view.findViewById(R.id.usernameDisplay);
         String currUser = FirebaseAuthenticationService.getInstance().getCurrentUser();
-        username.setText(currUser);
+        username.setText("@"+currUser);
         userDatabaseService.getDisplayName(currUser).addOnSuccessListener(name->{
             displayName.setText(name);
             displayName.setVisibility(View.VISIBLE);
