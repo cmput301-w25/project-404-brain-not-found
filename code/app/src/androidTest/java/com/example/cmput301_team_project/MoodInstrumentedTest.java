@@ -8,6 +8,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.Intents;
+import androidx.test.espresso.intent.rule.IntentsTestRule;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.filters.LargeTest;
@@ -47,10 +48,6 @@ public class MoodInstrumentedTest extends BaseActivityTest {
         onView(withId(R.id.login_password)).perform(typeText("some_password"), closeSoftKeyboard());
         onView(withId(R.id.button_login)).perform(click());
         System.out.println("Login pressed");
-
-        Thread.sleep(2000);
-
-        ActivityScenario.launch(MainActivity.class);
 
         onView(withId(R.id.mood_history_icon)).perform(click());
     }
