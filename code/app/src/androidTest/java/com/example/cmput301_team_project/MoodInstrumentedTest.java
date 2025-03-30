@@ -40,6 +40,7 @@ public class MoodInstrumentedTest extends BaseActivityTest {
     @Before
     public void login() throws InterruptedException {
         scenario = ActivityScenario.launch(MainActivity.class);
+        Thread.sleep(15000);
     }
 
     @After
@@ -49,7 +50,6 @@ public class MoodInstrumentedTest extends BaseActivityTest {
 
     @Test
     public void aaa_my_testcase() throws InterruptedException {
-        Thread.sleep(500);
 
         onView(withId(R.id.mood_history_icon)).perform(click());
     }
