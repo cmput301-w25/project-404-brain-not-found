@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -61,6 +62,7 @@ public class UserFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ConstraintLayout profileLayout = view.findViewById(R.id.profile);
         TextView userEmoji = view.findViewById(R.id.appUserEmoji);
         userEmoji.setVisibility(View.INVISIBLE);
         TextView displayName = view.findViewById(R.id.displayName);
@@ -76,6 +78,7 @@ public class UserFragment extends Fragment {
         moodDatabaseService.getMostRecentMood(currUser).addOnSuccessListener(emotion ->{
             if (emotion != null){
                 Mood tempMood = Mood.createMood(MoodEmotionEnum.valueOf(emotion), null, null, false,null, null, null, null);
+                profileLayout.setBackgroundColor(getContext().getResources().getColor(tempMood.getColour(), getContext().getTheme()));
                 userEmoji.setText(tempMood.getEmoji());
                 userEmoji.setVisibility(View.VISIBLE);
             }else{

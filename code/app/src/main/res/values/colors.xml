@@ -17,4 +17,5 @@
     <color name="decline_button">#FFD14249</color>
     <color name="text_secondary">#525F7F</color>
     <color name="text_primary">#32325D</color>
+    <color name="background">#E2E9FF</color>
 </resources>
