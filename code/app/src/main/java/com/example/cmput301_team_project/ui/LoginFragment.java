@@ -63,8 +63,8 @@ public class LoginFragment extends Fragment {
                     userDatabaseService.validateCredentials(username, password).addOnCompleteListener(validationTask -> {
                         if(validationTask.isSuccessful() && validationTask.getResult()) {
                             passwordInput.setError(null);
-                            Intent intent = new Intent(getContext(), MainActivity.class);
-                            requireContext().startActivity(intent);
+                            Intent intent = new Intent(requireActivity(), MainActivity.class);
+                            requireActivity().startActivity(intent);
                             requireActivity().finish();
                         }
                         else {
