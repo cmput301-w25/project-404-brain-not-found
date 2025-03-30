@@ -32,16 +32,6 @@ public class MoodInstrumentedTest extends BaseActivityTest {
     @Before
     public void login() throws InterruptedException {
         Intents.init();
-
-        Thread.sleep(500);
-
-        onView(withId(R.id.login_button)).perform(click());
-        onView(withId(R.id.login_username)).perform(typeText("Henrietta"), closeSoftKeyboard());
-        onView(withId(R.id.login_password)).perform(typeText("some_password"), closeSoftKeyboard());
-        onView(withId(R.id.button_login)).perform(click());
-
-        Thread.sleep(500);
-        intended(hasComponent(MainActivity.class.getName()));
     }
 
     @After
@@ -50,7 +40,19 @@ public class MoodInstrumentedTest extends BaseActivityTest {
     }
 
     @Test
-    public void test() {
+    public void test() throws InterruptedException {
+        Thread.sleep(500);
+        System.out.println("Login started");
+        onView(withId(R.id.login_button)).perform(click());
+        onView(withId(R.id.login_username)).perform(typeText("Henrietta"), closeSoftKeyboard());
+        onView(withId(R.id.login_password)).perform(typeText("some_password"), closeSoftKeyboard());
+        onView(withId(R.id.button_login)).perform(click());
+        System.out.println("Login pressed");
+
+        Thread.sleep(500);
+        intended(hasComponent(MainActivity.class.getName()));
+        System.out.println("Intended passed");
+
         onView(withId(R.id.mood_history_icon)).perform(click());
     }
 }
