@@ -62,7 +62,7 @@ jobs:
           api-level: 29
           script: |
             adb logcat -c
-            adb logcat -v time > logcat_output.txt
+            adb logcat -v time > logcat_output.txt &
             ./gradlew connectedCheck
             cat logcat_output.txt
           working-directory: code
