@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -200,6 +201,13 @@ public class UserDatabaseService extends BaseDatabaseService {
                 });
     }
 
+    /**
+     * Gets the count of all accounts following the user.
+     *
+     * @param username The username of the user.
+     * @return A Task containing the count of the user's followers if successful, otherwise an
+     * exception is thrown.
+     */
     public Task<Long> followerCount(String username){
         CollectionReference userRef = usersRef.document(username).collection("followers");
         return userRef.count().get(AggregateSource.SERVER).continueWith(task -> {
@@ -451,7 +459,13 @@ public class UserDatabaseService extends BaseDatabaseService {
             return null;
         });
     }
-
+    /**
+     * Gets the list of accounts the users is following.
+     *
+     * @param username The username of the user.
+     * @return A Task containing a list of users that the user is following, otherwise an empty
+     * ArrayList is returned.
+     */
     public Task<List<PublicUser>> getFollowing(String username, BatchLoader batchLoader) {
         CollectionReference followingRef = usersRef.document(username).collection("following");
         Task<QuerySnapshot> followingTask;
@@ -548,11 +562,11 @@ public class UserDatabaseService extends BaseDatabaseService {
                 .orderBy("date", Query.Direction.DESCENDING)
                 .get()
                 .continueWith(task -> {
-                    if (task.isSuccessful()) {
+                    if(task.isSuccessful()) {
                         return task.getResult()
                                 .getDocuments()
                                 .stream()
-                                .map(DocumentSnapshot -> DocumentSnapshot.getString("moodId"))
+                                .map(DocumentSnapshot::getId)
                                 .collect(Collectors.toList());
                     }
                     else {

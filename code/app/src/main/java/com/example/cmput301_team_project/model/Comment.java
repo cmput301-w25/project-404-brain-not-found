@@ -3,7 +3,6 @@ package com.example.cmput301_team_project.model;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FieldValue;
 
-
 /**
  * The Comment class represents a type of post that users can leave on a (usually different) user's
  * Mood post.
@@ -15,9 +14,10 @@ public class Comment {
     public String username;
     public String text;
     public Timestamp date;
-    public Comment(String username, String text){
-       this.username = username;
-       this.text = text;
+
+    public Comment(String username, String text) {
+        this.username = username;
+        this.text = text;
     }
 
     /**
@@ -41,4 +41,7 @@ public class Comment {
     public void setTimestamp(Timestamp date) {
         this.date = date;
     }
+
+
 }
+

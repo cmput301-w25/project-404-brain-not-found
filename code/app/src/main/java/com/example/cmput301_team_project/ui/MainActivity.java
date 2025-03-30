@@ -25,7 +25,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  * The main activity that serves as the entry point for the application after login.
  * It manages navigation between different fragments using a bottom navigation bar.
  */
-public class MainActivity extends BaseActivity{
+public class MainActivity extends BaseActivity {
     /**
      * Called when the activity is first created.
      * Sets up the main layout, navigation bar, and initial fragment.

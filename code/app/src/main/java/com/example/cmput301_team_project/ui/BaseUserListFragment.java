@@ -146,4 +146,6 @@ public abstract class BaseUserListFragment extends Fragment {
             loadDefaultData(batchLoader).addOnSuccessListener(res -> userAdapter.replaceItems(res));
         }
     }
+
+    protected abstract Task<List<PublicUser>> loadDefaultData(BatchLoader batchLoader);
 }

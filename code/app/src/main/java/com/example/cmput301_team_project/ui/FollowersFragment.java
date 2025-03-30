@@ -16,6 +16,14 @@ import java.util.List;
  * to remove the follower.
  */
 
+/**
+ * It displays a list of followers and provides functionality to remove them.
+ * This fragment extends {@link BaseUserListFragment} to inherit common user list functionality
+ *
+ * The fragment displays each follower with a "Remove" button that allows the current user
+ * to remove the follower.
+ */
+
 public class FollowersFragment extends BaseUserListFragment {
     @Override
     protected int getUserButtonTextId() {

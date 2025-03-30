@@ -16,6 +16,8 @@ import java.util.List;
  * behavior for managing followed users. Each user in the list is displayed
  * with an "Unfollow" button that allows the current user to stop following them.
  */
+
+
 public class FollowingFragment extends BaseUserListFragment {
     /**
      * Provides the string resource ID for the action button text.

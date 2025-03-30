@@ -114,84 +114,31 @@ public abstract class Mood implements Serializable {
         };
     }
 
-    /**
-     * An abstract method used by the emotion Mood subclasses to return the Mood's emotion.
-     *
-     * @return A {@link MoodEmotionEnum} representing the user's emotion.
-     */
     public abstract MoodEmotionEnum getEmotion();
 
-    /**
-     * An abstract method used by the emotion Mood subclasses to get the Mood post's colour based on
-     * the emotion.
-     *
-     * @return an integer value representing the respective Mood's colour id.
-     */
     public abstract int getColour();
 
-    /**
-     * An abstract method used by the emotion Mood subclasses to get the Mood post's emoji based on
-     * the emotion.
-     *
-     * @return an integer value representing the respective Mood's emoji id.
-     */
     public abstract int getEmoji();
-
-    /**
-     * An abstract method used by the emotion Mood subclasses to get the Mood post's display emotion
-     * based on the specified emotion.
-     *
-     * @return an integer value representing the Mood emotion's respective String id.
-     */
     public abstract int getDisplayName();
 
-    /**
-     * Gets the Mood's social situation specified by the user.
-     *
-     * @return A {@link MoodSocialSituationEnum} representing the social situation of the user's
-     * posted Mood.
-     */
     public MoodSocialSituationEnum getSocialSituation() {
         return socialSituation;
     }
 
-    /**
-     * Gets the Mood's trigger/reason from the Mood post.
-     *
-     * @return a String representing the user's trigger/reason why they posted the mood.
-     */
     public String getTrigger() {
         return trigger;
     }
-
-    /**
-     * Gets the date of the posted Mood.
-     *
-     * @return The date and time of the post made by the user.
-     */
 
     public Date getDate() {
         return date;
     }
 
-    /**
-     * returns true or false based on if the current Mood's id matches another Mood's id.
-     *
-     * @param mood The mood to be compared to.
-     * @return a boolean value depending on if the Mood's ids match or not.
-     */
     public Boolean equals(Mood mood){
         if (Objects.equals(this.id, mood.id)){
             return true;
         }
         return false;
     }
-
-    /**
-     * Gets the posted Mood's date and time, localized to the current users time zone
-     *
-     * @return A String formatted to the localized date and time of the Mood post.
-     */
     @Exclude
     public String getDateLocal() {
         DateFormat dfLocal = new SimpleDateFormat("MMM d, yyyy", Locale.CANADA);

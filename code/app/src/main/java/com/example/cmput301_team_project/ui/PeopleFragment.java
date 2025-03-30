@@ -5,7 +5,6 @@ import com.example.cmput301_team_project.db.BatchLoader;
 import com.example.cmput301_team_project.enums.UserButtonActionEnum;
 import com.example.cmput301_team_project.model.PublicUser;
 import com.google.android.gms.tasks.Task;
-
 import java.util.List;
 
 /**
