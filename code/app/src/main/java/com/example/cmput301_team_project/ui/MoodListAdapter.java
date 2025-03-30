@@ -25,6 +25,8 @@ import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.utils.ImageUtils;
+import com.example.cmput301_team_project.utils.PlacesUtils;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.button.MaterialButton;
 
 
@@ -96,6 +98,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         TextView socialSituation = view.findViewById(R.id.socialSituation);
         TextView triggerName = view.findViewById(R.id.triggerName);
         TextView moodTime = view.findViewById(R.id.timeAns);
+        TextView location = view.findViewById(R.id.locationText);
         ImageView moodImage = view.findViewById(R.id.ImageBase64);
         ImageView expandButton = view.findViewById(R.id.drop_down);
         androidx.cardview.widget.CardView cardView = view.findViewById(R.id.cardView);
@@ -122,17 +125,19 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
                 moodPrefix.setText(String.format("@%s %s", mood.getAuthor(), getContext().getString(R.string.is)));
             }
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-            SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
             moodClass.setText(mood.getDisplayName());
             emoji.setText(mood.getEmoji());
-            moodDate.setText(dateFormat.format(mood.getDate()));
+            moodDate.setText(mood.getDateLocal());
             if (mood.getSocialSituation() != MoodSocialSituationEnum.NONE){
                 socialSituation.setText(mood.getSocialSituation().getDropdownDisplayName(context).toLowerCase());
             }
             triggerName.setText(mood.getTrigger());
-            moodTime.setText(timeFormat.format(mood.getDate()));
+            moodTime.setText(mood.getTimeLocal());
             moodImage.setImageBitmap(ImageUtils.decodeBase64(mood.getImageBase64()));
+
+            if(mood.getLocation() != null) {
+                location.setText(PlacesUtils.getAddressFromLatLng(getContext(), new LatLng(mood.getLocation().getLatitude(), mood.getLocation().getLongitude())));
+            }
 
             cardView.setCardBackgroundColor(getContext().getResources().getColor(mood.getColour(), getContext().getTheme()));
 
@@ -146,6 +151,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
             // Set visibility based on expanded state
             triggerName.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             moodImage.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            location.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
             expandButton.setImageResource(isExpanded ? R.drawable.baseline_arrow_drop_up_24 : R.drawable.baseline_arrow_drop_down_24);
 
             expandButton.setOnClickListener(v -> {
@@ -160,8 +166,9 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
                 view.setTag(newExpandedState);
 
                 // Update UI based on new state
-                triggerName.setVisibility(newExpandedState ? View.VISIBLE : View.GONE);
-                moodImage.setVisibility(newExpandedState ? View.VISIBLE : View.GONE);
+                triggerName.setVisibility(newExpandedState && !triggerName.getText().toString().isEmpty() ? View.VISIBLE : View.GONE);
+                moodImage.setVisibility(newExpandedState && mood.getImageBase64() != null ? View.VISIBLE : View.GONE);
+                location.setVisibility(newExpandedState && mood.getLocation() != null ? View.VISIBLE : View.GONE);
                 expandButton.setImageResource(newExpandedState ? R.drawable.baseline_arrow_drop_up_24 : R.drawable.baseline_arrow_drop_down_24);
             });
 
