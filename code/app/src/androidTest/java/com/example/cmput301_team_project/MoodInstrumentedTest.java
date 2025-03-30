@@ -6,6 +6,8 @@ import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
+import android.util.Log;
+
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -38,12 +40,12 @@ public class MoodInstrumentedTest extends BaseActivityTest {
     @Test
     public void test() throws InterruptedException {
         Thread.sleep(500);
-        System.out.println("Login started");
+        Log.i("TEST_LOG", "Login started");
         onView(withId(R.id.login_button)).perform(click());
         onView(withId(R.id.login_username)).perform(typeText("Henrietta"), closeSoftKeyboard());
         onView(withId(R.id.login_password)).perform(typeText("some_password"), closeSoftKeyboard());
         onView(withId(R.id.button_login)).perform(click());
-        System.out.println("Login pressed");
+        Log.i("TEST_LOG", "Login started");
 
         Thread.sleep(15000);
 
