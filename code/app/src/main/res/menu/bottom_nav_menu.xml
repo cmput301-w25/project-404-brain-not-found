@@ -3,20 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/user_icon"
-        android:title="Profile"
+        android:title="@string/profile"
         android:icon="@drawable/ic_baseline_account_circle_24" />
 
     <item
         android:id="@+id/mood_following_icon"
-        android:title="Your feed"
+        android:title="@string/feed"
         android:icon="@drawable/ic_baseline_home_24" />
 
     <item
         android:id="@+id/mood_history_icon"
         android:icon="@drawable/ic_baseline_book_24"
-        android:title="My Events" />
+        android:title="@string/my_events" />
     <item
         android:id="@+id/mentioned_icon"
-        android:title="Notifications"
+        android:title="@string/mentions"
         android:icon="@drawable/ic_baseline_chat_24" />
 </menu>
