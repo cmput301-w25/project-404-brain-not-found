@@ -111,7 +111,7 @@ public class UserDatabaseService extends BaseDatabaseService {
      */
     public Task<String> getDisplayName(String username){
         DocumentReference uref = usersRef.document(username);
-        return uref.get().continueWith(task -> {
+        return uref.get().continueWith(taskExecutor, task -> {
             if(!task.isSuccessful()) {
                 throw task.getException();
             }
@@ -193,7 +193,7 @@ public class UserDatabaseService extends BaseDatabaseService {
                     if(followingCheck.isSuccessful() && followingCheck.getResult().exists()) {
                         return FollowRelationshipEnum.FOLLOWED;
                     }
-                    if(requestedCheck.isSuccessful() && followingCheck.getResult().exists()) {
+                    if(requestedCheck.isSuccessful() && requestedCheck.getResult().exists()) {
                         return FollowRelationshipEnum.REQUESTED;
                     }
                     return FollowRelationshipEnum.NONE;
@@ -209,7 +209,7 @@ public class UserDatabaseService extends BaseDatabaseService {
      */
     public Task<Long> followerCount(String username){
         CollectionReference userRef = usersRef.document(username).collection("followers");
-        return userRef.count().get(AggregateSource.SERVER).continueWith(task -> {
+        return userRef.count().get(AggregateSource.SERVER).continueWith(taskExecutor, task -> {
             if (!task.isSuccessful()){
                 throw task.getException();
             }
@@ -226,7 +226,7 @@ public class UserDatabaseService extends BaseDatabaseService {
      */
     public Task<Long> followingCount(String username){
         CollectionReference userRef = usersRef.document(username).collection("following");
-        return userRef.count().get(AggregateSource.SERVER).continueWith(task -> {
+        return userRef.count().get(AggregateSource.SERVER).continueWith(taskExecutor, task -> {
             if (!task.isSuccessful()){
                 throw task.getException();
             }
@@ -340,7 +340,7 @@ public class UserDatabaseService extends BaseDatabaseService {
         return usersRef.document(username)
                 .collection("requestsReceived")
                 .get()
-                .continueWith(task -> {
+                .continueWith(taskExecutor, task -> {
                     if(task.isSuccessful()) {
                         return task.getResult().getDocuments()
                                 .stream()
@@ -530,7 +530,7 @@ public class UserDatabaseService extends BaseDatabaseService {
         }
 
         return query.get()
-                .continueWith(task -> {
+                .continueWithTask(task -> {
                     if(task.isSuccessful()) {
                         List<DocumentSnapshot> documents = task.getResult().getDocuments();
 
@@ -538,12 +538,21 @@ public class UserDatabaseService extends BaseDatabaseService {
                             batchLoader.nextBatch(documents);
                         }
 
-                        return documents.stream()
-                                .map(document -> new PublicUser(document.getId(), document.getString("name")))
-                                .collect(Collectors.toList());
+                        List<Task<PublicUser>> userMappingTasks = new ArrayList<>();
+                        for (DocumentSnapshot d : documents) {
+                            String username = d.getString("username");
+                            String name = d.getString("name");
+
+                            if (!Objects.equals(username, currentUser)) {
+                                userMappingTasks.add(getFollowRelationship(currentUser, username)
+                                        .continueWith(t -> new PublicUser(username, name, t.getResult())));
+                            }
+                        }
+
+                        return Tasks.whenAllSuccess(userMappingTasks);
                     }
 
-                    return new ArrayList<>();
+                    return Tasks.forResult(new ArrayList<>());
                 });
     }
 

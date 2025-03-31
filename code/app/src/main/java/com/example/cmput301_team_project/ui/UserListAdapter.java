@@ -97,7 +97,8 @@ public class UserListAdapter extends ArrayAdapter<PublicUser> {
      */
     private void setButtonView(Button button, PublicUser user) {
         button.setText(getButtonText(user));
-        button.setEnabled(buttonAction != UserButtonActionEnum.FOLLOW || user.getFollowRelationshipWithCurrUser() == FollowRelationshipEnum.NONE);
+        boolean enabled = buttonAction != UserButtonActionEnum.FOLLOW || user.getFollowRelationshipWithCurrUser() == FollowRelationshipEnum.NONE;
+        button.setEnabled(enabled);
     }
 
     /**
