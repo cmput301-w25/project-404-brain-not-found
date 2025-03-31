@@ -123,7 +123,7 @@ public class FilterInstrumentedTest extends BaseActivityTest {
      *  'RESET FILTERS' in the dialog
      */
     @Test
-    public void testResetFilters() {
+    public void testResetFilters() throws InterruptedException {
         Espresso.onIdle();
         // set the 'Shame' selection from the spinner (remove some posts from the view)
         onView(withId(R.id.mood_history_icon)).perform(click());
@@ -137,6 +137,7 @@ public class FilterInstrumentedTest extends BaseActivityTest {
         Espresso.onIdle();
         // reset the filters
         onView(withId(R.id.filter_button)).perform(click());
+        Thread.sleep(500);
         onView(withText("RESET FILTERS")).inRoot(isDialog()).perform(click());
 
         Espresso.onIdle();
@@ -227,7 +228,7 @@ public class FilterInstrumentedTest extends BaseActivityTest {
     }
 
     @Test
-    public void cancelFiltersDoesntUpdateList() {
+    public void cancelFiltersDoesntUpdateList() throws InterruptedException {
         Espresso.onIdle();
         onView(withId(R.id.mood_history_icon)).perform(click());
         onView(withId(R.id.filter_button)).perform(click());
@@ -240,6 +241,7 @@ public class FilterInstrumentedTest extends BaseActivityTest {
         onView(withText("SET FILTER")).inRoot(isDialog()).perform(click());
 
         onView(withId(R.id.filter_button)).perform(click());
+        Thread.sleep(500);
         onView(withText("CANCEL")).inRoot(isDialog()).perform(click());
 
         // check that the Shame mood is still only one appearing
