@@ -52,6 +52,14 @@ public class UserFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Inflates the layout for the fragment.
+     *
+     * @param inflater LayoutInflater to inflate the view.
+     * @param container Parent view container.
+     * @param savedInstanceState Saved instance state.
+     * @return The View for the fragment's UI.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -59,6 +67,12 @@ public class UserFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_user, container, false);
     }
 
+    /**
+     * Sets up the UI components and initializes data when the view is created.
+     *
+     * @param view The fragment view.
+     * @param savedInstanceState Saved instance state.
+     */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);

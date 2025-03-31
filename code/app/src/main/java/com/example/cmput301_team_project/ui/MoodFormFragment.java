@@ -96,7 +96,10 @@ public class MoodFormFragment extends DialogFragment {
     }
 
 
-
+    /**
+     * Attaches the fragment and verifies parent implements callback interface.
+     * @throws RuntimeException if parent doesn't implement MoodFormDialogListener
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -109,6 +112,11 @@ public class MoodFormFragment extends DialogFragment {
             throw new RuntimeException(parentFragment + " must implement MoodFormDialogListener");
         }
     }
+
+    /**
+     * Creates and configures the mood form dialog.
+     * Sets up all form fields, buttons, and click handlers.
+     */
 
     @NonNull
     @Override
@@ -298,6 +306,11 @@ public class MoodFormFragment extends DialogFragment {
         });
     }
 
+
+    /**
+     * Sets up location search with current location button,
+     * place autocomplete, and location clearing.
+     */
     private void initializeLocationSearch(View view) {
         EditText locationField = view.findViewById(R.id.form_location);
 
@@ -340,6 +353,10 @@ public class MoodFormFragment extends DialogFragment {
 
     }
 
+    /**
+     * Gets last known location and updates location field.
+     * Handles permission requests if needed.
+     */
     private void getLastLocation(EditText locationText) {
         if(!locationPermissionManager.isPermissionGranted())
         {
