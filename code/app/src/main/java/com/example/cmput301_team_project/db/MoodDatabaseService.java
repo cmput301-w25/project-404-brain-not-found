@@ -27,8 +27,11 @@ import java.util.stream.Collectors;
 import java.util.concurrent.Executor;
 
 /**
- * Singleton class to manage mood-related operations with the firestore database
- * Handles all mood-related queries
+ * the MoodDatabaseService singleton class includes methods for making queries on the "moods"
+ * collection in the firestore database.
+ *
+ * Provides methods on posting, editing, deleting, and getting Moods, as well as getting, and
+ * posting comments on a users Mood post.
  */
 public class MoodDatabaseService extends BaseDatabaseService {
     private static MoodDatabaseService instance = null;
@@ -46,6 +49,11 @@ public class MoodDatabaseService extends BaseDatabaseService {
         moodsRef = db.collection("moods");
     }
 
+    /**
+     * returns the instance and/or creates a new instance if needed of the MoodDatabaseService.
+     *
+     * @return the instance of the MoodDatabaseService.
+     */
     public static MoodDatabaseService getInstance() {
         if (instance == null) {
             instance = new MoodDatabaseService();
@@ -53,10 +61,22 @@ public class MoodDatabaseService extends BaseDatabaseService {
         return instance;
     }
 
+    /**
+     * Sets up a custom Firebase db and executor for testing purposes. Overrides the singleton
+     * instance of MoodDatabaseService.
+     *
+     * @param db The Firestore instance to be used.
+     * @param executor The Executor to handle the Firestore operations during the tests.
+     */
     public static void setInstanceForTesting(FirebaseFirestore db, Executor executor) {
         instance = new MoodDatabaseService(db, executor);
     }
 
+    /**
+     * Adds a Mood to the "moods" CollectionReference
+     *
+     * @param mood The Mood to be added.
+     */
     public void addMood(Mood mood) {
         moodsRef.add(mood);
     }
@@ -74,6 +94,13 @@ public class MoodDatabaseService extends BaseDatabaseService {
         moodDocRef.delete();
     }
 
+    /**
+     * Returns the users most recently posted moods from the database.
+     * @param username The username of the user whose mood is being retrieved.
+     * @return A Task containing a String representing the emotion of the
+     * users most recently posted mood. If no mood is found, the Task returns null.
+     * @throws Exception if the db query fails.
+     */
     public Task<String> getMostRecentMood(String username){
         return moodsRef
                 .whereEqualTo("author", username)
@@ -107,6 +134,11 @@ public class MoodDatabaseService extends BaseDatabaseService {
         return query;
     }
 
+    /**
+     * Gets the users mood from the Firestore db document.
+     * @param document The document representing the mood.
+     * @return A Mood object based on the one from the document.
+     */
     private Mood moodFromDoc(DocumentSnapshot document) {
         Mood mood = Mood.createMood(MoodEmotionEnum.valueOf(document.getString("emotion")),
                 MoodSocialSituationEnum.valueOf(document.getString("socialSituation")),
@@ -120,7 +152,12 @@ public class MoodDatabaseService extends BaseDatabaseService {
         return mood;
   }
 
-    /**this is the method to get all the documents in the moods collection*/
+    /**
+     * Gets all of the user's moods they have posted in the db.
+     * @param username The username of the user whose moods are being retrieved.
+     * @return A Task containing a List of Moods that the user has posted.
+     * If the query fails then a null List is returned and the error is logged.
+     */
     public Task<List<Mood>> getMoodList(String username, MoodFilterState moodFilterState) {
         Query query = moodsRef
                 .whereEqualTo("author", username)
@@ -147,6 +184,11 @@ public class MoodDatabaseService extends BaseDatabaseService {
         });
     }
 
+    /**
+     * Gets the three(3) most recent public Moods from users that the current user is following
+     * @param following A List of Strings representing usernames that the current user is following
+     * @return A Task containing a List of Moods from the followed users, sorted by recent date posted.
+     */
     public Task<List<Mood>> getFollowingMoods(List<String> following, MoodFilterState moodFilterState) {
 
         List<Task<QuerySnapshot>> fetchTasks = new ArrayList<>();
@@ -182,12 +224,25 @@ public class MoodDatabaseService extends BaseDatabaseService {
     }
 
 
+    /**
+     * Adds a comment to the moods 'comments' collection.
+     * @param moodId The id of the Mood being commented on.
+     * @param comment The comment object being added to the Mood's collection
+     * @return A Task containing the DocumentReference to the newly added Comment. If the operation
+     * fails, an exception is added to the Task.
+     */
     public Task<DocumentReference> addComment(String moodId, Comment comment){
         comment.setTimestamp(Timestamp.now());
         return moodsRef.document(moodId).collection("comments")
                 .add(comment);
     }
 
+    /**
+     * Gets the comments of the Mood post.
+     * @param moodId The id of the Mood with the comments.
+     * @return A Task containing a List of the Comments that the Moods has in its
+     * "comments" collection. If the query fails, then a null List is returned.
+     */
     public Task<List<Comment>> getComments(String moodId){
         return moodsRef.document(moodId)
                 .collection("comments")
@@ -234,6 +289,10 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 });
     }
 
+    /**
+     * Updates the Mood document with new information Using its MoodId
+     * @param mood The Mood with the new data
+     */
     public void updateMood(Mood mood) {
         moodsRef.document(mood.getId()).set(mood);
     }
