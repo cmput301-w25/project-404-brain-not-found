@@ -79,7 +79,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 .whereEqualTo("author", username)
                 .orderBy("date", Query.Direction.DESCENDING)
                 .limit(1)
-                .get().continueWith(task ->{
+                .get().continueWith(taskExecutor, task ->{
                     if (!task.isSuccessful()){
                         throw task.getException();
                     }
@@ -193,7 +193,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 .collection("comments")
                 .orderBy("date", Query.Direction.DESCENDING)
                 .get()
-                .continueWith(task ->{
+                .continueWith(taskExecutor, task ->{
                     if(task.isSuccessful()){
                         return task.getResult().getDocuments()
                                 .stream()
@@ -240,7 +240,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
 
     public Task<Boolean> isPublic(String moodId){
         return moodsRef.document(moodId).get()
-                .continueWith(task -> {
+                .continueWith(taskExecutor, task -> {
                     if (task.isSuccessful() && task.getResult() != null) {
                         DocumentSnapshot documentSnapshot = task.getResult();
                         return documentSnapshot.getBoolean("public");
