@@ -22,8 +22,13 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
- * A simple {@link Fragment} subclass.
+ * A base fragment for displaying a list of users with search functionality.
+ * Subclasses must specify the button text and action for user interactions.
+ *
+ * This fragment initializes a search view and a list view to display users.
+ * Depending on the action type (FOLLOW, UNFOLLOW, REMOVE), it fetches relevant user data from the database.
  */
 public abstract class BaseUserListFragment extends Fragment {
     protected abstract int getUserButtonTextId();
@@ -42,6 +47,11 @@ public abstract class BaseUserListFragment extends Fragment {
         batchLoader = new BatchLoader(BATCH_SIZE);
     }
 
+    /**
+     * Initializes the UserDatabaseService instance when the fragment is created.
+     *
+     * @param savedInstanceState The saved state of the fragment.
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +59,13 @@ public abstract class BaseUserListFragment extends Fragment {
         authService = FirebaseAuthenticationService.getInstance();
     }
 
+    /**
+     * Initializes the fragment's view, including the mood list and map button.
+     * @param inflater  LayoutInflater to inflate the fragment layout
+     * @param container ViewGroup container
+     * @param savedInstanceState Saved instance state bundle
+     * @return The root view of the fragment
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
