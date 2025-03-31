@@ -123,7 +123,7 @@ public class UserInstrumentedTest extends BaseActivityTest {
         onView(withText("Accept")).perform(click());
         Thread.sleep(500);
         onView(withText("Vance")).check(doesNotExist());
-        onView(withText("Followers")).perform(click());
+        onView(allOf(getElementFromMatchAtPosition(allOf(withText("Followers")), 0))).perform(click());
         Thread.sleep(1000);
 
         onView(withText("Vance")).check(matches(isDisplayed()));
@@ -137,7 +137,7 @@ public class UserInstrumentedTest extends BaseActivityTest {
         onView(withText("Accept")).perform(click());
         Thread.sleep(500);
         onView(withText("Vance")).check(doesNotExist());
-        onView(withText("Followers")).perform(click());
+        onView(allOf(getElementFromMatchAtPosition(allOf(withText("Followers")), 0))).perform(click());
         Thread.sleep(1000);
 
         onView(withText("Remove")).perform(click());
@@ -153,7 +153,7 @@ public class UserInstrumentedTest extends BaseActivityTest {
         onView(withText("Decline")).perform(click());
         Thread.sleep(500);
         onView(withText("Vance")).check(doesNotExist());
-        onView(withText("Followers")).perform(click());
+        onView(allOf(getElementFromMatchAtPosition(allOf(withText("Followers")), 0))).perform(click());
         Thread.sleep(1000);
 
         onView(withText("Vance")).check(doesNotExist());
