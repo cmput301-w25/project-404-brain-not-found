@@ -134,10 +134,10 @@ public class FilterInstrumentedTest extends BaseActivityTest {
                 .perform(click());
         onView(withText("SET FILTER")).inRoot(isDialog()).perform(click());
 
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         // reset the filters
         onView(withId(R.id.filter_button)).perform(click());
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         onView(withId(android.R.id.button3)).perform(scrollTo(), click());
 
         Espresso.onIdle();
@@ -240,10 +240,10 @@ public class FilterInstrumentedTest extends BaseActivityTest {
                 .perform(click());
         onView(withText("SET FILTER")).inRoot(isDialog()).perform(click());
 
-        Thread.sleep(2000);
+        Thread.sleep(1000);
 
         onView(withId(R.id.filter_button)).perform(click());
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         onView(withId(android.R.id.button2)).perform(scrollTo(), click());
 
         // check that the Shame mood is still only one appearing
