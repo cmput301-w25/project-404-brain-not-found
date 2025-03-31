@@ -131,12 +131,18 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
             if (mood.getSocialSituation() != MoodSocialSituationEnum.NONE){
                 socialSituation.setText(mood.getSocialSituation().getDropdownDisplayName(context).toLowerCase());
             }
+            else {
+                socialSituation.setText(null);
+            }
             triggerName.setText(mood.getTrigger());
             moodTime.setText(mood.getTimeLocal());
             moodImage.setImageBitmap(ImageUtils.decodeBase64(mood.getImageBase64()));
 
             if(mood.getLocation() != null) {
                 location.setText(PlacesUtils.getAddressFromLatLng(getContext(), new LatLng(mood.getLocation().getLatitude(), mood.getLocation().getLongitude())));
+            }
+            else {
+                location.setText(null);
             }
 
             cardView.setCardBackgroundColor(getContext().getResources().getColor(mood.getColour(), getContext().getTheme()));

@@ -121,6 +121,7 @@ public abstract class BaseUserListFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 if(newText.isEmpty()) {
+                    batchLoader.reset();
                     loadDefaultData(batchLoader).addOnSuccessListener(res -> userAdapter.replaceItems(res));
                     showMoreButton.setVisibility(View.VISIBLE);
                 }

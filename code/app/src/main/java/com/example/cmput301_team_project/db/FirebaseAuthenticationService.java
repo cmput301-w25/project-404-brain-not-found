@@ -19,6 +19,7 @@ import java.util.UUID;
 public class FirebaseAuthenticationService {
     private static FirebaseAuthenticationService instance = null;
     private final FirebaseAuth mAuth;
+    private String testUser;
 
     /**
      * Gets/creates an instance of the FirebaseAuthenticationService
@@ -31,6 +32,10 @@ public class FirebaseAuthenticationService {
 
     private FirebaseAuthenticationService(FirebaseAuth mAuth) {
         this.mAuth = mAuth;
+    }
+
+    public void setUserForTesting(String user) {
+        testUser = user;
     }
 
     public static FirebaseAuthenticationService getInstance() {
@@ -105,6 +110,10 @@ public class FirebaseAuthenticationService {
      * @return The display name of the Authenticated user as a String.
      */
     public String getCurrentUser() {
+        if(testUser != null) {
+            return testUser;
+        }
+
         if(mAuth.getCurrentUser() == null) {
             return null;
         }
