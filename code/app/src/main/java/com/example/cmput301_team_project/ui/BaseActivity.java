@@ -9,7 +9,17 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+/**
+ * BaseActivity class provides a common behavior for all activities in the application..
+ */
 public class BaseActivity extends AppCompatActivity {
+    /**
+     * Overrides the default touch event dispatcher to hide the keyboard when the user taps
+     * outside an EditText field.
+     *
+     * @param ev The MotionEvent associated with the touch event.
+     * @return boolean value indicating whether the event was handled.
+     */
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if(ev.getAction() == MotionEvent.ACTION_DOWN) {
