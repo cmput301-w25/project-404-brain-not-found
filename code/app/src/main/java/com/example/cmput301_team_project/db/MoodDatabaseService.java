@@ -99,7 +99,6 @@ public class MoodDatabaseService extends BaseDatabaseService {
      * @param username The username of the user whose mood is being retrieved.
      * @return A Task containing a String representing the emotion of the
      * users most recently posted mood. If no mood is found, the Task returns null.
-     * @throws Exception if the db query fails.
      */
     public Task<String> getMostRecentMood(String username){
         return moodsRef
