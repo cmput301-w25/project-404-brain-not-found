@@ -177,7 +177,7 @@ public class MoodInstrumentedTest extends BaseActivityTest {
 
         Espresso.onIdle();
 
-        onView(withId(R.id.form_trigger)).perform(clearText(), typeText("edited trigger"));
+        onView(withId(R.id.form_trigger)).perform(clearText(), typeText("edited trigger"), closeSoftKeyboard());
 
         onView(withId(android.R.id.button1)).perform(click());
 
