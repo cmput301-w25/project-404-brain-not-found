@@ -11,6 +11,7 @@ import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.AppUser;
 import com.example.cmput301_team_project.model.Mood;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.hamcrest.BaseMatcher;
@@ -24,6 +25,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 
