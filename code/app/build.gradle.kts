@@ -59,6 +59,4 @@ dependencies {
     testImplementation(libs.mockito.inline)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    // for updating javaDoc
-    implementation(files("${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar"))
 }
