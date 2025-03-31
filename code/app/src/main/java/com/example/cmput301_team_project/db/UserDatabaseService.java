@@ -165,7 +165,7 @@ public class UserDatabaseService extends BaseDatabaseService {
                     if(followingCheck.isSuccessful() && followingCheck.getResult().exists()) {
                         return FollowRelationshipEnum.FOLLOWED;
                     }
-                    if(requestedCheck.isSuccessful() && followingCheck.getResult().exists()) {
+                    if(requestedCheck.isSuccessful() && requestedCheck.getResult().exists()) {
                         return FollowRelationshipEnum.REQUESTED;
                     }
                     return FollowRelationshipEnum.NONE;
@@ -475,7 +475,7 @@ public class UserDatabaseService extends BaseDatabaseService {
         }
 
         return query.get()
-                .continueWith(task -> {
+                .continueWithTask(task -> {
                     if(task.isSuccessful()) {
                         List<DocumentSnapshot> documents = task.getResult().getDocuments();
 
@@ -483,12 +483,21 @@ public class UserDatabaseService extends BaseDatabaseService {
                             batchLoader.nextBatch(documents);
                         }
 
-                        return documents.stream()
-                                .map(document -> new PublicUser(document.getId(), document.getString("name")))
-                                .collect(Collectors.toList());
+                        List<Task<PublicUser>> userMappingTasks = new ArrayList<>();
+                        for (DocumentSnapshot d : documents) {
+                            String username = d.getString("username");
+                            String name = d.getString("name");
+
+                            if (!Objects.equals(username, currentUser)) {
+                                userMappingTasks.add(getFollowRelationship(currentUser, username)
+                                        .continueWith(t -> new PublicUser(username, name, t.getResult())));
+                            }
+                        }
+
+                        return Tasks.whenAllSuccess(userMappingTasks);
                     }
 
-                    return new ArrayList<>();
+                    return Tasks.forResult(new ArrayList<>());
                 });
     }
 
