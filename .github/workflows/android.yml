@@ -62,5 +62,11 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
-          script: ./gradlew connectedCheck
+          script: |
+            adb logcat -c
+            adb logcat -v time > logcat_output.txt &
+            ./gradlew connectedCheck
           working-directory: code
+      - name: Print logcat output
+        if: always()  # Ensures this step runs even if the previous one failed
+        run: cat code/logcat_output.txt || echo "No logcat output captured."
