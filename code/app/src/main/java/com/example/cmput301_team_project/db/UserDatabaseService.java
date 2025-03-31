@@ -83,7 +83,7 @@ public class UserDatabaseService extends BaseDatabaseService {
 
     public Task<String> getDisplayName(String username){
         DocumentReference uref = usersRef.document(username);
-        return uref.get().continueWith(task -> {
+        return uref.get().continueWith(taskExecutor, task -> {
             if(!task.isSuccessful()) {
                 throw task.getException();
             }
@@ -174,7 +174,7 @@ public class UserDatabaseService extends BaseDatabaseService {
 
     public Task<Long> followerCount(String username){
         CollectionReference userRef = usersRef.document(username).collection("followers");
-        return userRef.count().get(AggregateSource.SERVER).continueWith(task -> {
+        return userRef.count().get(AggregateSource.SERVER).continueWith(taskExecutor, task -> {
             if (!task.isSuccessful()){
                 throw task.getException();
             }
@@ -184,7 +184,7 @@ public class UserDatabaseService extends BaseDatabaseService {
 
     public Task<Long> followingCount(String username){
         CollectionReference userRef = usersRef.document(username).collection("following");
-        return userRef.count().get(AggregateSource.SERVER).continueWith(task -> {
+        return userRef.count().get(AggregateSource.SERVER).continueWith(taskExecutor, task -> {
             if (!task.isSuccessful()){
                 throw task.getException();
             }
@@ -298,7 +298,7 @@ public class UserDatabaseService extends BaseDatabaseService {
         return usersRef.document(username)
                 .collection("requestsReceived")
                 .get()
-                .continueWith(task -> {
+                .continueWith(taskExecutor, task -> {
                     if(task.isSuccessful()) {
                         return task.getResult().getDocuments()
                                 .stream()
