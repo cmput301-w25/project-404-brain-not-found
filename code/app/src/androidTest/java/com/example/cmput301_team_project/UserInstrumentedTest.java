@@ -164,7 +164,7 @@ public class UserInstrumentedTest extends BaseActivityTest {
         onView(withId(R.id.user_icon)).perform(click());
         Thread.sleep(2000);
 
-        onView(withText("Following")).perform(click());
+        onView(allOf(getElementFromMatchAtPosition(allOf(withText("Following")), 0))).perform(click());
         Thread.sleep(1000);
         onView(allOf(getElementFromMatchAtPosition(allOf(withText("Urkel")), 1))).check(matches(isDisplayed()));
     }
@@ -174,7 +174,7 @@ public class UserInstrumentedTest extends BaseActivityTest {
         onView(withId(R.id.user_icon)).perform(click());
         Thread.sleep(2000);
 
-        onView(withText("Following")).perform(click());
+        onView(allOf(getElementFromMatchAtPosition(allOf(withText("Following")), 0))).perform(click());
         Thread.sleep(1000);
         onView(withText("Unfollow")).perform(click());
         Thread.sleep(500);
