@@ -16,9 +16,11 @@ import java.util.Objects;
 import java.util.TimeZone;
 
 /**
- * Base class for mood event.
- * Use {@link Mood#createMood(MoodEmotionEnum, MoodSocialSituationEnum, String, boolean, String, Date, String, GeoPoint)} factory method
- * to create the correct subclass instance of the base class
+ * The Mood class is the base class for all Mood posts the user can make.
+ *
+ * Methods involve creating, setting, and getting contents of the Mood post.
+ * NOTE: Use the {@link Mood#createMood(MoodEmotionEnum, MoodSocialSituationEnum, String, boolean, String, Date, String, GeoPoint)} factory method
+ * to create the correct subclass instance of the base class.
  */
 public abstract class Mood implements Serializable {
     private String id; // Firestore mood document ID
@@ -30,6 +32,9 @@ public abstract class Mood implements Serializable {
     private String imageBase64;
     private GeoPoint location;
 
+    /**
+     * Required no-arg constructor for Firestore (queries)
+     */
     public Mood() {
         // Required no-arg constructor for Firestore (queries)
     }
@@ -38,6 +43,18 @@ public abstract class Mood implements Serializable {
         this(socialSituation, trigger, isPublic, author, new Date(), imageBase64, location);
     }
 
+    /**
+     * Constructor for the base Mood class, with a specified date and time for the Mood.
+     *
+     * @param socialSituation   a {@link MoodSocialSituationEnum} representing the users social situation.
+     * @param trigger           a String containing the user's reason why they are the Mood they're posting.
+     * @param isPublic          a boolean statement representing if the post is publicly available.
+     * @param author            a String of the user's username that is posting the Mood.
+     * @param date              The specified date and time of the Mood post.
+     * @param imageBase64       a base64-encoded String representing an image that the user can have with their Mood
+     *                          post.
+     * @param location          a {@link GeoPoint} showing the user's location where they posted the Mood.
+     */
     protected Mood(MoodSocialSituationEnum socialSituation, String trigger, boolean isPublic, String author, Date date, String imageBase64, GeoPoint location) {
         this.socialSituation = socialSituation;
         this.trigger = trigger;
@@ -49,12 +66,18 @@ public abstract class Mood implements Serializable {
     }
 
     /**
-     *
-     * @param emotion emotional state of mood event
-     * @param socialSituation social situation of mood event
-     * @param trigger trigger of mood event
-     * @param date date of mood event. If null value is supplied, the current date and time are used
-     * @return Mood class instance
+     * Method to create specific Mood posts based on the user's specified emotion.
+     * @param emotion           emotional state of mood event
+     * @param socialSituation   a {@link MoodSocialSituationEnum} representing the users social situation.
+     * @param trigger           a String containing the user's reason why they are the Mood they're posting.
+     * @param isPublic          a boolean statement representing if the post is publicly available.
+     * @param author            a String of the user's username that is posting the Mood.
+     * @param date              (Optional) The specified date and time of the Mood post, if not included, then the
+     *                          current date and time will be used.
+     * @param imageBase64       (Optional) a base64-encoded String representing an image that the user can
+     *                          have with their Mood post. if null, then no image is provided.
+     * @param location          (Optional) a {@link GeoPoint} showing the user's location where they posted
+     *                          the Mood. If null then no location is provided.
      */
     public static Mood createMood(MoodEmotionEnum emotion, MoodSocialSituationEnum socialSituation, String trigger, boolean isPublic, String author, @Nullable Date date, @Nullable String imageBase64, @Nullable GeoPoint location) {
         return switch (emotion) {
@@ -117,10 +140,21 @@ public abstract class Mood implements Serializable {
         return dfLocal.format(date);
     }
 
+    /**
+     * gets the Mood's base64-encoded image if one is provided.
+     *
+     * @return a base64-encoded String representing the Mood's posted image, if no image was
+     * provided, then a null String is returned.
+     */
     public String getImageBase64() {
         return imageBase64;
     }
 
+    /**
+     * Gets the Mood's author that posted the mood.
+     *
+     * @return a String representing the username that posted the Mood.
+     */
     public String getAuthor() {
         return author;
     }
