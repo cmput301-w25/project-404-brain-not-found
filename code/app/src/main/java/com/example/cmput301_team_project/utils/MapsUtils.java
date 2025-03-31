@@ -9,7 +9,21 @@ import android.graphics.Rect;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 
+/**
+ * The MapsUtils class is a utility class for managing Moods locations.
+ *
+ * Deals with creating the Mood posts emoji marker on the map.
+ */
 public class MapsUtils {
+    /**
+     * Creates the Emoji marker for the Mood post to display on the map. Marker consists of the
+     * Mood emoji and a triangular pin underneath it.
+     *
+     * @param emoji The emoji of the Mood post.
+     * @param color The color of the Mood post.
+     * @param size The size of the Marker.
+     * @return A {@link BitmapDescriptor} consisting of the custom marker.
+     */
     public static BitmapDescriptor getEmojiMarker(String emoji, int color, int size) {
         int markerWidth = (int) (size * 1.5);
         int markerHeight = size * 2;
