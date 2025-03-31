@@ -105,6 +105,12 @@ public class MainActivity extends BaseActivity{
         Places.initializeWithNewPlacesApiEnabled(getApplicationContext(), apiKey);
     }
 
+    /**
+     * Sets up the notification badge for a specified icon in the navbar.
+     *
+     * @param id     The menu id where the badge should be set.
+     * @param alerts The number of alerts made to the user.
+     */
     private void badgeSetup(int id, int alerts){
         BottomNavigationView navigation = findViewById(R.id.navigation_main);
         BadgeDrawable badge = navigation.getOrCreateBadge(id);
@@ -112,6 +118,11 @@ public class MainActivity extends BaseActivity{
         badge.setNumber(alerts);
     }
 
+    /**
+     * Clears the notification badge for the specified icon in the navbar.
+     *
+     * @param id The id of the navbar icon.
+     */
     private void badgeClear(int id){
         BottomNavigationView navigation = findViewById(R.id.navigation_main);
         BadgeDrawable badgeDrawable = navigation.getBadge(id);
@@ -121,7 +132,10 @@ public class MainActivity extends BaseActivity{
         }
     }
 
-
+    /**
+     * Checks for mentions made to the user. If there is mentions, then the badge is created/updated
+     * with the count of the user mentions. If there is no mentions, then the badge is cleared.
+     */
     public void checkNotification(){
         UserDatabaseService.getInstance().getMentionCount(FirebaseAuthenticationService.getInstance().getCurrentUser()).addOnSuccessListener(count -> {
             if (count != 0){

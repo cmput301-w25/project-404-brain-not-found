@@ -20,6 +20,13 @@ import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
  */
 public class LoginSignupActivity extends BaseActivity implements LoginSignupFragment.onButtonClickListener{
 
+    /**
+     *  Creates the activity that prompts the user to login or register (The opening page of the app).
+     *  If there already is a user logged into the app, then the {@link MainActivity} is
+     *  opened instead.
+     *
+     * @param savedInstanceState The saved instance state of the activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -132,6 +132,10 @@ public abstract class BaseUserListFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Refreshes the user list when the fragment is resumed. If the search query is empty then it
+     * reloads the default user list.
+     */
     @Override
     public void onResume() {
         super.onResume();

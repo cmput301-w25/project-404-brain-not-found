@@ -30,6 +30,13 @@ public class HintDropdownAdapter extends ArrayAdapter<String> {
         super(context, android.R.layout.simple_spinner_dropdown_item, mapDropdownItems(context, items));
     }
 
+    /**
+     * Maps a list of {@link HintDropdownEnumInterface} items to their respective display names.
+     *
+     * @param context   The context needed to fetch the display names.
+     * @param items     The list of dropdown items that implement {@link HintDropdownEnumInterface}.
+     * @return An ArrayList of Strings containing a display name of the dropdown items.
+     */
     private static ArrayList<String> mapDropdownItems(Context context, ArrayList<HintDropdownEnumInterface> items) {
         return items
                 .stream()

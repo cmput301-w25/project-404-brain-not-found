@@ -36,6 +36,12 @@ public class FollowingFragment extends BaseUserListFragment {
         return UserButtonActionEnum.UNFOLLOW;
     }
 
+    /**
+     * Loads the default list of the accounts the user is following.
+     *
+     * @param batchLoader The {@link BatchLoader} holding the documents
+     * @return A Task holding a List of {@link PublicUser}s that follow the user.
+     */
     @Override
     protected Task<List<PublicUser>> loadDefaultData(BatchLoader batchLoader) {
         return userDatabaseService.getFollowing(authService.getCurrentUser(), batchLoader);

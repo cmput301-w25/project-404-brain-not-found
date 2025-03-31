@@ -68,6 +68,14 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         commentButtonListener = (CommentButtonListener) parentFragment;
     }
 
+    /**
+     * Provides a view for the Mood list items. IF the view is not already created, then it
+     * inflates the layout and binds the {@link Mood} data to the view.
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
