@@ -1,6 +1,7 @@
 package com.example.cmput301_team_project;
 
 import android.util.Log;
+import android.view.View;
 
 import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
@@ -12,6 +13,9 @@ import com.example.cmput301_team_project.model.Mood;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -98,5 +102,28 @@ public class BaseActivityTest {
 
         clearData("http://10.0.2.2:8080/emulator/v1/projects/" + projectId + "/databases/(default)/documents");
         clearData("http://10.0.2.2:9099/emulator/v1/projects/" + projectId + "/accounts");
+    }
+
+    protected static Matcher<View> getElementFromMatchAtPosition(final Matcher<View> matcher, final int position) {
+        return new BaseMatcher<>() {
+            int counter = 0;
+
+            @Override
+            public boolean matches(final Object item) {
+                if (matcher.matches(item)) {
+                    if (counter == position) {
+                        counter++;
+                        return true;
+                    }
+                    counter++;
+                }
+                return false;
+            }
+
+            @Override
+            public void describeTo(final Description description) {
+                description.appendText("Element at hierarchy position " + position);
+            }
+        };
     }
 }
