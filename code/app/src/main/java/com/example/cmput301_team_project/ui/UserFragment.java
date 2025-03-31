@@ -83,6 +83,12 @@ public class UserFragment extends Fragment {
         displayName.setVisibility(View.INVISIBLE);
         TextView username = view.findViewById(R.id.usernameDisplay);
         String currUser = FirebaseAuthenticationService.getInstance().getCurrentUser();
+
+        TextView followerCount = view.findViewById(R.id.currUserFollowerCount);
+        TextView followingCount = view.findViewById(R.id.currUserFollowingCount);
+        followingCount.setVisibility(View.INVISIBLE);
+        followerCount.setVisibility(View.INVISIBLE);
+
         username.setText("@"+currUser);
         userDatabaseService.getDisplayName(currUser).addOnSuccessListener(name->{
             displayName.setText(name);
@@ -98,6 +104,16 @@ public class UserFragment extends Fragment {
             }else{
                 userEmoji.setVisibility(View.VISIBLE);
             }
+        });
+
+        userDatabaseService.followerCount(currUser).addOnSuccessListener(count ->{
+            followerCount.setText(count.toString());
+            followerCount.setVisibility(View.VISIBLE);
+        });
+
+        userDatabaseService.followingCount(currUser).addOnSuccessListener(count ->{
+            followingCount.setText(count.toString());
+            followingCount.setVisibility(View.VISIBLE);
         });
 
         ImageButton logoutButton = view.findViewById(R.id.logout_button);
