@@ -1,6 +1,8 @@
 package com.example.cmput301_team_project.model;
 
-import java.util.Date;
+import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.FieldValue;
+
 
 /**
  * The Comment class represents a type of post that users can leave on a (usually different) user's
@@ -12,6 +14,11 @@ import java.util.Date;
 public class Comment {
     public String username;
     public String text;
+    public Timestamp date;
+    public Comment(String username, String text){
+       this.username = username;
+       this.text = text;
+    }
 
     /**
      * Gets the username of the user that posted the Comment.
@@ -31,14 +38,7 @@ public class Comment {
         return text;
     }
 
-    /**
-     * Constructs a new Comment object based on the username and text.
-     *
-     * @param username The username of the user posting the comment.
-     * @param text The text/content of the comment to be posted.
-     */
-    public Comment(String username, String text){
-       this.username = username;
-       this.text = text;
+    public void setTimestamp(Timestamp date) {
+        this.date = date;
     }
 }

@@ -21,9 +21,12 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.cmput301_team_project.R;
 import com.example.cmput301_team_project.db.MoodDatabaseService;
+import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.example.cmput301_team_project.enums.MoodSocialSituationEnum;
 import com.example.cmput301_team_project.model.Mood;
 import com.example.cmput301_team_project.utils.ImageUtils;
+import com.example.cmput301_team_project.utils.PlacesUtils;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.button.MaterialButton;
 
 
@@ -36,6 +39,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
     private Context context;
     private ArrayList<Mood> moodList;
     private MoodDatabaseService moodDatabaseService; // Reference to the database service
+    private UserDatabaseService userDatabaseService;
     private Fragment parentFragment;
     private boolean isOwned;
 
@@ -54,6 +58,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         this.context = context;
         this.moodList = moodList;
         this.moodDatabaseService = MoodDatabaseService.getInstance(); // Get a singleton instance
+        this.userDatabaseService = UserDatabaseService.getInstance();
         this.parentFragment = parentFragment;
         this.isOwned = isOwned;
 
@@ -93,7 +98,9 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         TextView socialSituation = view.findViewById(R.id.socialSituation);
         TextView triggerName = view.findViewById(R.id.triggerName);
         TextView moodTime = view.findViewById(R.id.timeAns);
+        TextView location = view.findViewById(R.id.locationText);
         ImageView moodImage = view.findViewById(R.id.ImageBase64);
+        ImageView expandButton = view.findViewById(R.id.drop_down);
         androidx.cardview.widget.CardView cardView = view.findViewById(R.id.cardView);
 
         MaterialButton commentButton = view.findViewById(R.id.comments_button);
@@ -118,19 +125,52 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
                 moodPrefix.setText(String.format("@%s %s", mood.getAuthor(), getContext().getString(R.string.is)));
             }
 
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-            SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm");
             moodClass.setText(mood.getDisplayName());
             emoji.setText(mood.getEmoji());
-            moodDate.setText(dateFormat.format(mood.getDate()));
+            moodDate.setText(mood.getDateLocal());
             if (mood.getSocialSituation() != MoodSocialSituationEnum.NONE){
                 socialSituation.setText(mood.getSocialSituation().getDropdownDisplayName(context).toLowerCase());
             }
             triggerName.setText(mood.getTrigger());
-            moodTime.setText(timeFormat.format(mood.getDate()));
+            moodTime.setText(mood.getTimeLocal());
             moodImage.setImageBitmap(ImageUtils.decodeBase64(mood.getImageBase64()));
 
+            if(mood.getLocation() != null) {
+                location.setText(PlacesUtils.getAddressFromLatLng(getContext(), new LatLng(mood.getLocation().getLatitude(), mood.getLocation().getLongitude())));
+            }
+
             cardView.setCardBackgroundColor(getContext().getResources().getColor(mood.getColour(), getContext().getTheme()));
+
+            // Track expanded state using a tag
+            Boolean isExpanded = (Boolean) view.getTag();
+            if (isExpanded == null) {
+                isExpanded = Boolean.FALSE; // Use Boolean wrapper safely
+                view.setTag(isExpanded);    // Set initial state to avoid null
+            }
+
+            // Set visibility based on expanded state
+            triggerName.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            moodImage.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            location.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+            expandButton.setImageResource(isExpanded ? R.drawable.baseline_arrow_drop_up_24 : R.drawable.baseline_arrow_drop_down_24);
+
+            expandButton.setOnClickListener(v -> {
+                // Retrieve the current expanded state dynamically
+                Boolean isExpandedNow = (Boolean) view.getTag();
+                if (isExpandedNow == null) {
+                    isExpandedNow = false; // Default to collapsed if null
+                }
+
+                // Toggle the state
+                boolean newExpandedState = !isExpandedNow;
+                view.setTag(newExpandedState);
+
+                // Update UI based on new state
+                triggerName.setVisibility(newExpandedState && !triggerName.getText().toString().isEmpty() ? View.VISIBLE : View.GONE);
+                moodImage.setVisibility(newExpandedState && mood.getImageBase64() != null ? View.VISIBLE : View.GONE);
+                location.setVisibility(newExpandedState && mood.getLocation() != null ? View.VISIBLE : View.GONE);
+                expandButton.setImageResource(newExpandedState ? R.drawable.baseline_arrow_drop_up_24 : R.drawable.baseline_arrow_drop_down_24);
+            });
 
             if(menuButton != null) {
                 // If the three-dot menu icon is clicked, a pop-up menu shows up
@@ -190,6 +230,7 @@ public class MoodListAdapter extends ArrayAdapter<Mood> {
         moodList.remove(position);
         // Remove from database
         moodDatabaseService.deleteMood(mood);
+        userDatabaseService.deleteMentions(mood.getId(), null);
         // Notify the adapter to refresh the list view
         notifyDataSetChanged();
     }

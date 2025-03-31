@@ -13,13 +13,16 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.concurrent.Executor;
 
@@ -87,8 +90,8 @@ public class MoodDatabaseService extends BaseDatabaseService {
             for (DocumentSnapshot document : querySnapshot.getDocuments()) {
                 document.getReference().delete();
             }});
-        moodsRef.document(mood.getId()).delete();
 
+        moodDocRef.delete();
     }
 
     /**
@@ -148,7 +151,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 document.getGeoPoint("location"));
         mood.setId(document.getId());
         return mood;
-    }
+  }
 
 
     /**
@@ -230,6 +233,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
      * fails, an exception is added to the Task.
      */
     public Task<DocumentReference> addComment(String moodId, Comment comment){
+        comment.setTimestamp(Timestamp.now());
         return moodsRef.document(moodId).collection("comments")
                 .add(comment);
     }
@@ -243,6 +247,7 @@ public class MoodDatabaseService extends BaseDatabaseService {
     public Task<List<Comment>> getComments(String moodId){
         return moodsRef.document(moodId)
                 .collection("comments")
+                .orderBy("date", Query.Direction.DESCENDING)
                 .get()
                 .continueWith(task ->{
                     if(task.isSuccessful()){
@@ -255,6 +260,35 @@ public class MoodDatabaseService extends BaseDatabaseService {
                 });
     }
 
+    public Task<List<Mood>> getMentionedMoods(List<String> moodIds, MoodFilterState moodFilterState) {
+        List<Task<QuerySnapshot>> fetchTasks = new ArrayList<>();
+        for(String moodId : moodIds) {
+            Query query = moodsRef.whereEqualTo(FieldPath.documentId(), moodId);
+
+            query = applyFilteringQueries(query, moodFilterState);
+
+            fetchTasks.add(query.get());
+        }
+
+        return Tasks.whenAllSuccess(fetchTasks)
+                .continueWith(result -> {
+                    if(result.isSuccessful()) {
+                        Set<Mood> moodList = new HashSet<>();
+                        for(Object res : result.getResult()) {
+                            if(res instanceof QuerySnapshot querySnapshot) {
+                                for(DocumentSnapshot document : querySnapshot.getDocuments()) {
+                                    Mood mood = moodFromDoc(document);
+                                    if(moodFilterState.verifyNonDatabaseFilters(mood)) {
+                                        moodList.add(mood);
+                                    }
+                                }
+                            }
+                        }
+                        return new ArrayList<>(moodList);
+                    }
+                    return new ArrayList<>();
+                });
+    }
     /**
      * Updates the Mood document with new information Using its MoodId
      * @param mood The Mood with the new data
@@ -262,4 +296,16 @@ public class MoodDatabaseService extends BaseDatabaseService {
     public void updateMood(Mood mood) {
         moodsRef.document(mood.getId()).set(mood);
     }
+
+    public Task<Boolean> isPublic(String moodId){
+        return moodsRef.document(moodId).get()
+                .continueWith(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        DocumentSnapshot documentSnapshot = task.getResult();
+                        return documentSnapshot.getBoolean("public");
+                    }
+                    return false;
+                });
+    }
+
 }

@@ -9,7 +9,9 @@ import com.google.firebase.firestore.GeoPoint;
 
 import java.io.Serializable;
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
 
@@ -192,7 +194,14 @@ public abstract class Mood implements Serializable {
      */
     @Exclude
     public String getDateLocal() {
-        DateFormat dfLocal = DateFormat.getDateTimeInstance();
+        DateFormat dfLocal = new SimpleDateFormat("MMM d, yyyy", Locale.CANADA);
+        dfLocal.setTimeZone(TimeZone.getDefault());
+        return dfLocal.format(date);
+    }
+
+    @Exclude
+    public String getTimeLocal() {
+        DateFormat dfLocal = new SimpleDateFormat("hh:mm a", Locale.CANADA);
         dfLocal.setTimeZone(TimeZone.getDefault());
         return dfLocal.format(date);
     }
@@ -288,5 +297,19 @@ public abstract class Mood implements Serializable {
      */
     public GeoPoint getLocation() {
         return location;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        Mood mood = (Mood) obj;
+        if (Objects.equals(this.getId(), mood.getId())){
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }

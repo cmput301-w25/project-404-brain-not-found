@@ -14,7 +14,10 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.cmput301_team_project.BuildConfig;
 import com.example.cmput301_team_project.R;
+import com.example.cmput301_team_project.db.FirebaseAuthenticationService;
+import com.example.cmput301_team_project.db.UserDatabaseService;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
@@ -22,7 +25,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  * The main activity that serves as the entry point for the application after login.
  * It manages navigation between different fragments using a bottom navigation bar.
  */
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity{
     /**
      * Called when the activity is first created.
      * Sets up the main layout, navigation bar, and initial fragment.
@@ -33,30 +36,38 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
+        checkNotification();
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+
         BottomNavigationView navigation = findViewById(R.id.navigation_main);
         navigation.setOnApplyWindowInsetsListener((v, insets) -> {
             v.setPadding(0, 0, 0, 0);
             return insets;
         });
-        navigation.setSelectedItemId(R.id.mood_following_icon);
 
         replaceFragment(MoodFollowingFragment.newInstance());
 
+        navigation.setSelectedItemId(R.id.mood_following_icon);
+
         navigation.setOnItemSelectedListener(item -> {
+            checkNotification();
             if(item.getItemId() == R.id.mood_history_icon) {
                 replaceFragment(MoodHistoryFragment.newInstance());
             }
             else if(item.getItemId() == R.id.user_icon) {
                 replaceFragment(UserFragment.newInstance());
+
             }
             else if(item.getItemId() == R.id.mood_following_icon) {
                 replaceFragment(MoodFollowingFragment.newInstance());
+            }
+            else if(item.getItemId() == R.id.mentioned_icon){
+                replaceFragment(MentionedMoodsFragment.newInstance(this::checkNotification));
             }
             return true;
         });
@@ -89,7 +100,35 @@ public class MainActivity extends BaseActivity {
             finish();
             return;
         }
-
         Places.initializeWithNewPlacesApiEnabled(getApplicationContext(), apiKey);
+    }
+
+    private void badgeSetup(int id, int alerts){
+        BottomNavigationView navigation = findViewById(R.id.navigation_main);
+        BadgeDrawable badge = navigation.getOrCreateBadge(id);
+        badge.setVisible(true);
+        badge.setNumber(alerts);
+    }
+
+    private void badgeClear(int id){
+        BottomNavigationView navigation = findViewById(R.id.navigation_main);
+        BadgeDrawable badgeDrawable = navigation.getBadge(id);
+        if (badgeDrawable != null){
+            badgeDrawable.setVisible(false);
+            badgeDrawable.clearNumber();
+        }
+    }
+
+
+    public void checkNotification(){
+        UserDatabaseService.getInstance().getMentionCount(FirebaseAuthenticationService.getInstance().getCurrentUser()).addOnSuccessListener(count -> {
+            if (count != 0){
+                int countInt = count.intValue();
+                badgeSetup(R.id.mentioned_icon, countInt);
+            }else{
+                badgeClear(R.id.mentioned_icon);
+
+            }
+        });
     }
 }

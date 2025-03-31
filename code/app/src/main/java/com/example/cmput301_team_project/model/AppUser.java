@@ -11,6 +11,7 @@ public class AppUser {
     private String name;
     private String password;
 
+
     /**
      * Constructs an AppUser object with the specified username, password, and salt.
      *
@@ -49,4 +50,5 @@ public class AppUser {
     public String getName() {
         return name;
     }
+
 }
