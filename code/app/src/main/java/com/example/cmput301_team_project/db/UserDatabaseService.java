@@ -509,7 +509,12 @@ public class UserDatabaseService extends BaseDatabaseService {
            return new ArrayList<>();
         });
     }
-
+    /**
+     * Gets the list of accounts the users is following.
+     *
+     * @return A Task containing a list of users that the user is following, otherwise an empty
+     * ArrayList is returned.
+     */
     public Task<List<PublicUser>> getMostFollowedUsers(String currentUser, BatchLoader batchLoader) {
         Query query = usersRef.orderBy("followerCount", Query.Direction.DESCENDING).whereNotEqualTo(FieldPath.documentId(), currentUser);
 

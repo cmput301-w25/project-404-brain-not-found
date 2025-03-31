@@ -49,6 +49,7 @@ public class MainActivity extends BaseActivity{
             v.setPadding(0, 0, 0, 0);
             return insets;
         });
+        navigation.setSelectedItemId(R.id.mood_following_icon);
 
         replaceFragment(MoodFollowingFragment.newInstance());
 
@@ -100,6 +101,7 @@ public class MainActivity extends BaseActivity{
             finish();
             return;
         }
+
         Places.initializeWithNewPlacesApiEnabled(getApplicationContext(), apiKey);
     }
 

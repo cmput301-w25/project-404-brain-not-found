@@ -106,7 +106,6 @@ public class CommentListFragment extends DialogFragment {
      * @param savedInstanceState If non-null, this fragment is created from previous saved state
      * @return A new Dialog instance to be displayed by the Fragment
      */
-
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {

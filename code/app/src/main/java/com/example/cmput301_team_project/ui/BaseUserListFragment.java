@@ -36,7 +36,6 @@ import java.util.List;
 public abstract class BaseUserListFragment extends Fragment {
     protected abstract int getUserButtonTextId();
     protected abstract UserButtonActionEnum getUserButtonAction();
-    protected abstract Task<List<PublicUser>> loadDefaultData(BatchLoader batchLoader);
 
     protected UserDatabaseService userDatabaseService;
     protected FirebaseAuthenticationService authService;
@@ -131,7 +130,11 @@ public abstract class BaseUserListFragment extends Fragment {
                 return true;
             }
         });
-
+        // Handles item clicks to open the profile view of the selected user
+        userList.setOnItemClickListener((parent, view1, position, id) -> {
+            PublicUser user = userAdapter.getItem(position);
+            ViewProfileFragment.newInstance(user.getUsername(), user.getName()).show(requireActivity().getSupportFragmentManager(), "Profile");
+        });
         return view;
     }
 
