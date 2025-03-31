@@ -3,42 +3,50 @@
     android:id="@+id/profileName"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/recentEmoji"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25sp"
+        android:layout_marginTop="16dp"
         android:text="@string/emoji_emotionless"
         android:textAlignment="center"
-        android:textSize="150sp" />
+        android:textColor="@color/text_primary"
+        android:textSize="120sp" />
 
     <TextView
         android:id="@+id/publicName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40sp"
+        android:layout_marginTop="24dp"
         android:ellipsize="end"
         android:maxLines="2"
         android:text="TextView"
         android:textAlignment="center"
-        android:textSize="50sp" />
+        android:textColor="@color/text_primary"
+        android:textSize="40sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/publicUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40sp"
+        android:layout_marginBottom="24dp"
         android:ellipsize="end"
         android:maxLines="2"
         android:text="TextView"
         android:textAlignment="center"
-        android:textSize="30sp" />
+        android:textColor="@color/text_secondary"
+        android:textSize="24sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="51dp"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        android:padding="8dp"
         android:orientation="horizontal">
 
         <TextView
@@ -48,7 +56,8 @@
             android:layout_weight="1"
             android:text="@string/followers"
             android:textAlignment="center"
-            android:textSize="24sp" />
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/following"
@@ -57,12 +66,15 @@
             android:layout_weight="1"
             android:text="@string/following"
             android:textAlignment="center"
-            android:textSize="24sp" />
+            android:textColor="@color/text_primary"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/background"
+        android:padding="8dp"
         android:orientation="horizontal">
 
         <TextView
@@ -72,7 +84,9 @@
             android:layout_weight="1"
             android:text="0"
             android:textAlignment="center"
-            android:textSize="24sp" />
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/followingCount"
@@ -81,7 +95,9 @@
             android:layout_weight="1"
             android:text="0"
             android:textAlignment="center"
-            android:textSize="24sp" />
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
 </LinearLayout>

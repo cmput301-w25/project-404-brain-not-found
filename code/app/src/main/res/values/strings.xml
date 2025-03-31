@@ -70,4 +70,26 @@
     <string name="use_my_current_location">Use my current location</string>
     <string name="moods_within_5_km">Only moods within 5 km of my current location</string>
     <string name="show_more">Show more</string>
+    <string name="sign_up">Sign up</string>
+    <string name="login">Login</string>
+    <string name="privacy_policy">© Privacy Policy</string>
+    <string name="Slogan">Track your emotions. Improve your wellbeing.</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="create_your_account">Create your account</string>
+    <string name="display_name">Display name</string>
+    <string name="comments">Comments</string>
+    <string name="profile">Profile</string>
+    <string name="feed">My Feed</string>
+    <string name="my_events">My Moods</string>
+    <string name="mentions">Mentions</string>
+    <string name="emotion">Emotion</string>
+    <string name="social_situation">Social Situation</string>
+    <string name="location">Location</string>
+    <string name="post">Post</string>
+    <string name="apply_filters">Apply Filters</string>
+    <string name="filter_your_moods">Filter Your Moods</string>
+    <string name="select_mood">Select Mood</string>
+    <string name="location_filter">Location Filter</string>
+
 </resources>
