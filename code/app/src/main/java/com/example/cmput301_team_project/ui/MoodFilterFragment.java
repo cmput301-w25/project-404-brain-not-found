@@ -29,6 +29,10 @@ import com.google.firebase.firestore.GeoPoint;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * A dialog fragment for filtering mood events by time, emotion, trigger text, and location.
+ * Allows users to set and reset filters for mood lists.
+ */
 public class MoodFilterFragment extends DialogFragment {
 
     // filters for time (-x days)
@@ -44,10 +48,23 @@ public class MoodFilterFragment extends DialogFragment {
 
     }
 
+    /**
+     * Interface for handling filter updates.
+     */
     interface MoodFilterDialogListener {
+        /**
+         * Called when filters are updated or reset.
+         * @param moodFilterState The new filter state to apply
+         */
         void updateFilter(MoodFilterState moodFilterState);
     }
     private MoodFilterDialogListener listener;
+
+    /**
+     * Creates a new MoodFilterFragment with initial filter state.
+     * @param moodFilterState The initial filter state to display
+     * @return A new MoodFilterFragment instance
+     */
 
     public static MoodFilterFragment newInstance(MoodFilterState moodFilterState) {
         Bundle args = new Bundle();
@@ -57,6 +74,11 @@ public class MoodFilterFragment extends DialogFragment {
         return fragment;
     }
 
+    /**
+     * Attaches the listener from parent fragment.
+     * @param context The context of the parent fragment
+     * @throws RuntimeException if parent fragment doesn't implement MoodFilterDialogListener
+     */
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -74,7 +96,11 @@ public class MoodFilterFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
+    /**
+     * Creates the filter dialog with all UI controls.
+     * @param savedInstanceState Saved state (unused)
+     * @return The configured dialog
+     */
 
     @NonNull
     @Override
